@@ -1,7 +1,7 @@
 <p align="middle">
     <img src="https://www.rifos.org/assets/img/logo.svg" alt="logo" height="100" >
 </p>
-<h3 align="middle"><h3>rLogin</h3></h3>
+<h3 align="middle">rLogin</h3>
 <p align="middle">
     A web tool that combines Web3 and W3C standard protocols to manage user's identity.
 </p>
