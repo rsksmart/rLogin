@@ -1,0 +1,32 @@
+{
+  "name": "@rsksmart/rlogin",
+  "version": "0.0.1",
+  "description": "rLogin - the web3.0 SDK",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsksmart/rLogin.git"
+  },
+  "keywords": [
+    "rif",
+    "rsk",
+    "web3",
+    "ipfs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rsksmart/rLogin/issues"
+  },
+  "homepage": "https://github.com/rsksmart/rLogin#readme",
+  "devDependencies": {
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  }
+}
