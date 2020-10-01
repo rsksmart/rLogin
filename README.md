@@ -31,19 +31,23 @@ rlogin is a tool that allows the front end developer to connect their user with 
 Install dependencies:
 
 ```
+npm i
 ```
 
 Run tests:
 
 ```
+npm test
 ```
 
 Lint:
 
 ```
+npm run lint
 ```
 
 Build for production:
 
 ```
+npm run build
 ```
