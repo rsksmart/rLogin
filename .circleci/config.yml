@@ -11,6 +11,9 @@ jobs:
       - run:
           name: 'Lint'
           command: npm run lint
+      - run:
+          name: 'Build'
+          command: npm run build
 
 orbs:
   node: circleci/node@4.0.1
