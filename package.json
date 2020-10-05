@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "lint": "npx eslint src/**/* test/**/*",
+    "lint:fix": "npx eslint src/**/* test/**/* --fix",
     "build": "webpack --env=production",
     "build:dev": "webpack --env=development",
     "sample": "concurrently \"serve dist -l 3005\" \"serve sample/decentralized -l 3006 \"",

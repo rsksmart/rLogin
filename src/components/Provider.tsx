@@ -1,14 +1,15 @@
-import * as React from "react";
-import styled from "styled-components";
+// eslint-disable-next-line
+import * as React from 'react'
+import styled from 'styled-components'
 
-import { ThemeColors } from "web3modal";
 import {
+  ThemeColors,
   PROVIDER_WRAPPER_CLASSNAME,
   PROVIDER_CONTAINER_CLASSNAME,
   PROVIDER_ICON_CLASSNAME,
   PROVIDER_NAME_CLASSNAME,
   PROVIDER_DESCRIPTION_CLASSNAME
-} from "web3modal";
+} from 'web3modal'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/master/src/components/Provider.tsx#L1
@@ -31,7 +32,7 @@ const SIcon = styled.div`
     width: 8.5vw;
     height: 8.5vw;
   }
-`;
+`
 
 interface IStyedThemeColorOptions {
   themeColors: ThemeColors;
@@ -46,7 +47,7 @@ const SName = styled.div<IStyedThemeColorOptions>`
   @media screen and (max-width: 768px) {
     font-size: 5vw;
   }
-`;
+`
 
 const SDescription = styled.div<IStyedThemeColorOptions>`
   width: 100%;
@@ -56,7 +57,7 @@ const SDescription = styled.div<IStyedThemeColorOptions>`
   @media screen and (max-width: 768px) {
     font-size: 4vw;
   }
-`;
+`
 
 const SProviderContainer = styled.div<IStyedThemeColorOptions>`
   transition: background-color 0.2s ease-in-out;
@@ -71,7 +72,7 @@ const SProviderContainer = styled.div<IStyedThemeColorOptions>`
   @media screen and (max-width: 768px) {
     padding: 1vw;
   }
-`;
+`
 
 const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
   width: 100%;
@@ -88,7 +89,7 @@ const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
       background-color: ${({ themeColors }) => themeColors.hover};
     }
   }
-`;
+`
 
 interface IProviderProps {
   name: string;
@@ -98,7 +99,7 @@ interface IProviderProps {
   onClick: () => void;
 }
 
-export function Provider(props: IProviderProps) {
+export function Provider (props: IProviderProps) {
   const {
     name,
     logo,
@@ -106,7 +107,7 @@ export function Provider(props: IProviderProps) {
     themeColors,
     onClick,
     ...otherProps
-  } = props;
+  } = props
   return (
     <SProviderWrapper
       themeColors={themeColors}
@@ -132,5 +133,5 @@ export function Provider(props: IProviderProps) {
         </SDescription>
       </SProviderContainer>
     </SProviderWrapper>
-  );
+  )
 }

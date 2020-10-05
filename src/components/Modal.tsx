@@ -1,22 +1,23 @@
-import * as React from "react";
-import * as PropTypes from "prop-types";
-import styled from "styled-components";
+// eslint-disable-next-line
+import * as React from 'react'
+import * as PropTypes from 'prop-types'
+import styled from 'styled-components'
 
-import { Provider } from "./Provider";
+import { Provider } from './Provider'
 import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
   MODAL_HITBOX_CLASSNAME,
   MODAL_CARD_CLASSNAME
-} from "web3modal";
-import { SimpleFunction, IProviderUserOptions, ThemeColors } from "web3modal";
-
+  , SimpleFunction, IProviderUserOptions, ThemeColors
+} from 'web3modal'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
 
+// eslint-disable-next-line
 declare global {
-  // tslint:disable-next-line
+  // eslint-disable-next-line
   interface Window {
     ethereum: any;
     web3: any;
@@ -43,15 +44,15 @@ const SLightbox = styled.div<ILightboxStyleProps>`
   z-index: 2;
   will-change: opacity;
   background-color: ${({ opacity }) => {
-    let alpha = 0.4;
-    if (typeof opacity === "number") {
-      alpha = opacity;
+    let alpha = 0.4
+    if (typeof opacity === 'number') {
+      alpha = opacity
     }
-    return `rgba(0, 0, 0, ${alpha})`;
+    return `rgba(0, 0, 0, ${alpha})`
   }};
   opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? "visible" : "hidden")};
-  pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
+  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,7 +60,7 @@ const SLightbox = styled.div<ILightboxStyleProps>`
   & * {
     box-sizing: border-box !important;
   }
-`;
+`
 
 interface IModalContainerStyleProps {
   show: boolean;
@@ -74,9 +75,9 @@ const SModalContainer = styled.div<IModalContainerStyleProps>`
   align-items: center;
   justify-content: center;
   opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? "visible" : "hidden")};
-  pointer-events: ${({ show }) => (show ? "auto" : "none")};
-`;
+  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
+  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
+`
 
 const SHitbox = styled.div`
   position: absolute;
@@ -84,7 +85,7 @@ const SHitbox = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-`;
+`
 
 interface IModalCardStyleProps {
   show: boolean;
@@ -100,21 +101,21 @@ const SModalCard = styled.div<IModalCardStyleProps>`
   margin: 10px;
   padding: 0;
   opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? "visible" : "hidden")};
-  pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
+  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "800px")};
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : '800px')};
   min-width: fit-content;
   max-height: 100%;
   overflow: auto;
 
   @media screen and (max-width: 768px) {
-    max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "500px")};
+    max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : '500px')};
     grid-template-columns: 1fr;
   }
-`;
+`
 
 interface IModalProps {
   themeColors: ThemeColors;
@@ -132,15 +133,16 @@ interface IModalState {
 const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0
-};
+}
 
 export class Modal extends React.Component<IModalProps, IModalState> {
-  constructor(props: IModalProps) {
-    super(props);
+  constructor (props: IModalProps) {
+    super(props)
     window.updateWeb3Modal = async (state: IModalState) => {
-      this.setState(state);
-    };
+      this.setState(state)
+    }
   }
+
   public static propTypes = {
     userOptions: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -155,27 +157,27 @@ export class Modal extends React.Component<IModalProps, IModalState> {
     ...INITIAL_STATE
   };
 
-  public componentDidUpdate(prevProps: IModalProps, prevState: IModalState) {
+  public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
-      this.props.resetState();
+      this.props.resetState()
     }
     if (this.lightboxRef) {
-      const lightboxRect = this.lightboxRef.getBoundingClientRect();
-      const lightboxOffset = lightboxRect.top > 0 ? lightboxRect.top : 0;
+      const lightboxRect = this.lightboxRef.getBoundingClientRect()
+      const lightboxOffset = lightboxRect.top > 0 ? lightboxRect.top : 0
 
       if (
         lightboxOffset !== INITIAL_STATE.lightboxOffset &&
         lightboxOffset !== this.state.lightboxOffset
       ) {
-        this.setState({ lightboxOffset });
+        this.setState({ lightboxOffset })
       }
     }
   }
 
   public render = () => {
-    const { show, lightboxOffset } = this.state;
+    const { show, lightboxOffset } = this.state
 
-    const { onClose, userOptions, lightboxOpacity, themeColors } = this.props;
+    const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
 
     console.log(userOptions)
 
@@ -197,7 +199,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             ref={c => (this.mainModalCard = c)}
           >
             {userOptions.map(provider =>
-              !!provider ? (
+              provider ? (
                 <Provider
                   name={provider.name}
                   logo={provider.logo}
@@ -210,12 +212,12 @@ export class Modal extends React.Component<IModalProps, IModalState> {
           </SModalCard>
         </SModalContainer>
       </SLightbox>
-    );
-/*
+    )
+    /*
     return (
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          
+
             {userOptions.map(provider =>
               !!provider ? (
                 <Provider
@@ -229,6 +231,6 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             )}
           </SModalCard>
         </SModalContainer>
-    );*/
+    ); */
   };
 }
