@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>rLogin | dApp sample</title>
+  </head>
+  <body>
+    <div style="width: 100%; height: 100%;">
+      <button id="login">login with rLogin</button>
+      <p id="address">please login</button>
+    </div>
+
+    <script src="http://localhost:3005/main.js"></script>
+    <script type="text/javascript">
+      document.getElementById('login').addEventListener('click', handleLogin);
+
+      function handleLogin() {
+        const rLogin = window.RLogin.default()
+        rLogin.connect().then(provider => {
+          document.getElementById('address').innerHTML = provider.selectedAddress
+        })
+      }
+    </script>
+  </body>
+</html>

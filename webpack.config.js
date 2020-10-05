@@ -4,10 +4,8 @@ module.exports = {
   mode: "production",
   entry: "./src/index.ts",
   output: {
-    path: path.resolve(__dirname, "lib"),
-    filename: "[name].js",
     libraryTarget: "umd",
-    library: "rLogin",
+    library: "RLogin",
     umdNamedDefine: true,
     globalObject: "this"
   },

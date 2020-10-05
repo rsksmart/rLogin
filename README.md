@@ -51,3 +51,11 @@ Build for production:
 ```
 npm run build
 ```
+
+## Sample apps
+
+Please first build for production.
+
+| Flavor | Import from | Location | Command |  |
+| - | - | - | - | - |
+| Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample` | Open _http://localhost:3006_ |
