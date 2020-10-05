@@ -6,11 +6,45 @@
     A web tool that combines Web3 and W3C standard protocols to manage user's identity.
 </p>
 
-## Getting started
+## Quick start
 
-TBD
+Get RSK standard login modal in your dApp:
 
-<!-- we should add here a sample block for quick-integration -->
+1. Build and serve the library<sup><a href="#run-for-development">*</a></sup>
+2. Try
+
+    ```html
+    <html>
+    <head>
+        <title>rLogin | dApp sample</title>
+        <link href="https://fonts.googleapis.com/css?family=Rubik:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div style="width: 100%; height: 100%;">
+        <button id="login">login with rLogin</button>
+        <p id="address">please login</button>
+        </div>
+
+        <script src="http://localhost:3005/main.js"></script>
+        <script type="text/javascript">
+        document.getElementById('login').addEventListener('click', handleLogin);
+
+        function handleLogin() {
+            const rLogin = new window.RLogin.default({
+            cachedProvider: false,
+            providerOptions: {}
+            })
+
+            rLogin.connect().then(provider => {
+            document.getElementById('address').innerHTML = provider.selectedAddress
+            })
+        }
+        </script>
+    </body>
+    </html>
+    ```
+
+The interface is to be defined, this is just a demo.
 
 ## What is rLgin?
 
@@ -26,31 +60,53 @@ rlogin is a tool that allows the front end developer to connect their user with 
 
 - Closed apps: for example, a back office. This are apps that only specific user's can access. This flavor is used to prove the user accessing an app holds or is delegated by a specific identity
 
+## The code
+
+The tool tries not to re-implement functionalities that are provided by other libraries. The work is strongly based on:
+
+- [`web3modal`](https://github.com/web3Modal/web3modal/)
+    - Wallet provider integrations are imported from npm package
+    - Core and components are re-implemented to enable developing custom UX flow and custom components
+
 ## Run for development
 
-Install dependencies:
+Install dependencies - downloads and install dependencies from `npm`
 
 ```
 npm i
 ```
 
-Run tests:
+Run tests - runs with `jest`
 
 ```
 npm test
 ```
 
-Lint:
+Lint - runs `eslint` syntax checks
 
 ```
 npm run lint
 ```
 
-Build for production:
+Build for production - builds `umd` into `dist/main.js`
 
 ```
 npm run build
 ```
+
+Build in watch mode - builds each time a file in `src/` is updated
+
+```
+npm run build:dev
+```
+
+Serve the library - serves the library in `http://localhost:5005`
+
+```
+npm run serve
+```
+
+> Metamask cannot be accessed without `http` - see https://ethereum.stackexchange.com/a/62217/620
 
 ## Sample apps
 
@@ -58,4 +114,4 @@ Please first build for production.
 
 | Flavor | Import from | Location | Command |  |
 | - | - | - | - | - |
-| Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample` | Open _http://localhost:3006_ |
+| Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample` | Serves the library in _http://localhost:3006_ and a dApp in _http://localhost:3006_. Go to _3006_ with your browser |

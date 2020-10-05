@@ -1,9 +1,3 @@
-import Web3Modal, { ICoreOptions } from 'web3modal'
+import { Core } from './core'
 
-type Options = Partial<ICoreOptions>
-
-const defaultRSKOptions: Options = {
-  providerOptions: {}
-}
-
-export default (options: Options = defaultRSKOptions) => new Web3Modal(options)
+export default Core
