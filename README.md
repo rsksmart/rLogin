@@ -70,37 +70,41 @@ The tool tries not to re-implement functionalities that are provided by other li
 
 ## Run for development
 
-Install dependencies - downloads and install dependencies from `npm`
+**Install dependencies** - downloads and install dependencies from `npm`
 
 ```
 npm i
 ```
 
-Run tests - runs with `jest`
+**Run tests** - runs with `jest`
 
 ```
 npm test
 ```
 
-Lint - runs `eslint` syntax checks
+Currently, there are no tests :(. Please test it with a [sample app](#sample-apps).
+
+The best way to test it is to run `npm build:dev` to update the bundle after saving files. You will need to reload page after rebuilding, that is not automated yet.
+
+**Lint** - runs `eslint` syntax checks
 
 ```
 npm run lint
 ```
 
-Build for production - builds `umd` into `dist/main.js`
+**Build for production** - builds `umd` into `dist/main.js`
 
 ```
 npm run build
 ```
 
-Build in watch mode - builds each time a file in `src/` is updated
+**Build in watch mode** - builds each time a file in `src/` is updated
 
 ```
 npm run build:dev
 ```
 
-Serve the library - serves the library in `http://localhost:5005`
+**Serve the library** - serves the library in `http://localhost:5005`
 
 ```
 npm run serve
