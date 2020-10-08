@@ -1,16 +1,14 @@
 // eslint-disable-next-line
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { Provider } from './Provider'
 import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
   MODAL_HITBOX_CLASSNAME,
-  MODAL_CARD_CLASSNAME
-  , SimpleFunction, IProviderUserOptions, ThemeColors
+  SimpleFunction, IProviderUserOptions, ThemeColors
 } from 'web3modal'
+import WalletProviders from './step1'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -86,63 +84,6 @@ const SHitbox = styled.div`
   right: 0;
   bottom: 0;
 `
-
-interface IModalCardStyleProps {
-  show: boolean;
-  themeColors: ThemeColors;
-  maxWidth?: number;
-}
-
-const SModalCard = styled.div<IModalCardStyleProps>`
-  position: relative;
-  width: 100%;
-  background-color: ${({ themeColors }) => themeColors.background};
-  border-radius: 12px;
-  margin: 10px;
-  padding: 0;
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
-  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
-
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : '800px')};
-  min-width: fit-content;
-  max-height: 100%;
-  overflow: auto;
-
-  @media screen and (max-width: 768px) {
-    max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : '500px')};
-    grid-template-columns: 1fr;
-  }
-`
-
-interface IWalletProvidersProps {
-  show: boolean
-  themeColors: ThemeColors
-  userOptions: IProviderUserOptions[]
-  mainModalCard: HTMLDivElement | null | undefined
-}
-
-const WalletProviders = ({ show, themeColors, userOptions, mainModalCard }: IWalletProvidersProps) => <SModalCard
-  className={MODAL_CARD_CLASSNAME}
-  show={show}
-  themeColors={themeColors}
-  maxWidth={userOptions.length < 3 ? 500 : 800}
-  ref={c => (mainModalCard = c)}
-  >
-  {userOptions.map(provider =>
-    provider ? (
-      <Provider
-        name={provider.name}
-        logo={provider.logo}
-        description={provider.description}
-        themeColors={themeColors}
-        onClick={provider.onClick}
-      />
-    ) : null
-  )}
-</SModalCard>
 
 interface IModalProps {
   themeColors: ThemeColors;
