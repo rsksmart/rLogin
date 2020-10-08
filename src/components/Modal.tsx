@@ -179,8 +179,6 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
     const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
 
-    console.log(userOptions)
-
     return (
       <SLightbox
         className={MODAL_LIGHTBOX_CLASSNAME}
@@ -213,24 +211,5 @@ export class Modal extends React.Component<IModalProps, IModalState> {
         </SModalContainer>
       </SLightbox>
     )
-    /*
-    return (
-        <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
-          <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-
-            {userOptions.map(provider =>
-              !!provider ? (
-                <Provider
-                  name={provider.name}
-                  logo={provider.logo}
-                  description={provider.description}
-                  themeColors={themeColors}
-                  onClick={provider.onClick}
-                />
-              ) : null
-            )}
-          </SModalCard>
-        </SModalContainer>
-    ); */
-  };
+  }
 }

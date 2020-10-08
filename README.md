@@ -27,18 +27,18 @@ Get RSK standard login modal in your dApp:
 
         <script src="http://localhost:3005/main.js"></script>
         <script type="text/javascript">
-        document.getElementById('login').addEventListener('click', handleLogin);
+            document.getElementById('login').addEventListener('click', handleLogin);
 
-        function handleLogin() {
-            const rLogin = new window.RLogin.default({
-            cachedProvider: false,
-            providerOptions: {}
-            })
+            function handleLogin() {
+                const rLogin = new window.RLogin.default({
+                    cachedProvider: false,
+                    providerOptions: {}
+                })
 
-            rLogin.connect().then(provider => {
-            document.getElementById('address').innerHTML = provider.selectedAddress
-            })
-        }
+                rLogin.connect().then(provider => {
+                    document.getElementById('address').innerHTML = provider.selectedAddress
+                })
+            }
         </script>
     </body>
     </html>
