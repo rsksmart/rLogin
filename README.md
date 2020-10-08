@@ -12,7 +12,7 @@ TBD
 
 <!-- we should add here a sample block for quick-integration -->
 
-## What is rLgin?
+## What is rLogin?
 
 rlogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information within their permission.
 
