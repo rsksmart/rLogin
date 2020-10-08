@@ -117,6 +117,33 @@ const SModalCard = styled.div<IModalCardStyleProps>`
   }
 `
 
+interface IWalletProvidersProps {
+  show: boolean
+  themeColors: ThemeColors
+  userOptions: IProviderUserOptions[]
+  mainModalCard: HTMLDivElement | null | undefined
+}
+
+const WalletProviders = ({ show, themeColors, userOptions, mainModalCard }: IWalletProvidersProps) => <SModalCard
+  className={MODAL_CARD_CLASSNAME}
+  show={show}
+  themeColors={themeColors}
+  maxWidth={userOptions.length < 3 ? 500 : 800}
+  ref={c => (mainModalCard = c)}
+  >
+  {userOptions.map(provider =>
+    provider ? (
+      <Provider
+        name={provider.name}
+        logo={provider.logo}
+        description={provider.description}
+        themeColors={themeColors}
+        onClick={provider.onClick}
+      />
+    ) : null
+  )}
+</SModalCard>
+
 interface IModalProps {
   themeColors: ThemeColors;
   userOptions: IProviderUserOptions[];
@@ -138,17 +165,8 @@ const INITIAL_STATE: IModalState = {
 export class Modal extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
-    window.updateWeb3Modal = async (state: IModalState) => {
-      this.setState(state)
-    }
+    window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
   }
-
-  public static propTypes = {
-    userOptions: PropTypes.object.isRequired,
-    onClose: PropTypes.func.isRequired,
-    resetState: PropTypes.func.isRequired,
-    lightboxOpacity: PropTypes.number.isRequired
-  };
 
   public lightboxRef?: HTMLDivElement | null;
   public mainModalCard?: HTMLDivElement | null;
@@ -189,25 +207,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          <SModalCard
-            className={MODAL_CARD_CLASSNAME}
-            show={show}
-            themeColors={themeColors}
-            maxWidth={userOptions.length < 3 ? 500 : 800}
-            ref={c => (this.mainModalCard = c)}
-          >
-            {userOptions.map(provider =>
-              provider ? (
-                <Provider
-                  name={provider.name}
-                  logo={provider.logo}
-                  description={provider.description}
-                  themeColors={themeColors}
-                  onClick={provider.onClick}
-                />
-              ) : null
-            )}
-          </SModalCard>
+          <WalletProviders show={show} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard} />
         </SModalContainer>
       </SLightbox>
     )
