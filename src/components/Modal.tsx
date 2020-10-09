@@ -9,6 +9,7 @@ import {
   SimpleFunction, IProviderUserOptions, ThemeColors,
   CONNECT_EVENT, ERROR_EVENT
 } from 'web3modal'
+import { ModalCard } from './ModalCard'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
 
@@ -175,8 +176,12 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          {currentStep === 'Step1' && <WalletProviders show={currentStep === 'Step1'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard} />}
-          {currentStep === 'Step3' && <ConfirmSelectiveDisclosure show={currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard} sdr={sdr} />}
+          <ModalCard show={currentStep === 'Step1' || currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard}>
+            <h2>choose your wallet</h2>
+            {currentStep === 'Step1' && <WalletProviders themeColors={themeColors} userOptions={userOptions} />}
+            {currentStep === 'Step3' && <ConfirmSelectiveDisclosure sdr={sdr} />}
+            <p>powered by rif</p>
+          </ModalCard>
         </SModalContainer>
       </SLightbox>
     )

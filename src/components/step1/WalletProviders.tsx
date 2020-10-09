@@ -1,13 +1,13 @@
 import React from 'react'
 import { Provider } from './Provider'
-import { IProviderUserOptions } from 'web3modal'
-import { ModalCard, ModalCardProps } from '../ModalCard'
+import { IProviderUserOptions, ThemeColors } from 'web3modal'
 
-interface IWalletProvidersProps extends ModalCardProps {}
+interface IWalletProvidersProps {
+  themeColors: ThemeColors
+  userOptions: IProviderUserOptions[]
+}
 
-export const WalletProviders = ({ show, themeColors, userOptions, mainModalCard }: IWalletProvidersProps) => <ModalCard
-  show={show} themeColors={themeColors} userOptions={userOptions} mainModalCard={mainModalCard}
->
+export const WalletProviders = ({ themeColors, userOptions }: IWalletProvidersProps) => <>
   {userOptions.map(provider =>
     provider ? (
       <Provider
@@ -20,4 +20,4 @@ export const WalletProviders = ({ show, themeColors, userOptions, mainModalCard 
       />
     ) : null
   )}
-</ModalCard>
+</>
