@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import styled from 'styled-components'
-
+import axios from 'axios'
 import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
@@ -97,14 +97,18 @@ interface IModalProps {
   providerController: any
   onConnect: (provider: any) => Promise<void>
   onError: (error: any) => Promise<void>
+  backendUrl?: string
 }
 
 interface IModalState {
   show: boolean
   currentStep: Step
   lightboxOffset: number
-  provider: any
-  sdr: any // TBD
+  provider?: any
+  sdr?: any // TBD
+  sd?: any // TBD
+  challenge?: number
+  did?: string
 }
 
 type Step = 'Step1' | 'Step2' | 'Step3'
@@ -112,9 +116,7 @@ type Step = 'Step1' | 'Step2' | 'Step3'
 const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
-  currentStep: 'Step1',
-  provider: null,
-  sdr: null
+  currentStep: 'Step1'
 }
 
 export class Modal extends React.Component<IModalProps, IModalState> {
@@ -122,16 +124,25 @@ export class Modal extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError } = props
+    const { providerController, onConnect, onError, backendUrl } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setState({ provider })
-      // request schema to back end
-      // if schema requests credentials, go to data vault step (2)
-      // otherwise, request auth to back end and go to challenge response step (3)
-      this.setState({ sdr: {}, currentStep: 'Step3' })
+      const did = 'did:ethr:rsk:' + provider.selectedAddress.toLowerCase()
+      this.setState({ provider, did })
 
-      // onConnect(provider)
+      // if no back end, decentralized flavor
+      if (!backendUrl) {
+        return onConnect(provider)
+      } else {
+        // request schema to back end
+        axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
+          if (sdr) { // schema has selective disclosure request, permissioned app flavor
+            this.setState({ sdr, currentStep: 'Step2' })
+          } else { // open app flavor
+            this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
+          }
+        })
+      }
     });
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error));
@@ -162,7 +173,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sdr } = this.state
+    const { show, lightboxOffset, currentStep, sd, did } = this.state
 
     const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
 
@@ -176,10 +187,11 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          <ModalCard show={currentStep === 'Step1' || currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard}>
+          <ModalCard show={currentStep === 'Step1' || currentStep === 'Step2' || currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard}>
             <h2>choose your wallet</h2>
             {currentStep === 'Step1' && <WalletProviders themeColors={themeColors} userOptions={userOptions} />}
-            {currentStep === 'Step3' && <ConfirmSelectiveDisclosure sdr={sdr} />}
+            {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
+            {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} />}
             <p>powered by rif</p>
           </ModalCard>
         </SModalContainer>

@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>rLogin | dApp sample</title>
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div style="width: 100%; height: 100%;">
+      <button id="login">login with rLogin</button>
+      <button id="loginMetamask">login with rLogin (defaults: Metamask)</button>
+      <p id="address">please login</button>
+    </div>
+
+    <script src="http://localhost:3005/main.js"></script>
+    <script type="text/javascript">
+      const rLogin = new window.RLogin.default({
+        cachedProvider: false,
+        providerOptions: {},
+        backendUrl: 'http://localhost:3007'
+      })
+
+      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider));
+      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider));
+
+      function handleProvider(provider) {
+        document.getElementById('address').innerHTML = provider.selectedAddress
+      }
+    </script>
+  </body>
+</html>

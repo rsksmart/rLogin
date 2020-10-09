@@ -32,6 +32,12 @@ const defaultOpts: ICoreOptions = {
   network: ""
 };
 
+interface BackendOptions {
+  backendUrl?: string
+}
+
+type Options = Partial<ICoreOptions> & BackendOptions
+
 export class Core {
   private show: boolean = INITIAL_STATE.show;
   private themeColors: ThemeColors;
@@ -39,8 +45,9 @@ export class Core {
   private lightboxOpacity: number;
   private providerController: ProviderController;
   private userOptions: IProviderUserOptions[];
+  private backendUrl?: string;
 
-  constructor(opts?: Partial<ICoreOptions>) {
+  constructor(opts?: Options) {
     const options: ICoreOptions = {
       ...defaultOpts,
       ...opts
@@ -57,6 +64,9 @@ export class Core {
       providerOptions: options.providerOptions,
       network: options.network
     });
+
+    // setup did auth
+    this.backendUrl = opts && opts.backendUrl
 
     // setup modal
     this.userOptions = this.providerController.getUserOptions();
@@ -126,6 +136,7 @@ export class Core {
         providerController={this.providerController}
         onConnect={this.onConnect}
         onError={this.onError}
+        backendUrl={this.backendUrl}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     );

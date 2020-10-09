@@ -1,11 +1,13 @@
 import React from 'react'
 
 interface ConfirmSelectiveDisclosureProps {
-  sdr: any
+  did: string
+  sd: any
 }
 
-export function ConfirmSelectiveDisclosure({ sdr }: ConfirmSelectiveDisclosureProps) {
-  return (
-    <p>Selective disclosure request: {sdr && sdr.toString()}</p>
-  )
+export function ConfirmSelectiveDisclosure({ did, sd }: ConfirmSelectiveDisclosureProps) {
+  return <>
+    <p>{did}</p>
+    {sd != null && <p>Selective disclosure request: {sd && sd.toString()}</p>}
+  </>
 }
