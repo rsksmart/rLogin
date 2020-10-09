@@ -6,9 +6,11 @@ import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
   MODAL_HITBOX_CLASSNAME,
-  SimpleFunction, IProviderUserOptions, ThemeColors
+  SimpleFunction, IProviderUserOptions, ThemeColors,
+  CONNECT_EVENT, ERROR_EVENT
 } from 'web3modal'
-import WalletProviders from './step1'
+import { WalletProviders } from './step1'
+import { ConfirmSelectiveDisclosure } from './step3'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -91,22 +93,47 @@ interface IModalProps {
   onClose: SimpleFunction;
   resetState: SimpleFunction;
   lightboxOpacity: number;
+  providerController: any
+  onConnect: (provider: any) => Promise<void>
+  onError: (error: any) => Promise<void>
 }
 
 interface IModalState {
-  show: boolean;
-  lightboxOffset: number;
+  show: boolean
+  currentStep: Step
+  lightboxOffset: number
+  provider: any
+  sdr: any // TBD
 }
+
+type Step = 'Step1' | 'Step2' | 'Step3'
 
 const INITIAL_STATE: IModalState = {
   show: false,
-  lightboxOffset: 0
+  lightboxOffset: 0,
+  currentStep: 'Step1',
+  provider: null,
+  sdr: null
 }
 
 export class Modal extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
+
+    const { providerController, onConnect, onError } = props
+
+    providerController.on(CONNECT_EVENT, (provider: any) => {
+      this.setState({ provider })
+      // request schema to back end
+      // if schema requests credentials, go to data vault step (2)
+      // otherwise, request auth to back end and go to challenge response step (3)
+      this.setState({ sdr: {}, currentStep: 'Step3' })
+
+      // onConnect(provider)
+    });
+
+    providerController.on(ERROR_EVENT, (error: any) => onError(error));
   }
 
   public lightboxRef?: HTMLDivElement | null;
@@ -134,7 +161,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset } = this.state
+    const { show, lightboxOffset, currentStep, sdr } = this.state
 
     const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
 
@@ -148,7 +175,8 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          <WalletProviders show={show} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard} />
+          {currentStep === 'Step1' && <WalletProviders show={currentStep === 'Step1'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard} />}
+          {currentStep === 'Step3' && <ConfirmSelectiveDisclosure show={currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard} sdr={sdr} />}
         </SModalContainer>
       </SLightbox>
     )

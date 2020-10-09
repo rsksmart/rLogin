@@ -58,9 +58,6 @@ export class Core {
       network: options.network
     });
 
-    this.providerController.on(CONNECT_EVENT, provider => this.onConnect(provider));
-    this.providerController.on(ERROR_EVENT, error => this.onError(error));
-
     // setup modal
     this.userOptions = this.providerController.getUserOptions();
     this.renderModal();
@@ -126,6 +123,9 @@ export class Core {
         lightboxOpacity={this.lightboxOpacity}
         onClose={this.onClose}
         resetState={this.resetState}
+        providerController={this.providerController}
+        onConnect={this.onConnect}
+        onError={this.onError}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     );

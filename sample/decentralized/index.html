@@ -6,22 +6,22 @@
   <body>
     <div style="width: 100%; height: 100%;">
       <button id="login">login with rLogin</button>
+      <button id="loginMetamask">login with rLogin (defaults: Metamask)</button>
       <p id="address">please login</button>
     </div>
 
     <script src="http://localhost:3005/main.js"></script>
     <script type="text/javascript">
-      document.getElementById('login').addEventListener('click', handleLogin);
+      const rLogin = new window.RLogin.default({
+        cachedProvider: false,
+        providerOptions: {}
+      })
 
-      function handleLogin() {
-        const rLogin = new window.RLogin.default({
-          cachedProvider: false,
-          providerOptions: {}
-        })
+      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider));
+      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider));
 
-        rLogin.connect().then(provider => {
-          document.getElementById('address').innerHTML = provider.selectedAddress
-        })
+      function handleProvider(provider) {
+        document.getElementById('address').innerHTML = provider.selectedAddress
       }
     </script>
   </body>
