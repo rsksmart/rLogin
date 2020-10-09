@@ -10,11 +10,15 @@
       <p id="address">please login</p>
       <p id="access-token"></p>
       <button id="send-tx" disabled>send</button>
-      <p id="tx" disabled></p>
+      <p id="tx"></p>
+      <button id="sign" disabled>sign</button>
+      <p id="signature"></p>
     </div>
 
     <script src="http://localhost:3005/main.js"></script>
     <script src="https://unpkg.com/web3@1.3.0/lib/index.js"></script>
+    <script src="https://unpkg.com/@rsksmart/ethr-did@1.1.1-beta.1/lib/index.js"></script>
+    <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js"></script>
     <script type="text/javascript">
       const rLogin = new window.RLogin.default({
         cachedProvider: false,
@@ -34,8 +38,18 @@
 
         sendButton.addEventListener('click', () => {
           const web3 = new Web3(provider)
+
           web3.eth.sendTransaction({ from: provider.selectedAddress, to: provider.selectedAddress, value: '10000000' }, (err, tx) => {
             document.getElementById('tx').innerHTML = tx
+          })
+        });
+
+        let signButton = document.getElementById('sign')
+        signButton.removeAttribute('disabled')
+
+        signButton.addEventListener('click', () => {
+          new window.ethers.providers.Web3Provider(provider).getSigner().signMessage('message').then(sig => {
+            document.getElementById('signature').innerHTML = sig
           })
         });
       }
