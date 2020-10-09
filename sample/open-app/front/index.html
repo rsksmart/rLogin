@@ -7,7 +7,8 @@
     <div style="width: 100%; height: 100%;">
       <button id="login">login with rLogin</button>
       <button id="loginMetamask">login with rLogin (defaults: Metamask)</button>
-      <p id="address">please login</button>
+      <p id="address">please login</p>
+      <p id="access-token"></p>
     </div>
 
     <script src="http://localhost:3005/main.js"></script>
@@ -23,6 +24,7 @@
 
       function handleProvider(provider) {
         document.getElementById('address').innerHTML = provider.selectedAddress
+        document.getElementById('access-token').innerHTML = localStorage.getItem(window.RLogin.RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY)
       }
     </script>
   </body>

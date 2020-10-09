@@ -19,11 +19,9 @@ app.post('/request_auth', function (req, res) {
 })
 
 app.post('/auth', function (req, res) {
-  if (req.body.challenge === 1000) {
-    res.status(200).send('access token')
-  } else {
-    res.status(400).send('Invalid response')
-  }
+  console.log(req.body.response)
+
+  res.status(200).send('access token')
 })
 
 const port = 3007

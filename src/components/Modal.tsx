@@ -12,6 +12,8 @@ import {
 import { ModalCard } from './ModalCard'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
+import { Web3Provider } from '@ethersproject/providers'
+import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -128,6 +130,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
       const did = 'did:ethr:rsk:' + provider.selectedAddress.toLowerCase()
+
       this.setState({ provider, did })
 
       // if no back end, decentralized flavor
@@ -146,6 +149,8 @@ export class Modal extends React.Component<IModalProps, IModalState> {
     });
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error));
+
+    this.onConfirmAuth = this.onConfirmAuth.bind(this)
   }
 
   public lightboxRef?: HTMLDivElement | null;
@@ -172,6 +177,16 @@ export class Modal extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private onConfirmAuth() {
+    const { backendUrl, onConnect } = this.props
+    const { provider, challenge } = this.state
+    console.log(provider)
+    new Web3Provider(provider).getSigner().signMessage(challenge!.toString())
+      .then(response => axios.post(backendUrl + '/auth', { response }))
+      .then(({ data }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
+      .then(() => onConnect(provider))
+  }
+
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, did } = this.state
 
@@ -191,7 +206,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             <h2>choose your wallet</h2>
             {currentStep === 'Step1' && <WalletProviders themeColors={themeColors} userOptions={userOptions} />}
             {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
-            {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} />}
+            {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
             <p>powered by rif</p>
           </ModalCard>
         </SModalContainer>
