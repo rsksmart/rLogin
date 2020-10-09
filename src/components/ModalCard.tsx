@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from 'react'
 import styled from 'styled-components'
 import { IProviderUserOptions, MODAL_CARD_CLASSNAME, ThemeColors } from 'web3modal'
@@ -48,4 +49,3 @@ export const ModalCard: React.FC<ModalCardProps> = ({ show, themeColors, userOpt
 >
   {children}
 </SModalCard>
-

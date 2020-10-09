@@ -102,6 +102,8 @@ interface IModalProps {
   backendUrl?: string
 }
 
+type Step = 'Step1' | 'Step2' | 'Step3'
+
 interface IModalState {
   show: boolean
   currentStep: Step
@@ -112,8 +114,6 @@ interface IModalState {
   challenge?: number
   did?: string
 }
-
-type Step = 'Step1' | 'Step2' | 'Step3'
 
 const INITIAL_STATE: IModalState = {
   show: false,
@@ -146,9 +146,9 @@ export class Modal extends React.Component<IModalProps, IModalState> {
           }
         })
       }
-    });
+    })
 
-    providerController.on(ERROR_EVENT, (error: any) => onError(error));
+    providerController.on(ERROR_EVENT, (error: any) => onError(error))
 
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
   }
@@ -177,7 +177,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
     }
   }
 
-  private onConfirmAuth() {
+  private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
     const { provider, challenge } = this.state
 

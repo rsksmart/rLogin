@@ -1,5 +1,6 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+// eslint-disable-next-line
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
 import {
   ICoreOptions,
@@ -7,21 +8,20 @@ import {
   ThemeColors,
   getThemeColors,
   SimpleFunction
-} from 'web3modal'
-import {
+  ,
   WEB3_CONNECT_MODAL_ID,
   CONNECT_EVENT,
   ERROR_EVENT,
   CLOSE_EVENT
+  , themesList, EventController, ProviderController
 } from 'web3modal'
-import { themesList } from 'web3modal'
+
 import { Modal } from './components'
-import { EventController, ProviderController } from 'web3modal'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
-const INITIAL_STATE = { show: false };
+const INITIAL_STATE = { show: false }
 
 const defaultOpts: ICoreOptions = {
   lightboxOpacity: 0.4,
@@ -29,8 +29,8 @@ const defaultOpts: ICoreOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
   providerOptions: {},
-  network: ""
-};
+  network: ''
+}
 
 interface BackendOptions {
   backendUrl?: string
@@ -47,15 +47,15 @@ export class Core {
   private userOptions: IProviderUserOptions[];
   private backendUrl?: string;
 
-  constructor(opts?: Options) {
+  constructor (opts?: Options) {
     const options: ICoreOptions = {
       ...defaultOpts,
       ...opts
-    };
+    }
 
     // setup theme
-    this.lightboxOpacity = options.lightboxOpacity;
-    this.themeColors = getThemeColors(options.theme);
+    this.lightboxOpacity = options.lightboxOpacity
+    this.themeColors = getThemeColors(options.theme)
 
     // setup provider controller
     this.providerController = new ProviderController({
@@ -63,35 +63,35 @@ export class Core {
       cacheProvider: options.cacheProvider,
       providerOptions: options.providerOptions,
       network: options.network
-    });
+    })
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
 
     // setup modal
-    this.userOptions = this.providerController.getUserOptions();
-    this.renderModal();
+    this.userOptions = this.providerController.getUserOptions()
+    this.renderModal()
   }
 
-  get cachedProvider(): string {
-    return this.providerController.cachedProvider;
+  get cachedProvider (): string {
+    return this.providerController.cachedProvider
   }
 
   /** opens or closes modal */
   private toggleModal = () => {
-    const d = typeof window !== "undefined" ? document : ""
-    const body = d ? d.body || d.getElementsByTagName("body")[0] : ""
+    const d = typeof window !== 'undefined' ? document : ''
+    const body = d ? d.body || d.getElementsByTagName('body')[0] : ''
 
     if (body) {
-      body.style.overflow = this.show ? "" : "hidden"
+      body.style.overflow = this.show ? '' : 'hidden'
     }
 
-    return this.updateState({ show: !this.show });
+    return this.updateState({ show: !this.show })
   };
 
   private closeModalIfOpen = async () => {
     if (this.show) {
-      await this.toggleModal();
+      await this.toggleModal()
     }
   }
 
@@ -105,26 +105,26 @@ export class Core {
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
-    this.on(CONNECT_EVENT, provider => resolve(provider));
-    this.on(ERROR_EVENT, error => reject(error));
-    this.on(CLOSE_EVENT, () => reject("Modal closed by user"));
+    this.on(CONNECT_EVENT, provider => resolve(provider))
+    this.on(ERROR_EVENT, error => reject(error))
+    this.on(CLOSE_EVENT, () => reject('Modal closed by user'))
   }
 
   /** dangerous! gives responsibility to update modal state */
   private updateState = async (state: any) => {
     Object.keys(state).forEach(key => {
-      (this as any)[key] = state[key];
-    });
-    await window.updateWeb3Modal(state);
+      (this as any)[key] = state[key]
+    })
+    await window.updateWeb3Modal(state)
   };
 
   private resetState = () => this.updateState({ ...INITIAL_STATE });
 
   /** renders the modal in DOM */
-  private renderModal() {
-    const el = document.createElement("div");
-    el.id = WEB3_CONNECT_MODAL_ID;
-    document.body.appendChild(el);
+  private renderModal () {
+    const el = document.createElement('div')
+    el.id = WEB3_CONNECT_MODAL_ID
+    document.body.appendChild(el)
 
     ReactDOM.render(
       <Modal
@@ -139,7 +139,7 @@ export class Core {
         backendUrl={this.backendUrl}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
-    );
+    )
   }
 
   /**
@@ -147,15 +147,16 @@ export class Core {
    * definitions.
    */
   public connect = (): Promise<any> =>
+    // eslint-disable-next-line
     new Promise(async (resolve, reject) => { // weird async, to be refactored
       this.setupHandlers(resolve, reject)
 
       if (this.cachedProvider) {
-        await this.providerController.connectToCachedProvider();
-        return;
+        await this.providerController.connectToCachedProvider()
+        return
       }
 
-      await this.toggleModal(); // pre: the modal is closed
+      await this.toggleModal() // pre: the modal is closed
     });
 
   /**
@@ -163,14 +164,15 @@ export class Core {
    * @param id provider id (same of configuration)
    */
   public connectTo = (id: string): Promise<any> =>
+    // eslint-disable-next-line
     new Promise(async (resolve, reject) => {
       this.setupHandlers(resolve, reject)
 
-      const provider = this.providerController.getProvider(id);
+      const provider = this.providerController.getProvider(id)
 
-      if (!provider) return reject(`Cannot connect to provider (${id}), check provider options`)
+      if (!provider) return reject(new Error(`Cannot connect to provider (${id}), check provider options`))
 
-      await this.providerController.connectTo(provider.id, provider.connector);
+      await this.providerController.connectTo(provider.id, provider.connector)
     });
 
   /**
@@ -178,10 +180,10 @@ export class Core {
    * @param event event name
    * @param callback event callback closure
    */
-  public on(event: string, callback: SimpleFunction): SimpleFunction {
-    this.eventController.on({ event, callback });
+  public on (event: string, callback: SimpleFunction): SimpleFunction {
+    this.eventController.on({ event, callback })
 
-    return () => this.eventController.off({ event, callback });
+    return () => this.eventController.off({ event, callback })
   }
 
   /**
@@ -189,31 +191,31 @@ export class Core {
    * @param event event name
    * @param callback event callback closure
    */
-  public off(event: string, callback?: SimpleFunction): void {
-    this.eventController.off({ event, callback });
+  public off (event: string, callback?: SimpleFunction): void {
+    this.eventController.off({ event, callback })
   }
 
   /**
    * Clear cached provider from local storage
    */
-  public clearCachedProvider(): void {
-    this.providerController.clearCachedProvider();
+  public clearCachedProvider (): void {
+    this.providerController.clearCachedProvider()
   }
 
   /**
    * Set cached provider in local storage
    * @param id provider id (same of configuration)
    */
-  public setCachedProvider(id: string): void {
-    this.providerController.setCachedProvider(id);
+  public setCachedProvider (id: string): void {
+    this.providerController.setCachedProvider(id)
   }
 
   /**
    * Update theme
    * @param theme new theme
    */
-  public async updateTheme(theme: string | ThemeColors): Promise<void> {
-    this.themeColors = getThemeColors(theme);
-    await this.updateState({ themeColors: this.themeColors });
+  public async updateTheme (theme: string | ThemeColors): Promise<void> {
+    this.themeColors = getThemeColors(theme)
+    await this.updateState({ themeColors: this.themeColors })
   }
 }
