@@ -1,1 +1,3 @@
-export default () => 'Welcome to rLogin'
+import { Core } from './core'
+
+export default Core

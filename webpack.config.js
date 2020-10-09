@@ -1,18 +1,15 @@
 const path = require("path");
 
-module.exports = {
-  mode: "production",
-  entry: {
-    index: "./src/index.ts"
-  },
+module.exports = env => ({
+  mode: env,
+  entry: "./src/index.ts",
   output: {
-    path: path.resolve(__dirname, "lib"),
-    filename: "[name].js",
     libraryTarget: "umd",
-    library: "rLogin",
+    library: "RLogin",
     umdNamedDefine: true,
     globalObject: "this"
   },
+  watch: env === 'development',
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
   },
@@ -34,4 +31,4 @@ module.exports = {
       }
     ]
   }
-};
+});
