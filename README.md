@@ -119,4 +119,6 @@ Please first build for production.
 
 | Flavor | Import from | Location | Command |  |
 | - | - | - | - | - |
-| Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample1` | Serves the library in _http://localhost:3006_ and a dApp in _http://localhost:3006_. Go to _3006_ with your browser |
+| Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample:dapp` | Serves the library in _http://localhost:3006_ and a dApp in _http://localhost:3006_. Go to _3006_ with your browser |
+| Open app | HTML DOM | _./sample/with_be_ | `npm run sample:open` | Serves the library in _http://localhost:3006_, dApp in _http://localhost:3006_ and back end in _http://localhost:3007_. This mode will not ask for Data Vault access. Go to _3006_ with your browser |
+| Permissioned app | HTML DOM | _./sample/decentralized_ | `npm run sample:permissioned` | Serves the library in _http://localhost:3006_, dApp in _http://localhost:3006_ and back end in _http://localhost:3007_. This mode will ask for Data Vault access. Go to _3006_ with your browser |

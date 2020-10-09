@@ -180,7 +180,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
   private onConfirmAuth() {
     const { backendUrl, onConnect } = this.props
     const { provider, challenge } = this.state
-    console.log(provider)
+
     new Web3Provider(provider).getSigner().signMessage(challenge!.toString())
       .then(response => axios.post(backendUrl + '/auth', { response }))
       .then(({ data }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
