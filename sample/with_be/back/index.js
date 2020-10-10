@@ -26,7 +26,7 @@ app.post('/auth', function (req, res) {
   // verify credentials
   // perform business logic
 
-  res.status(200).send(uuid.uuidv4())
+  res.status(200).send(uuid.v4())
 })
 
 const port = 3007
