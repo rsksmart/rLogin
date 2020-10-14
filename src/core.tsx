@@ -1,5 +1,6 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+// eslint-disable-next-line
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
 import {
   ICoreOptions,
@@ -7,21 +8,20 @@ import {
   ThemeColors,
   getThemeColors,
   SimpleFunction
-} from 'web3modal' // from "../helpers";
-import {
+  ,
   WEB3_CONNECT_MODAL_ID,
   CONNECT_EVENT,
   ERROR_EVENT,
   CLOSE_EVENT
-} from 'web3modal' // from "../constants";
-import { themesList } from 'web3modal' // from "../themes";
-import { Modal } from './components' // from "../components";
-import { EventController, ProviderController } from 'web3modal' // from "../controllers";
+  , themesList, EventController, ProviderController
+} from 'web3modal'
+
+import { Modal } from './components'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
-const INITIAL_STATE = { show: false };
+const INITIAL_STATE = { show: false }
 
 const defaultOpts: ICoreOptions = {
   lightboxOpacity: 0.4,
@@ -29,8 +29,14 @@ const defaultOpts: ICoreOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
   providerOptions: {},
-  network: ""
-};
+  network: ''
+}
+
+interface BackendOptions {
+  backendUrl?: string
+}
+
+type Options = Partial<ICoreOptions> & BackendOptions
 
 export class Core {
   private show: boolean = INITIAL_STATE.show;
@@ -39,163 +45,177 @@ export class Core {
   private lightboxOpacity: number;
   private providerController: ProviderController;
   private userOptions: IProviderUserOptions[];
+  private backendUrl?: string;
 
-  constructor(opts?: Partial<ICoreOptions>) {
+  constructor (opts?: Options) {
     const options: ICoreOptions = {
       ...defaultOpts,
       ...opts
-    };
+    }
 
-    this.lightboxOpacity = options.lightboxOpacity;
-    this.themeColors = getThemeColors(options.theme);
+    // setup theme
+    this.lightboxOpacity = options.lightboxOpacity
+    this.themeColors = getThemeColors(options.theme)
 
+    // setup provider controller
     this.providerController = new ProviderController({
       disableInjectedProvider: options.disableInjectedProvider,
       cacheProvider: options.cacheProvider,
       providerOptions: options.providerOptions,
       network: options.network
-    });
+    })
 
-    this.providerController.on(CONNECT_EVENT, provider =>
-      this.onConnect(provider)
-    );
-    this.providerController.on(ERROR_EVENT, error => this.onError(error));
+    // setup did auth
+    this.backendUrl = opts && opts.backendUrl
 
-    this.userOptions = this.providerController.getUserOptions();
-    this.renderModal();
+    // setup modal
+    this.userOptions = this.providerController.getUserOptions()
+    this.renderModal()
   }
 
-  get cachedProvider(): string {
-    return this.providerController.cachedProvider;
+  get cachedProvider (): string {
+    return this.providerController.cachedProvider
   }
 
-  // --------------- PUBLIC METHODS --------------- //
+  /** opens or closes modal */
+  private toggleModal = () => {
+    const d = typeof window !== 'undefined' ? document : ''
+    const body = d ? d.body || d.getElementsByTagName('body')[0] : ''
 
-  public connect = (): Promise<any> =>
-    new Promise(async (resolve, reject) => {
-      this.on(CONNECT_EVENT, provider => resolve(provider));
-      this.on(ERROR_EVENT, error => reject(error));
-      this.on(CLOSE_EVENT, () => reject("Modal closed by user"));
-      await this.toggleModal();
-    });
-
-  public connectTo = (id: string): Promise<any> =>
-    new Promise(async (resolve, reject) => {
-      this.on(CONNECT_EVENT, provider => resolve(provider));
-      this.on(ERROR_EVENT, error => reject(error));
-      this.on(CLOSE_EVENT, () => reject("Modal closed by user"));
-      const provider = this.providerController.getProvider(id);
-      if (!provider) {
-        return reject(
-          new Error(
-            `Cannot connect to provider (${id}), check provider options`
-          )
-        );
-      }
-      await this.providerController.connectTo(provider.id, provider.connector);
-    });
-
-  public async toggleModal(): Promise<void> {
-    if (this.cachedProvider) {
-      await this.providerController.connectToCachedProvider();
-      return;
+    if (body) {
+      body.style.overflow = this.show ? '' : 'hidden'
     }
 
-    await this._toggleModal();
+    return this.updateState({ show: !this.show })
+  };
+
+  private closeModalIfOpen = async () => {
+    if (this.show) {
+      await this.toggleModal()
+    }
   }
 
-  public on(event: string, callback: SimpleFunction): SimpleFunction {
-    this.eventController.on({
-      event,
-      callback
-    });
+  /** handles an event and closes modal if open */
+  private handleOnAndTrigger = async (event: string, ...args: any) => this.closeModalIfOpen()
+    .then(() => this.eventController.trigger(event, ...args))
 
-    return () =>
-      this.eventController.off({
-        event,
-        callback
-      });
+  /** event handlers */
+  private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
+  private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
+  private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error)
+
+  private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
+    this.on(CONNECT_EVENT, provider => resolve(provider))
+    this.on(ERROR_EVENT, error => reject(error))
+    this.on(CLOSE_EVENT, () => reject('Modal closed by user'))
   }
 
-  public off(event: string, callback?: SimpleFunction): void {
-    this.eventController.off({
-      event,
-      callback
-    });
-  }
+  /** dangerous! gives responsibility to update modal state */
+  private updateState = async (state: any) => {
+    Object.keys(state).forEach(key => {
+      (this as any)[key] = state[key]
+    })
+    await window.updateWeb3Modal(state)
+  };
 
-  public clearCachedProvider(): void {
-    this.providerController.clearCachedProvider();
-  }
+  private resetState = () => this.updateState({ ...INITIAL_STATE });
 
-  public setCachedProvider(id: string): void {
-    this.providerController.setCachedProvider(id);
-  }
-
-  public async updateTheme(theme: string | ThemeColors): Promise<void> {
-    this.themeColors = getThemeColors(theme);
-    await this.updateState({ themeColors: this.themeColors });
-  }
-
-  // --------------- PRIVATE METHODS --------------- //
-
-  private renderModal() {
-    const el = document.createElement("div");
-    el.id = WEB3_CONNECT_MODAL_ID;
-    document.body.appendChild(el);
+  /** renders the modal in DOM */
+  private renderModal () {
+    const el = document.createElement('div')
+    el.id = WEB3_CONNECT_MODAL_ID
+    document.body.appendChild(el)
 
     ReactDOM.render(
       <Modal
         themeColors={this.themeColors}
         userOptions={this.userOptions}
+        lightboxOpacity={this.lightboxOpacity}
         onClose={this.onClose}
         resetState={this.resetState}
-        lightboxOpacity={this.lightboxOpacity}
+        providerController={this.providerController}
+        onConnect={this.onConnect}
+        onError={this.onError}
+        backendUrl={this.backendUrl}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
-    );
+    )
   }
 
-  private _toggleModal = async () => {
-    const d = typeof window !== "undefined" ? document : "";
-    const body = d ? d.body || d.getElementsByTagName("body")[0] : "";
-    if (body) {
-      if (this.show) {
-        body.style.overflow = "";
-      } else {
-        body.style.overflow = "hidden";
+  /**
+   * Connect to rLogin. This will prompt the modal based on the
+   * definitions.
+   */
+  public connect = (): Promise<any> =>
+    // eslint-disable-next-line
+    new Promise(async (resolve, reject) => { // weird async, to be refactored
+      this.setupHandlers(resolve, reject)
+
+      if (this.cachedProvider) {
+        await this.providerController.connectToCachedProvider()
+        return
       }
-    }
-    await this.updateState({ show: !this.show });
-  };
 
-  private onError = async (error: any) => {
-    if (this.show) {
-      await this._toggleModal();
-    }
-    this.eventController.trigger(ERROR_EVENT, error);
-  };
-
-  private onConnect = async (provider: any) => {
-    if (this.show) {
-      await this._toggleModal();
-    }
-    this.eventController.trigger(CONNECT_EVENT, provider);
-  };
-
-  private onClose = async () => {
-    if (this.show) {
-      await this._toggleModal();
-    }
-    this.eventController.trigger(CLOSE_EVENT);
-  };
-
-  private updateState = async (state: any) => {
-    Object.keys(state).forEach(key => {
-      (this as any)[key] = state[key];
+      await this.toggleModal() // pre: the modal is closed
     });
-    await window.updateWeb3Modal(state);
-  };
 
-  private resetState = () => this.updateState({ ...INITIAL_STATE });
+  /**
+   * Connect to rLogin with a specific wallet provider
+   * @param id provider id (same of configuration)
+   */
+  public connectTo = (id: string): Promise<any> =>
+    // eslint-disable-next-line
+    new Promise(async (resolve, reject) => {
+      this.setupHandlers(resolve, reject)
+
+      const provider = this.providerController.getProvider(id)
+
+      if (!provider) return reject(new Error(`Cannot connect to provider (${id}), check provider options`))
+
+      await this.providerController.connectTo(provider.id, provider.connector)
+    });
+
+  /**
+   * Subscribe to modal event
+   * @param event event name
+   * @param callback event callback closure
+   */
+  public on (event: string, callback: SimpleFunction): SimpleFunction {
+    this.eventController.on({ event, callback })
+
+    return () => this.eventController.off({ event, callback })
+  }
+
+  /**
+   * Unsubscribe from modal event
+   * @param event event name
+   * @param callback event callback closure
+   */
+  public off (event: string, callback?: SimpleFunction): void {
+    this.eventController.off({ event, callback })
+  }
+
+  /**
+   * Clear cached provider from local storage
+   */
+  public clearCachedProvider (): void {
+    this.providerController.clearCachedProvider()
+  }
+
+  /**
+   * Set cached provider in local storage
+   * @param id provider id (same of configuration)
+   */
+  public setCachedProvider (id: string): void {
+    this.providerController.setCachedProvider(id)
+  }
+
+  /**
+   * Update theme
+   * @param theme new theme
+   */
+  public async updateTheme (theme: string | ThemeColors): Promise<void> {
+    this.themeColors = getThemeColors(theme)
+    await this.updateState({ themeColors: this.themeColors })
+  }
 }
