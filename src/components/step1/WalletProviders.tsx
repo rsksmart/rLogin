@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from 'react'
 import { Provider } from './Provider'
 import { IProviderUserOptions, ThemeColors } from 'web3modal'

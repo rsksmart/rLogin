@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from 'react'
 
 interface ConfirmSelectiveDisclosureProps {
@@ -6,7 +7,7 @@ interface ConfirmSelectiveDisclosureProps {
   onConfirm: () => void
 }
 
-export function ConfirmSelectiveDisclosure({ did, sd, onConfirm }: ConfirmSelectiveDisclosureProps) {
+export function ConfirmSelectiveDisclosure ({ did, sd, onConfirm }: ConfirmSelectiveDisclosureProps) {
   return <>
     <p>{did}</p>
     {sd != null && <p>Selective disclosure request: {sd && sd.toString()}</p>}

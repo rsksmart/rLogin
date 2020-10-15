@@ -7,16 +7,17 @@ import {
   IProviderUserOptions,
   ThemeColors,
   getThemeColors,
-  SimpleFunction
-  ,
+  SimpleFunction,
   WEB3_CONNECT_MODAL_ID,
   CONNECT_EVENT,
   ERROR_EVENT,
-  CLOSE_EVENT
-  , themesList, EventController, ProviderController
+  CLOSE_EVENT,
+  themesList,
+  EventController,
+  ProviderController
 } from 'web3modal'
 
-import { Modal } from './components'
+import { Core } from './components'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
@@ -38,7 +39,7 @@ interface BackendOptions {
 
 type Options = Partial<ICoreOptions> & BackendOptions
 
-export class Core {
+export class RLogin {
   private show: boolean = INITIAL_STATE.show;
   private themeColors: ThemeColors;
   private eventController: EventController = new EventController();
@@ -102,7 +103,7 @@ export class Core {
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
   private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
-  private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error)
+  private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
     this.on(CONNECT_EVENT, provider => resolve(provider))
@@ -127,7 +128,7 @@ export class Core {
     document.body.appendChild(el)
 
     ReactDOM.render(
-      <Modal
+      <Core
         themeColors={this.themeColors}
         userOptions={this.userOptions}
         lightboxOpacity={this.lightboxOpacity}
