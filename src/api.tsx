@@ -7,13 +7,14 @@ import {
   IProviderUserOptions,
   ThemeColors,
   getThemeColors,
-  SimpleFunction
-  ,
+  SimpleFunction,
   WEB3_CONNECT_MODAL_ID,
   CONNECT_EVENT,
   ERROR_EVENT,
-  CLOSE_EVENT
-  , themesList, EventController, ProviderController
+  CLOSE_EVENT,
+  themesList,
+  EventController,
+  ProviderController
 } from 'web3modal'
 
 import { Modal } from './components'
@@ -38,7 +39,7 @@ interface BackendOptions {
 
 type Options = Partial<ICoreOptions> & BackendOptions
 
-export class Core {
+export class RLogin {
   private show: boolean = INITIAL_STATE.show;
   private themeColors: ThemeColors;
   private eventController: EventController = new EventController();
@@ -102,7 +103,7 @@ export class Core {
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
   private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
-  private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error)
+  private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
     this.on(CONNECT_EVENT, provider => resolve(provider))
