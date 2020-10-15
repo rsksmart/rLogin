@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from 'react'
 import { ThemeColors, IProviderUserOptions, MODAL_HITBOX_CLASSNAME, MODAL_LIGHTBOX_CLASSNAME } from 'web3modal'
 import { ModalLightbox } from './ModalLightbox'
@@ -39,7 +40,7 @@ export const Modal: React.FC<ModalProps> = ({
       <ModalHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
       <ModalCard show={show} themeColors={themeColors} userOptions={userOptions} mainModalCard={mainModalCard}>
         <h2>choose your wallet</h2>
-          {children}
+        {children}
         <p>powered by rif</p>
       </ModalCard>
     </ModalContainer>
