@@ -61,6 +61,8 @@
     "express": "^4.17.1",
     "jest": "^26.5.3",
     "jest-enzyme": "^7.1.2",
+    "jsdom": "^16.4.0",
+    "jsdom-global": "^3.0.2",
     "nodemon": "^2.0.4",
     "serve": "^11.3.2",
     "ts-jest": "^26.4.1",
