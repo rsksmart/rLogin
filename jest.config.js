@@ -2,7 +2,7 @@
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
-  setupTestFrameworkScriptFile: '<rootDir>/test/setupTests.ts',
+  setupFilesAfterEnv: ['<rootDir>/test/setupTests.ts'],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -171,7 +171,7 @@ module.exports = {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  transform: { '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest/preprocessor.js' },
+  transform: { '^.+\\.tsx?$': 'ts-jest' },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: ['/node_modules/(?!(lodash-es|react)/)'],
