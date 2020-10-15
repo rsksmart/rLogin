@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Modal } from './Modal'
-import { ThemeColors, IProviderUserOptions } from 'web3modal'
+import { ThemeColors, IProviderUserOptions, ProviderController, IProviderControllerOptions, IProviderOptions } from 'web3modal'
 
 describe('Component: Modal', () => {
   it('should render and be described', () => {
@@ -19,6 +19,17 @@ describe('Component: Modal', () => {
       description: 'description',
       onClick: jest.fn()
     }
+    const providerOptions: IProviderOptions = {
+      null: {
+        package: 'any'
+      }
+    }
+    const providerControllerOptions: IProviderControllerOptions = {
+      disableInjectedProvider: false,
+      cacheProvider: false,
+      providerOptions: providerOptions,
+      network: 'string'
+    }
 
     const wrapper = shallow(
       <Modal
@@ -27,7 +38,7 @@ describe('Component: Modal', () => {
         onClose={jest.fn()}
         resetState={jest.fn()}
         lightboxOpacity={60}
-        providerController="string"
+        providerController={new ProviderController(providerControllerOptions)}
         onConnect={jest.fn()}
         onError={jest.fn()}
       />
