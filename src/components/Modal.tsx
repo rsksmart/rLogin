@@ -14,6 +14,7 @@ import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
 import { Web3Provider } from '@ethersproject/providers'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
+import { ModalLightbox } from './ModalLightbox'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -27,43 +28,6 @@ declare global {
     updateWeb3Modal: any;
   }
 }
-
-interface ILightboxStyleProps {
-  show: boolean;
-  offset: number;
-  opacity?: number;
-}
-
-const SLightbox = styled.div<ILightboxStyleProps>`
-  font-family: Rubik;
-  transition: opacity 0.1s ease-in-out;
-  text-align: center;
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  margin-left: -50vw;
-  top: ${({ offset }) => (offset ? `-${offset}px` : 0)};
-  left: 50%;
-  z-index: 2;
-  will-change: opacity;
-  background-color: ${({ opacity }) => {
-    let alpha = 0.4
-    if (typeof opacity === 'number') {
-      alpha = opacity
-    }
-    return `rgba(0, 0, 0, ${alpha})`
-  }};
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
-  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  & * {
-    box-sizing: border-box !important;
-  }
-`
 
 interface IModalContainerStyleProps {
   show: boolean;
@@ -193,7 +157,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
     const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
 
     return (
-      <SLightbox
+      <ModalLightbox
         className={MODAL_LIGHTBOX_CLASSNAME}
         offset={lightboxOffset}
         opacity={lightboxOpacity}
@@ -210,7 +174,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             <p>powered by rif</p>
           </ModalCard>
         </SModalContainer>
-      </SLightbox>
+      </ModalLightbox>
     )
   }
 }
