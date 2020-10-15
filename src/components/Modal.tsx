@@ -16,6 +16,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 import { ModalLightbox } from './ModalLightbox'
 import { ModalHitbox } from './ModalHitbox'
+import { ModalContainer } from './ModalContainer'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -29,23 +30,6 @@ declare global {
     updateWeb3Modal: any;
   }
 }
-
-interface IModalContainerStyleProps {
-  show: boolean;
-}
-
-const SModalContainer = styled.div<IModalContainerStyleProps>`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
-  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
-`
 
 interface IModalProps {
   themeColors: ThemeColors;
@@ -157,7 +141,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
         ref={c => (this.lightboxRef = c)}
         show={show}
       >
-        <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
+        <ModalContainer show={show}>
           {/* TODO: test this component hitting outside the modal */}
           <ModalHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
           <ModalCard show={currentStep === 'Step1' || currentStep === 'Step2' || currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard}>
@@ -167,7 +151,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
             <p>powered by rif</p>
           </ModalCard>
-        </SModalContainer>
+        </ModalContainer>
       </ModalLightbox>
     )
   }
