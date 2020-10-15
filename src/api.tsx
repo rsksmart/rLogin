@@ -17,7 +17,7 @@ import {
   ProviderController
 } from 'web3modal'
 
-import { Modal } from './components'
+import { Core } from './components'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
@@ -128,7 +128,7 @@ export class RLogin {
     document.body.appendChild(el)
 
     ReactDOM.render(
-      <Modal
+      <Core
         themeColors={this.themeColors}
         userOptions={this.userOptions}
         lightboxOpacity={this.lightboxOpacity}
