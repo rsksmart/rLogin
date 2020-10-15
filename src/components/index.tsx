@@ -1,1 +1,1 @@
-export * from './Core'
+export { Core } from './Core'

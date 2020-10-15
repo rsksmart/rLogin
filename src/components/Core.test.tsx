@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import React from 'react'
 import { shallow } from 'enzyme'
-import { Modal } from './Core'
+import { Core } from './Core'
 import { ThemeColors, IProviderUserOptions, ProviderController, IProviderControllerOptions, IProviderOptions } from 'web3modal'
 
 describe('Component: Core', () => {
@@ -33,7 +33,7 @@ describe('Component: Core', () => {
     }
 
     const wrapper = shallow(
-      <Modal
+      <Core
         themeColors={themeColors}
         userOptions={[option]}
         onClose={jest.fn()}
