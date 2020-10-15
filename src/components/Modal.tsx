@@ -15,6 +15,7 @@ import { ConfirmSelectiveDisclosure } from './step3'
 import { Web3Provider } from '@ethersproject/providers'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 import { ModalLightbox } from './ModalLightbox'
+import { ModalHitbox } from './ModalHitbox'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -44,14 +45,6 @@ const SModalContainer = styled.div<IModalContainerStyleProps>`
   opacity: ${({ show }) => (show ? 1 : 0)};
   visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
   pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
-`
-
-const SHitbox = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 `
 
 interface IModalProps {
@@ -165,7 +158,8 @@ export class Modal extends React.Component<IModalProps, IModalState> {
         show={show}
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
-          <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
+          {/* TODO: test this component hitting outside the modal */}
+          <ModalHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
           <ModalCard show={currentStep === 'Step1' || currentStep === 'Step2' || currentStep === 'Step3'} themeColors={themeColors} userOptions={userOptions} mainModalCard={this.mainModalCard}>
             <h2>choose your wallet</h2>
             {currentStep === 'Step1' && <WalletProviders themeColors={themeColors} userOptions={userOptions} />}
