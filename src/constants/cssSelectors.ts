@@ -3,6 +3,8 @@ export const MODAL_LIGHTBOX_CLASSNAME = 'rlogin-modal-lightbox'
 export const MODAL_CONTAINER_CLASSNAME = 'rlogin-modal-container'
 export const MODAL_HITBOX_CLASSNAME = 'rlogin-modal-hitbox'
 export const MODAL_CARD_CLASSNAME = 'rlogin-modal-card'
+export const MODAL_CLOSE_BUTTON_CLASSNAME = 'rlogin-modal-close-button'
+export const MODAL_HEADER_CLASSNAME = 'rlogin-modal-header'
 
 export const PROVIDER_WRAPPER_CLASSNAME = 'rlogin-provider-wrapper'
 export const PROVIDER_CONTAINER_CLASSNAME = 'rlogin-provider-container'
