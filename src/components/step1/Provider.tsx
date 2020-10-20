@@ -2,14 +2,15 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
+import { ThemeColors } from 'web3modal'
+
 import {
-  ThemeColors,
   PROVIDER_WRAPPER_CLASSNAME,
   PROVIDER_CONTAINER_CLASSNAME,
   PROVIDER_ICON_CLASSNAME,
   PROVIDER_NAME_CLASSNAME,
   PROVIDER_DESCRIPTION_CLASSNAME
-} from 'web3modal'
+} from '../../constants/cssSelectors'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/master/src/components/Provider.tsx#L1

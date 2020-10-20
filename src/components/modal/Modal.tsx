@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import React from 'react'
-import { ThemeColors, IProviderUserOptions, MODAL_HITBOX_CLASSNAME, MODAL_LIGHTBOX_CLASSNAME } from 'web3modal'
+import { ThemeColors, IProviderUserOptions } from 'web3modal'
+import { MODAL_HITBOX_CLASSNAME, MODAL_LIGHTBOX_CLASSNAME } from '../../constants/cssSelectors'
 import { ModalLightbox } from './ModalLightbox'
 import { ModalContainer } from './ModalContainer'
 import { ModalHitbox } from './ModalHitbox'

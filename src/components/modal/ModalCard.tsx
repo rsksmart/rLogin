@@ -1,7 +1,8 @@
 // eslint-disable-next-line
 import React from 'react'
 import styled from 'styled-components'
-import { IProviderUserOptions, MODAL_CARD_CLASSNAME, ThemeColors } from 'web3modal'
+import { IProviderUserOptions, ThemeColors } from 'web3modal'
+import { MODAL_CARD_CLASSNAME } from '../../constants/cssSelectors'
 
 interface IModalCardStyleProps {
   show: boolean;

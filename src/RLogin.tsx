@@ -8,7 +8,6 @@ import {
   ThemeColors,
   getThemeColors,
   SimpleFunction,
-  WEB3_CONNECT_MODAL_ID,
   CONNECT_EVENT,
   ERROR_EVENT,
   CLOSE_EVENT,
@@ -16,6 +15,8 @@ import {
   EventController,
   ProviderController
 } from 'web3modal'
+
+import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
 import { Core } from './components'
 
