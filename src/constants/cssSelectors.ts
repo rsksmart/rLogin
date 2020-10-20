@@ -12,5 +12,8 @@ export const PROVIDER_ICON_CLASSNAME = 'rlogin-provider-icon'
 export const PROVIDER_NAME_CLASSNAME = 'rlogin-provider-name'
 export const PROVIDER_DESCRIPTION_CLASSNAME = 'rlogin-provider-description'
 
+export const HEADER2_CLASS = 'rlogin-header2'
+export const PARAGRAPH_CLASS = 'rlogin-paragraph'
+
 // Ids
 export const WEB3_CONNECT_MODAL_ID = 'rlogin-connect-modal'

@@ -1,9 +1,9 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import styled from 'styled-components'
-
 import { ThemeColors } from 'web3modal'
 
+import { Header2, Paragraph } from '../shared/Typography'
 import {
   PROVIDER_WRAPPER_CLASSNAME,
   PROVIDER_CONTAINER_CLASSNAME,
@@ -116,6 +116,7 @@ export function Provider (props: IProviderProps) {
       onClick={onClick}
       {...otherProps}
     >
+      <Header2>Connect your wallet</Header2>
       <SProviderContainer
         themeColors={themeColors}
         className={PROVIDER_CONTAINER_CLASSNAME}

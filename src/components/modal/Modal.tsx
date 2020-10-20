@@ -47,9 +47,8 @@ export const Modal: React.FC<ModalProps> = ({
           <ModalCloseButton className={MODAL_CLOSE_BUTTON_CLASSNAME} onClick={onClose} />
           <PoweredByRif />
         </ModalHeader>
-        <h2>choose your wallet</h2>
         {children}
-        <p>powered by rif</p>
+        {/* TODO: footer yo! */}
       </ModalCard>
     </ModalContainer>
   </ModalLightbox>
