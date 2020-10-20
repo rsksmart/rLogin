@@ -1,25 +1,21 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import styled from 'styled-components'
-import { ThemeColors } from 'web3modal'
 
-import { Header2, Paragraph } from '../shared/Typography'
+import { Header3, Paragraph } from '../shared/Typography'
 import {
-  PROVIDER_WRAPPER_CLASSNAME,
   PROVIDER_CONTAINER_CLASSNAME,
-  PROVIDER_ICON_CLASSNAME,
-  PROVIDER_NAME_CLASSNAME,
-  PROVIDER_DESCRIPTION_CLASSNAME
+  PROVIDER_ICON_CLASSNAME
 } from '../../constants/cssSelectors'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/master/src/components/Provider.tsx#L1
 
-const SIcon = styled.div`
+const ProviderIcon = styled.div`
   width: 45px;
   height: 45px;
   display: flex;
-  border-radius: 50%;
+  margin: 0 15px;
   overflow: visible;
   box-shadow: none;
   justify-content: center;
@@ -35,68 +31,37 @@ const SIcon = styled.div`
   }
 `
 
-interface IStyedThemeColorOptions {
-  themeColors: ThemeColors;
-}
-
-const SName = styled.div<IStyedThemeColorOptions>`
-  width: 100%;
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 0.5em;
-  color: ${({ themeColors }) => themeColors.main};
-  @media screen and (max-width: 768px) {
-    font-size: 5vw;
-  }
-`
-
-const SDescription = styled.div<IStyedThemeColorOptions>`
-  width: 100%;
-  font-size: 18px;
-  margin: 0.333em 0;
-  color: ${({ themeColors }) => themeColors.secondary};
-  @media screen and (max-width: 768px) {
-    font-size: 4vw;
-  }
-`
-
-const SProviderContainer = styled.div<IStyedThemeColorOptions>`
+const ProviderContainer = styled.div`
   transition: background-color 0.2s ease-in-out;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: ${({ themeColors }) => themeColors.background};
+  background-color: #F2F2F2;
   border-radius: 12px;
-  padding: 24px 16px;
+  margin-bottom: 15px;
+  padding: 5px 0;
+  :hover {
+    background-color: #E4E4E4;
+  }
   @media screen and (max-width: 768px) {
     padding: 1vw;
   }
 `
 
-const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
+const HeaderRow = styled.div`
   width: 100%;
-  padding: 8px;
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  cursor: pointer;
-  border-radius: 0;
-  border: ${({ themeColors }) => `1px solid ${themeColors.border}`};
-  @media (hover: hover) {
-    &:hover ${SProviderContainer} {
-      background-color: ${({ themeColors }) => themeColors.hover};
-    }
-  }
+  margin: 10px 0 -10px 0;
 `
 
 interface IProviderProps {
   name: string;
   logo: string;
   description: string;
-  themeColors: ThemeColors;
   onClick: () => void;
 }
 
@@ -105,35 +70,19 @@ export function Provider (props: IProviderProps) {
     name,
     logo,
     description,
-    themeColors,
     onClick,
     ...otherProps
   } = props
   return (
-    <SProviderWrapper
-      themeColors={themeColors}
-      className={PROVIDER_WRAPPER_CLASSNAME}
-      onClick={onClick}
-      {...otherProps}
-    >
-      <Header2>Connect your wallet</Header2>
-      <SProviderContainer
-        themeColors={themeColors}
-        className={PROVIDER_CONTAINER_CLASSNAME}
-      >
-        <SIcon className={PROVIDER_ICON_CLASSNAME}>
+    <ProviderContainer className={PROVIDER_CONTAINER_CLASSNAME} onClick={onClick} {...otherProps}>
+      <HeaderRow>
+        <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
           <img src={logo} alt={name} />
-        </SIcon>
-        <SName themeColors={themeColors} className={PROVIDER_NAME_CLASSNAME}>
-          {name}
-        </SName>
-        <SDescription
-          themeColors={themeColors}
-          className={PROVIDER_DESCRIPTION_CLASSNAME}
-        >
-          {description}
-        </SDescription>
-      </SProviderContainer>
-    </SProviderWrapper>
+        </ProviderIcon>
+        <Header3>{name}</Header3>
+      </HeaderRow>
+
+      <Paragraph>{description}</Paragraph>
+    </ProviderContainer>
   )
 }

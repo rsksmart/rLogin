@@ -138,7 +138,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       userOptions={userOptions}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders themeColors={themeColors} userOptions={userOptions} />}
+      {currentStep === 'Step1' && <WalletProviders userOptions={userOptions} />}
       {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
     </Modal>
