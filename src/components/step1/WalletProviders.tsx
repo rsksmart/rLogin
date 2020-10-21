@@ -7,7 +7,7 @@ import { Header2, Paragraph } from '../shared/Typography'
 import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
 
 interface IWalletProvidersProps {
-  userOptions: IProviderUserOptions[]
+  userProviders: IProviderUserOptions[]
 }
 
 const ProvidersWrapper = styled.div`
@@ -28,10 +28,10 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-export const WalletProviders = ({ userOptions }: IWalletProvidersProps) => <>
+export const WalletProviders = ({ userProviders }: IWalletProvidersProps) => <>
   <Header2>Connect your wallet</Header2>
   <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
-    {userOptions.map(provider =>
+    {userProviders.map(provider =>
       provider ? (
         <Provider
           key={provider.name}

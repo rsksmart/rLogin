@@ -22,7 +22,7 @@ declare global {
 }
 
 interface IModalProps {
-  userOptions: IProviderUserOptions[];
+  userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
@@ -124,7 +124,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, did } = this.state
 
-    const { onClose, userOptions } = this.props
+    const { onClose, userProviders } = this.props
 
     return <Modal
       lightboxOffset={lightboxOffset}
@@ -133,7 +133,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userOptions={userOptions} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
       {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
     </Modal>

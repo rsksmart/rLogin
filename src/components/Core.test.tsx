@@ -6,7 +6,7 @@ import { IProviderUserOptions, ProviderController, IProviderControllerOptions, I
 
 describe('Component: Core', () => {
   it('should render and be described', () => {
-    const option: IProviderUserOptions = {
+    const provider: IProviderUserOptions = {
       name: 'test',
       logo: 'test.jpg',
       description: 'description',
@@ -26,7 +26,7 @@ describe('Component: Core', () => {
 
     const wrapper = shallow(
       <Core
-        userOptions={[option]}
+        userProviders={[provider]}
         onClose={jest.fn()}
         resetState={jest.fn()}
         providerController={new ProviderController(providerControllerOptions)}

@@ -39,7 +39,7 @@ export class RLogin {
   private show: boolean = INITIAL_STATE.show;
   private eventController: EventController = new EventController();
   private providerController: ProviderController;
-  private userOptions: IProviderUserOptions[];
+  private userProviders: IProviderUserOptions[];
   private backendUrl?: string;
 
   constructor (opts?: Options) {
@@ -60,7 +60,7 @@ export class RLogin {
     this.backendUrl = opts && opts.backendUrl
 
     // setup modal
-    this.userOptions = this.providerController.getUserOptions()
+    this.userProviders = this.providerController.getUserOptions()
     this.renderModal()
   }
 
@@ -119,7 +119,7 @@ export class RLogin {
 
     ReactDOM.render(
       <Core
-        userOptions={this.userOptions}
+        userProviders={this.userProviders}
         onClose={this.onClose}
         resetState={this.resetState}
         providerController={this.providerController}
