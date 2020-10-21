@@ -47,6 +47,10 @@ Get RSK standard login modal in your dApp:
 
 The interface is to be defined, this is just a demo.
 
+## Styling the modal and interface
+
+The modal comes with basic RIF styling and can be overwritten using CSS. All of the elements contain class and id selectors to allow style customizations. A list of the selectors can be found in the [cssSelector.ts constants file](https://github.com/rsksmart/rLogin/tree/master/src/constants/cssSelectors.ts).
+
 ## What is rLogin?
 
 rlogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information within their permission.
