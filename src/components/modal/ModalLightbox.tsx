@@ -3,7 +3,6 @@ import styled from 'styled-components'
 interface ModalLightboxProps {
   show: boolean;
   offset: number;
-  opacity?: number;
 }
 
 export const ModalLightbox = styled.div<ModalLightboxProps>`
@@ -18,14 +17,8 @@ top: ${({ offset }) => (offset ? `-${offset}px` : 0)};
 left: 50%;
 z-index: 2;
 will-change: opacity;
-background-color: ${({ opacity }) => {
-  let alpha = 0.4
-  if (typeof opacity === 'number') {
-    alpha = opacity
-  }
-  return `rgba(0, 0, 0, ${alpha})`
-}};
-opacity: ${({ show }) => (show ? 1 : 0)};
+background-color: rgba(0, 0, 0, 0.4);
+opacity: 1;
 visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
 pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
 display: flex;

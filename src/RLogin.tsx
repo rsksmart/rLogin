@@ -3,19 +3,17 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 import {
-  ICoreOptions,
+  IProviderControllerOptions,
   IProviderUserOptions,
-  ThemeColors,
-  getThemeColors,
   SimpleFunction,
-  WEB3_CONNECT_MODAL_ID,
   CONNECT_EVENT,
   ERROR_EVENT,
   CLOSE_EVENT,
-  themesList,
   EventController,
   ProviderController
 } from 'web3modal'
+
+import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
 import { Core } from './components'
 
@@ -24,9 +22,7 @@ import { Core } from './components'
 
 const INITIAL_STATE = { show: false }
 
-const defaultOpts: ICoreOptions = {
-  lightboxOpacity: 0.4,
-  theme: themesList.default.name,
+const defaultOpts: IProviderControllerOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
   providerOptions: {},
@@ -37,26 +33,20 @@ interface BackendOptions {
   backendUrl?: string
 }
 
-type Options = Partial<ICoreOptions> & BackendOptions
+type Options = Partial<IProviderControllerOptions> & BackendOptions
 
 export class RLogin {
   private show: boolean = INITIAL_STATE.show;
-  private themeColors: ThemeColors;
   private eventController: EventController = new EventController();
-  private lightboxOpacity: number;
   private providerController: ProviderController;
-  private userOptions: IProviderUserOptions[];
+  private userProviders: IProviderUserOptions[];
   private backendUrl?: string;
 
   constructor (opts?: Options) {
-    const options: ICoreOptions = {
+    const options: IProviderControllerOptions = {
       ...defaultOpts,
       ...opts
     }
-
-    // setup theme
-    this.lightboxOpacity = options.lightboxOpacity
-    this.themeColors = getThemeColors(options.theme)
 
     // setup provider controller
     this.providerController = new ProviderController({
@@ -70,7 +60,7 @@ export class RLogin {
     this.backendUrl = opts && opts.backendUrl
 
     // setup modal
-    this.userOptions = this.providerController.getUserOptions()
+    this.userProviders = this.providerController.getUserOptions()
     this.renderModal()
   }
 
@@ -129,9 +119,7 @@ export class RLogin {
 
     ReactDOM.render(
       <Core
-        themeColors={this.themeColors}
-        userOptions={this.userOptions}
-        lightboxOpacity={this.lightboxOpacity}
+        userProviders={this.userProviders}
         onClose={this.onClose}
         resetState={this.resetState}
         providerController={this.providerController}
@@ -209,14 +197,5 @@ export class RLogin {
    */
   public setCachedProvider (id: string): void {
     this.providerController.setCachedProvider(id)
-  }
-
-  /**
-   * Update theme
-   * @param theme new theme
-   */
-  public async updateTheme (theme: string | ThemeColors): Promise<void> {
-    this.themeColors = getThemeColors(theme)
-    await this.updateState({ themeColors: this.themeColors })
   }
 }

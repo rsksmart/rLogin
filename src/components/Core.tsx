@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import axios from 'axios'
-import { SimpleFunction, IProviderUserOptions, ThemeColors, CONNECT_EVENT, ERROR_EVENT } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions, CONNECT_EVENT, ERROR_EVENT } from 'web3modal'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
 import { Web3Provider } from '@ethersproject/providers'
@@ -22,11 +22,9 @@ declare global {
 }
 
 interface IModalProps {
-  themeColors: ThemeColors;
-  userOptions: IProviderUserOptions[];
+  userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
   resetState: SimpleFunction;
-  lightboxOpacity: number;
   providerController: any
   onConnect: (provider: any) => Promise<void>
   onError: (error: any) => Promise<void>
@@ -126,19 +124,16 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, did } = this.state
 
-    const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
+    const { onClose, userProviders } = this.props
 
     return <Modal
       lightboxOffset={lightboxOffset}
-      lightboxOpacity={lightboxOpacity}
       show={show}
       onClose={onClose}
       setLightboxRef={this.setLightboxRef}
-      themeColors={themeColors}
-      userOptions={userOptions}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders themeColors={themeColors} userOptions={userOptions} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
       {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
     </Modal>
