@@ -1,12 +1,13 @@
 // eslint-disable-next-line
 import React from 'react'
-import { MODAL_HITBOX_CLASSNAME, MODAL_LIGHTBOX_CLASSNAME, MODAL_CLOSE_BUTTON_CLASSNAME, MODAL_HEADER_CLASSNAME } from '../../constants/cssSelectors'
+import { MODAL_HITBOX_CLASSNAME, MODAL_LIGHTBOX_CLASSNAME, MODAL_CLOSE_BUTTON_CLASSNAME, MODAL_HEADER_CLASSNAME, MODAL_BODY_CLASSNAME } from '../../constants/cssSelectors'
 import { ModalLightbox } from './ModalLightbox'
 import { ModalContainer } from './ModalContainer'
 import { ModalHitbox } from './ModalHitbox'
 import { ModalCard } from './ModalCard'
 import { ModalCloseButton } from './ModalCloseButton'
 import { ModalHeader } from './ModalHeader'
+import { ModalBody } from './ModalBody'
 import PoweredByRif from '../../images/PoweredByRif'
 
 interface ModalProps {
@@ -39,7 +40,9 @@ export const Modal: React.FC<ModalProps> = ({
           <ModalCloseButton className={MODAL_CLOSE_BUTTON_CLASSNAME} onClick={onClose} />
           <PoweredByRif />
         </ModalHeader>
-        {children}
+        <ModalBody className={MODAL_BODY_CLASSNAME}>
+          {children}
+        </ModalBody>
       </ModalCard>
     </ModalContainer>
   </ModalLightbox>

@@ -7,7 +7,7 @@ interface TypographyInterface {
   className?: string;
 }
 
-const typeShared = css`
+export const typeShared = css`
   font-family: 'Roboto', sans-serif;
 `
 
@@ -32,7 +32,7 @@ const Header3Wrapper = styled.h3`
 `
 
 export const Header3: React.FC<TypographyInterface> = ({ children, className }) => (
-  <Header3Wrapper className={className ? `${HEADER2_CLASS} ${className}` : HEADER2_CLASS}>
+  <Header3Wrapper className={className ? `${HEADER3_CLASS} ${className}` : HEADER3_CLASS}>
     {children}
   </Header3Wrapper>
 )

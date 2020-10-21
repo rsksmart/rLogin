@@ -17,7 +17,7 @@ const ProvidersWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   cursor: pointer;
-  padding: 8px 16px 8px 16px;
+  padding: 8px;
 `
 
 const NoWalletAnchor = styled.a`
