@@ -126,16 +126,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, did } = this.state
 
-    const { onClose, userOptions, lightboxOpacity, themeColors } = this.props
+    const { onClose, userOptions } = this.props
 
     return <Modal
       lightboxOffset={lightboxOffset}
-      lightboxOpacity={lightboxOpacity}
       show={show}
       onClose={onClose}
       setLightboxRef={this.setLightboxRef}
-      themeColors={themeColors}
-      userOptions={userOptions}
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userOptions={userOptions} />}

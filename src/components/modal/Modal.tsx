@@ -12,30 +12,23 @@ import PoweredByRif from '../../images/PoweredByRif'
 
 interface ModalProps {
   lightboxOffset: number
-  lightboxOpacity: number
   show: boolean
   onClose: () => void
   setLightboxRef: (c: HTMLDivElement | null) => void
-  themeColors: ThemeColors
-  userOptions: IProviderUserOptions[]
   mainModalCard: HTMLDivElement | null | undefined
 }
 
 export const Modal: React.FC<ModalProps> = ({
   lightboxOffset,
-  lightboxOpacity,
   show,
   onClose,
   setLightboxRef,
-  themeColors,
-  userOptions,
   mainModalCard,
   children
 }) => (
   <ModalLightbox
     className={MODAL_LIGHTBOX_CLASSNAME}
     offset={lightboxOffset}
-    opacity={lightboxOpacity}
     ref={setLightboxRef}
     show={show}
   >
@@ -48,7 +41,6 @@ export const Modal: React.FC<ModalProps> = ({
           <PoweredByRif />
         </ModalHeader>
         {children}
-        {/* TODO: footer yo! */}
       </ModalCard>
     </ModalContainer>
   </ModalLightbox>
