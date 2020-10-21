@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import axios from 'axios'
-import { SimpleFunction, IProviderUserOptions, ThemeColors, CONNECT_EVENT, ERROR_EVENT } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions, CONNECT_EVENT, ERROR_EVENT } from 'web3modal'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
 import { Web3Provider } from '@ethersproject/providers'
@@ -22,11 +22,9 @@ declare global {
 }
 
 interface IModalProps {
-  themeColors: ThemeColors;
   userOptions: IProviderUserOptions[];
   onClose: SimpleFunction;
   resetState: SimpleFunction;
-  lightboxOpacity: number;
   providerController: any
   onConnect: (provider: any) => Promise<void>
   onError: (error: any) => Promise<void>
