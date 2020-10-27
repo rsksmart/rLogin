@@ -58,9 +58,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { providerController, onConnect, onError, backendUrl } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      const did = provider.selectedAddress
-        ? 'did:ethr:rsk:' + provider.selectedAddress.toLowerCase()
-        : 'did:ethr:rsk:' + provider.accounts[0]
+      const address = provider.selectedAddress || provider.accounts[0]
+      const network = provider.networkVersion || provider.chainId
+      const did = 'did:ethr:' + this.getPrefix(network) + address.toLowerCase()
 
       this.setState({ provider, did })
 
@@ -121,6 +121,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private setLightboxRef (c: HTMLDivElement | null) {
     this.lightboxRef = c
+  }
+
+  private getPrefix = (chainId: string | number) => {
+    switch (chainId.toString()) {
+      case '30': return 'rsk:'
+      case '31': return 'rsk:testnet:'
+      default: return ''
+    }
   }
 
   public render = () => {
