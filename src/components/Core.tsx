@@ -42,6 +42,7 @@ interface IModalState {
   sd?: any // TBD
   challenge?: number
   did?: string
+  chainId?: string
 }
 
 const INITIAL_STATE: IModalState = {
@@ -59,10 +60,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
       const address = provider.selectedAddress || provider.accounts[0]
-      const network = provider.networkVersion || provider.chainId
-      const did = 'did:ethr:' + this.getPrefix(network) + address.toLowerCase()
+      const chainId = (provider.networkVersion || provider.chainId).toString()
+      const did = 'did:ethr:' + this.getPrefix(chainId) + address.toLowerCase()
 
-      this.setState({ provider, did })
+      this.setState({ provider, did, chainId })
 
       // if no back end, decentralized flavor
       if (!backendUrl) {
@@ -111,9 +112,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge } = this.state
+    const { provider, challenge, chainId } = this.state
 
-    new Web3Provider(provider).getSigner().signMessage(challenge!.toString())
+    new Web3Provider(provider, parseInt(chainId)).getSigner().signMessage(challenge!.toString())
       .then(response => axios.post(backendUrl + '/auth', { response }))
       .then(({ data }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
       .then(() => onConnect(provider))
@@ -123,8 +124,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.lightboxRef = c
   }
 
-  private getPrefix = (chainId: string | number) => {
-    switch (chainId.toString()) {
+  private getPrefix = (chainId: string) => {
+    switch (chainId) {
       case '30': return 'rsk:'
       case '31': return 'rsk:testnet:'
       default: return ''
