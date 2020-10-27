@@ -58,7 +58,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { providerController, onConnect, onError, backendUrl } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      const did = 'did:ethr:rsk:' + provider.selectedAddress.toLowerCase()
+      const did = provider.selectedAddress
+        ? 'did:ethr:rsk:' + provider.selectedAddress.toLowerCase()
+        : 'did:ethr:rsk:' + provider.accounts[0]
 
       this.setState({ provider, did })
 
