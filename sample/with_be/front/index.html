@@ -38,7 +38,8 @@
             }
           }
         },
-        backendUrl: 'http://localhost:3007'
+        backendUrl: 'http://localhost:3007',
+        network: 30
       })
 
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider));
@@ -72,6 +73,9 @@
             document.getElementById('signature').innerHTML = sig
           })
         });
+
+        document.getElementById('login').setAttribute('disabled', true)
+        document.getElementById('loginMetamask').setAttribute('disabled', true)
       }
 
       document.getElementById('reset').addEventListener('click', () => {
