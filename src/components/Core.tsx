@@ -1,7 +1,8 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import axios from 'axios'
-import { SimpleFunction, IProviderUserOptions, CONNECT_EVENT, ERROR_EVENT } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions } from 'web3modal'
+import { CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
 import { Web3Provider } from '@ethersproject/providers'
@@ -28,6 +29,7 @@ interface IModalProps {
   providerController: any
   onConnect: (provider: any) => Promise<void>
   onError: (error: any) => Promise<void>
+  onAccountsChange: (accounts: string[]) => void
   backendUrl?: string
 }
 
@@ -56,7 +58,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, backendUrl } = props
+    const { providerController, onConnect, onError, onAccountsChange, backendUrl, autoRefreshOnNetworkChange } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
       const address = provider.selectedAddress || provider.accounts[0]
@@ -64,6 +66,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
       const did = 'did:ethr:' + this.getPrefix(chainId) + address.toLowerCase()
 
       this.setState({ provider, did, chainId })
+
+      const web3Provider = new Web3Provider(provider, chainId)
+      web3Provider.provider.on('accountsChanged', (accounts: string[]) => onAccountsChange(accounts))
 
       // if no back end, decentralized flavor
       if (!backendUrl) {

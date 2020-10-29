@@ -39,6 +39,10 @@
       );
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider));
 
+      rLogin.on("accountsChanged", (accounts) => {
+        document.getElementById('address').innerHTML = 'Account: ' + accounts[0]
+      });
+
       function handleProvider(provider) {
         const web3 = new Web3(provider);
         web3.eth.getAccounts().then(response =>
@@ -47,6 +51,9 @@
         web3.eth.getChainId().then(id =>
           document.getElementById('chainId').innerHTML = 'ChainId: ' + id
         );
+
+        document.getElementById('login').setAttribute('disabled', true)
+        document.getElementById('loginMetamask').setAttribute('disabled', true)
       }
     </script>
   </body>
