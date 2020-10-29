@@ -84,9 +84,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
       web3Provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
 
       // auto refresh when the network changes
-      if (provider.autoRefreshOnNetworkChange && autoRefreshOnNetworkChange === false) {
-        provider.autoRefreshOnNetworkChange = false
-        web3Provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+      if (provider.autoRefreshOnNetworkChange && typeof autoRefreshOnNetworkChange !== 'undefined') {
+        provider.autoRefreshOnNetworkChange = autoRefreshOnNetworkChange
+        !autoRefreshOnNetworkChange && web3Provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
       }
 
       if (providerController.network && chainId !== parseInt(providerController.network)) {
