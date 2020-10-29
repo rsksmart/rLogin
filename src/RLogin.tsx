@@ -28,12 +28,12 @@ const defaultOpts: IProviderControllerOptions = {
   network: ''
 }
 
-interface BackendOptions {
+interface RLoginOptions {
   backendUrl?: string
   autoRefreshOnNetworkChange?: boolean
 }
 
-type Options = Partial<IProviderControllerOptions> & BackendOptions
+type Options = Partial<IProviderControllerOptions> & RLoginOptions
 
 export class RLogin {
   private show: boolean = INITIAL_STATE.show;

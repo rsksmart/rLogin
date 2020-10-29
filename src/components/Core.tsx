@@ -5,7 +5,7 @@ import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
-import { Web3Provider } from '@ethersproject/providers'
+import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 import { Modal } from './modal'
 
@@ -22,6 +22,10 @@ declare global {
   }
 }
 
+interface RLoginExternalProvider extends ExternalProvider {
+  on(event: any, method: SimpleFunction): void
+}
+
 interface IModalProps {
   userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
@@ -30,7 +34,7 @@ interface IModalProps {
   onConnect: (provider: any) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
-  onChainChange: (chainId : string | number ) => void
+  onChainChange: (chainId : string | number) => void
   backendUrl?: string
   autoRefreshOnNetworkChange?: boolean
 }
@@ -69,13 +73,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
       this.setState({ provider, did, chainId })
 
-      const web3Provider = new Web3Provider(provider, chainId)
-      web3Provider.provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
+      const web3Provider = new Web3Provider(provider, chainId).provider as RLoginExternalProvider
+      web3Provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
 
       // auto refresh when the network changes
       if (provider.autoRefreshOnNetworkChange && autoRefreshOnNetworkChange === false) {
         provider.autoRefreshOnNetworkChange = false
-        web3Provider.provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+        web3Provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
       }
 
       // if no back end, decentralized flavor

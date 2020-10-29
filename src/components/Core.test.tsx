@@ -32,6 +32,8 @@ describe('Component: Core', () => {
         providerController={new ProviderController(providerControllerOptions)}
         onConnect={jest.fn()}
         onError={jest.fn()}
+        onAccountsChange={jest.fn()}
+        onChainChange={jest.fn()}
       />
     )
     expect(wrapper).toBeDefined()
