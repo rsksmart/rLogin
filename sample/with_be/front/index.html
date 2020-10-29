@@ -14,6 +14,7 @@
       <p id="tx"></p>
       <button id="sign" disabled>sign</button>
       <p id="signature"></p>
+      <button id="reset">reset cache</button>
     </div>
 
     <script src="http://localhost:3005/main.js"></script>
@@ -56,8 +57,10 @@
         sendButton.removeAttribute('disabled')
 
         sendButton.addEventListener('click', () => {
-          web3.eth.sendTransaction({ from: provider.selectedAddress, to: provider.selectedAddress, value: '10000000' }, (err, tx) => {
-            document.getElementById('tx').innerHTML = tx
+          web3.eth.getAccounts().then(accounts => {
+            web3.eth.sendTransaction({ from: accounts[0], to: accounts[0], value: '10000000' }, (err, tx) => {
+              document.getElementById('tx').innerHTML = tx
+            })
           })
         });
 
@@ -70,6 +73,11 @@
           })
         });
       }
+
+      document.getElementById('reset').addEventListener('click', () => {
+        localStorage.removeItem('RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY')
+        localStorage.removeItem('walletconnect')
+      })
     </script>
   </body>
 </html>
