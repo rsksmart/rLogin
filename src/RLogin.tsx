@@ -10,7 +10,7 @@ import {
   ProviderController
 } from 'web3modal'
 
-import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED } from './constants/events'
+import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED } from './constants/events'
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
@@ -30,6 +30,7 @@ const defaultOpts: IProviderControllerOptions = {
 
 interface BackendOptions {
   backendUrl?: string
+  autoRefreshOnNetworkChange?: boolean
 }
 
 type Options = Partial<IProviderControllerOptions> & BackendOptions
@@ -40,6 +41,7 @@ export class RLogin {
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
   private backendUrl?: string;
+  private autoRefreshOnNetworkChange?: boolean;
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -57,6 +59,7 @@ export class RLogin {
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
+    this.autoRefreshOnNetworkChange = opts && opts.autoRefreshOnNetworkChange
 
     // setup modal
     this.userProviders = this.providerController.getUserOptions()
@@ -94,6 +97,7 @@ export class RLogin {
   private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
+  private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
     this.on(CONNECT_EVENT, provider => resolve(provider))
@@ -126,7 +130,9 @@ export class RLogin {
         onConnect={this.onConnect}
         onError={this.onError}
         onAccountsChange={this.onAccountsChange}
+        onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
+        autoRefreshOnNetworkChange={this.autoRefreshOnNetworkChange}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

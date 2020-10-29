@@ -31,7 +31,8 @@
               }
             }
           }
-        }
+        },
+        autoRefreshOnNetworkChange: false
       })
 
       document.getElementById('login').addEventListener('click', () => 
@@ -42,6 +43,10 @@
       rLogin.on("accountsChanged", (accounts) => {
         document.getElementById('address').innerHTML = 'Account: ' + accounts[0]
       });
+
+      rLogin.on("chainChanged", (chainId) => {
+        document.getElementById('chainId').innerHTML = 'ChainId: ' + parseInt(chainId)
+      })
 
       function handleProvider(provider) {
         const web3 = new Web3(provider);

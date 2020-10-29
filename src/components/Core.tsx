@@ -2,7 +2,7 @@
 import * as React from 'react'
 import axios from 'axios'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-import { CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
+import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
 import { Web3Provider } from '@ethersproject/providers'
@@ -30,7 +30,9 @@ interface IModalProps {
   onConnect: (provider: any) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
+  onChainChange: (chainId : string | number ) => void
   backendUrl?: string
+  autoRefreshOnNetworkChange?: boolean
 }
 
 type Step = 'Step1' | 'Step2' | 'Step3'
@@ -58,7 +60,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, onAccountsChange, backendUrl, autoRefreshOnNetworkChange } = props
+    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl, autoRefreshOnNetworkChange } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
       const address = provider.selectedAddress || provider.accounts[0]
@@ -68,7 +70,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState({ provider, did, chainId })
 
       const web3Provider = new Web3Provider(provider, chainId)
-      web3Provider.provider.on('accountsChanged', (accounts: string[]) => onAccountsChange(accounts))
+      web3Provider.provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
+
+      // auto refresh when the network changes
+      if (provider.autoRefreshOnNetworkChange && autoRefreshOnNetworkChange === false) {
+        provider.autoRefreshOnNetworkChange = false
+        web3Provider.provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+      }
 
       // if no back end, decentralized flavor
       if (!backendUrl) {
