@@ -47,6 +47,50 @@ Get RSK standard login modal in your dApp:
 
 The interface is to be defined, this is just a demo.
 
+## Event Listeners
+
+### accountsChanged
+
+Event is fired when the user changes the account/persona.
+
+```js
+rLogin.on("accountsChanged", (accounts) => {
+    document.getElementById('address').innerHTML = 'Account: ' + accounts[0]
+});
+```
+
+### chainChanged
+
+Event is fired when the user changes the network in the wallet.
+
+```js
+rLogin.on("chainChanged", (chainId) => {
+    document.getElementById('chainId').innerHTML = 'ChainId: ' + parseInt(chainId)
+})
+```
+
+## Optional parameters
+
+### autoRefreshOnNetworkChange
+
+Changing the chain may result in the wallet refreshing the page. If this is not the desired effect, and the wallet supports this parameter, you can pass this in.
+
+```js
+const rLogin = new window.RLogin.default({
+    autoRefreshOnNetworkChange: false,
+})
+```
+
+### network
+
+Specify the network ID that the wallet should use.
+
+```js
+const rLogin = new window.RLogin.default({
+    network: 31,
+})
+```
+
 ## Styling the modal and interface
 
 The modal comes with basic RIF styling and can be overwritten using CSS. All of the elements contain class and id selectors to allow style customizations. A list of the selectors can be found in the [cssSelector.ts constants file](https://github.com/rsksmart/rLogin/tree/master/src/constants/cssSelectors.ts).
