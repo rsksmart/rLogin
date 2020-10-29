@@ -8,6 +8,7 @@ import { ConfirmSelectiveDisclosure } from './step3'
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 import { Modal } from './modal'
+import { ErrorMessage } from './shared/ErrorMessage'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -39,7 +40,12 @@ interface IModalProps {
   autoRefreshOnNetworkChange?: boolean
 }
 
-type Step = 'Step1' | 'Step2' | 'Step3'
+type Step = 'Step1' | 'Step2' | 'Step3' | 'error'
+
+interface ErrorDetails {
+  title: string
+  description?: string
+}
 
 interface IModalState {
   show: boolean
@@ -51,6 +57,7 @@ interface IModalState {
   challenge?: number
   did?: string
   chainId?: number
+  errorReason?: ErrorDetails
 }
 
 const INITIAL_STATE: IModalState = {
@@ -80,6 +87,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
       if (provider.autoRefreshOnNetworkChange && autoRefreshOnNetworkChange === false) {
         provider.autoRefreshOnNetworkChange = false
         web3Provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+      }
+
+      if (providerController.network && chainId !== parseInt(providerController.network)) {
+        web3Provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
+
+        return this.setState({
+          currentStep: 'error',
+          errorReason: { title: 'Incorrect Network', description: `Please change your wallet's network to ${this.getChainName(providerController.network)}` }
+        })
       }
 
       // if no back end, decentralized flavor
@@ -149,8 +165,16 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private getChainName = (chainId: number) => {
+    switch (chainId) {
+      case 30: return 'RSK'
+      case 31: return 'RSK Testnet'
+      default: return `network Id ${chainId}`
+    }
+  }
+
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, did } = this.state
+    const { show, lightboxOffset, currentStep, sd, did, errorReason } = this.state
 
     const { onClose, userProviders } = this.props
 
@@ -164,6 +188,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
       {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
+      {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
   }
 }
