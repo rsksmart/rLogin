@@ -99,13 +99,13 @@ MetaMask will soon stop reloading pages on network change. For more information,
 
 ## Optional parameters
 
-### network
+### supportedNetworks
 
-Specify the network ID that the wallet should use.
+Specify the network IDs that the dApp supports and the wallet should use.
 
 ```js
 const rLogin = new window.RLogin.default({
-    network: 31,
+    supportedNetworks: [30, 31],
 })
 ```
 
