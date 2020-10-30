@@ -18,10 +18,10 @@
       <ul id="accounts"></ul>
       <h3>Chain id</h3>
       <p id="chain-id"></p>
-      <hr />
-      <h2>Backend connection info</h2>
-      <h3>Access token</h3>
-      <p id="access-token"></p>
+      <hr class="be-only" />
+      <h2 class="be-only">Backend connection info</h2>
+      <h3 class="be-only">Access token</h3>
+      <p id="access-token" class="be-only"></p>
       <hr />
       <h2>Actions</h2>
       <button id="send-tx" disabled>send</button>
@@ -32,6 +32,7 @@
       <button id="sign-typed-data" disabled>sign typed data</button>
       <p id="typed-signature"></p>
       <p id="typed-recovery"></p>
+      <hr />
       <button id="reset">reset cache</button>
     </div>
 
@@ -41,6 +42,18 @@
     <script type="text/javascript">
       // prevent metamask reload
       window.ethereum.autoRefreshOnNetworkChange = false
+
+      // detect flavor
+      const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
+      console.log(withBackend)
+      const backendUrl = withBackend && 'http://localhost:3007'
+
+      if (!withBackend) {
+        const beOnly = document.getElementsByClassName('be-only')
+        for (let i = 0; i < beOnly.length; ++i) {
+          beOnly[i].remove()
+        }
+      }
 
       // setup rLogin
       const rLogin = new window.RLogin.default({
@@ -57,7 +70,7 @@
             }
           }
         },
-        backendUrl: 'http://localhost:3007',
+        backendUrl,
         network: 31
       })
 
