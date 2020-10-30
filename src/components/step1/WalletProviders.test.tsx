@@ -23,7 +23,7 @@ describe('Component: WalletProviders', () => {
 
   it('shows multiple providers', () => {
     const wrapper = mount(<WalletProviders userProviders={providers} />)
-    expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).children().length).toBe(2)
+    expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).children()).toHaveLength(2)
 
     expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).childAt(0).find('h3').text()).toEqual('test1')
     expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).childAt(1).find('h3').text()).toEqual('test2')

@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import axios from 'axios'
-import { SimpleFunction, IProviderUserOptions, getChainId } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
@@ -94,14 +94,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
       Promise.all([
         provider.request({ method: 'eth_accounts' }),
         provider.request({ method: 'net_version' })
-      ]).then(([eth_accounts, net_version]) => {
-        const chainId = parseInt(net_version)
+      ]).then(([accounts, netVersion]) => {
+        const chainId = parseInt(netVersion)
         this.setState({ chainId })
 
-        if (!this.validateCurrentChain()) return;
+        if (!this.validateCurrentChain()) return
 
-        const address  = provider.selectedAddress || eth_accounts[0]
-        const did = getDID(chainId,address)
+        const address = provider.selectedAddress || accounts[0]
+        const did = getDID(chainId, address)
 
         this.setState({ provider, address })
 
@@ -161,8 +161,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
-  private validateCurrentChain() {
-    const { supportedChains, providerController } = this.props
+  private validateCurrentChain () {
+    const { supportedChains } = this.props
     const { chainId, provider } = this.state
 
     const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
@@ -182,7 +182,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, chainId, address } = this.state
+    const { provider, challenge, address } = this.state
 
     console.log(challenge!.toString(16))
 
@@ -210,7 +210,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
       {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
-      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={chainId && address && getDID(chainId, address) || ''} sd={sd} onConfirm={this.onConfirmAuth} />}
+      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? getDID(chainId, address) : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
   }
