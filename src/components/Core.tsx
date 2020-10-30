@@ -37,7 +37,7 @@ interface IModalProps {
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
   backendUrl?: string
-  autoRefreshOnNetworkChange?: boolean
+  supportedChains?: number[]
 }
 
 type Step = 'Step1' | 'Step2' | 'Step3' | 'error'
@@ -71,41 +71,46 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl, autoRefreshOnNetworkChange } = props
+    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl, supportedChains } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      const address = provider.selectedAddress || provider.accounts[0]
-      const chainId = parseInt(provider.networkVersion || provider.chainId)
-      const did = 'did:ethr:' + this.getPrefix(chainId) + address.toLowerCase()
+      Promise.all([
+        provider.request({ method: 'eth_accounts' }),
+        provider.request({ method: 'net_version' })
+      ]).then(([eth_accounts, net_version]) => {
+        const chainId = parseInt(net_version)
 
-      this.setState({ provider, did, chainId })
+        if (supportedChains && !supportedChains.includes(chainId)) {
+          provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
 
-      const web3Provider = new Web3Provider(provider, chainId).provider as RLoginExternalProvider
-      web3Provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
-      web3Provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+          return this.setState({
+            currentStep: 'error',
+            errorReason: { title: 'Incorrect Network', description: `Please change your wallet's network to ${this.getChainName(providerController.network)}` }
+          })
+        }
 
-      if (providerController.network && chainId !== parseInt(providerController.network)) {
-        web3Provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
+        const address  = provider.selectedAddress || eth_accounts[0]
+        const did = 'did:ethr:' + this.getPrefix(chainId) + address.toLowerCase()
 
-        return this.setState({
-          currentStep: 'error',
-          errorReason: { title: 'Incorrect Network', description: `Please change your wallet's network to ${this.getChainName(providerController.network)}` }
-        })
-      }
+        this.setState({ provider, did, chainId })
 
-      // if no back end, decentralized flavor
-      if (!backendUrl) {
-        return onConnect(provider)
-      } else {
-        // request schema to back end
-        axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
-          if (sdr) { // schema has selective disclosure request, permissioned app flavor
-            this.setState({ sdr, currentStep: 'Step2' })
-          } else { // open app flavor
-            this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
-          }
-        })
-      }
+        provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
+        provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+
+        // if no back end, decentralized flavor
+        if (!backendUrl) {
+          return onConnect(provider)
+        } else {
+          // request schema to back end
+          axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
+            if (sdr) { // schema has selective disclosure request, permissioned app flavor
+              this.setState({ sdr, currentStep: 'Step2' })
+            } else { // open app flavor
+              this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
+            }
+          })
+        }
+      })
     })
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))

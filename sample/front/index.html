@@ -45,7 +45,6 @@
 
       // detect flavor
       const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
-      console.log(withBackend)
       const backendUrl = withBackend && 'http://localhost:3007'
 
       if (!withBackend) {
@@ -71,7 +70,7 @@
           }
         },
         backendUrl,
-        network: 31
+        supportedChains: [31]
       })
 
       // setup login button

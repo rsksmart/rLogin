@@ -30,6 +30,7 @@ const defaultOpts: IProviderControllerOptions = {
 
 interface RLoginOptions {
   backendUrl?: string
+  supportedChains?: number[]
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -39,8 +40,8 @@ export class RLogin {
   private eventController: EventController = new EventController();
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
+  private supportedChains?: number[];
   private backendUrl?: string;
-  private autoRefreshOnNetworkChange?: boolean;
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -55,6 +56,8 @@ export class RLogin {
       providerOptions: options.providerOptions,
       network: options.network
     })
+
+    this.supportedChains = opts && opts.supportedChains
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
@@ -130,7 +133,7 @@ export class RLogin {
         onAccountsChange={this.onAccountsChange}
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
-        autoRefreshOnNetworkChange={this.autoRefreshOnNetworkChange}
+        supportedChains={this.supportedChains}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )
