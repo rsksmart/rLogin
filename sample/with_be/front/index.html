@@ -6,26 +6,43 @@
   </head>
   <body>
     <div style="width: 100%; height: 100%;">
+      <p id="error"></p>
+      <h2>Login</h2>
       <button id="login">login with rLogin</button>
       <button id="loginMetamask">login with rLogin (defaults: Metamask)</button>
-      <p id="address">please login</p>
+      <hr />
+      <h2>Wallet provider info</h2>
+      <h3>Connected</h3>
+      <p id="connected">No</p>
+      <h3>Accounts</h3>
+      <ul id="accounts"></ul>
+      <h3>Chain id</h3>
+      <p id="chain-id"></p>
+      <hr />
+      <h2>Backend connection info</h2>
+      <h3>Access token</h3>
       <p id="access-token"></p>
+      <hr />
+      <h2>Actions</h2>
       <button id="send-tx" disabled>send</button>
       <p id="tx"></p>
       <button id="sign" disabled>sign</button>
       <p id="signature"></p>
+      <p id="recovery"></p>
+      <button id="sign-typed-data" disabled>sign typed data</button>
+      <p id="typed-signature"></p>
+      <p id="typed-recovery"></p>
       <button id="reset">reset cache</button>
     </div>
 
     <script src="http://localhost:3005/main.js"></script>
-    <script src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
-    <script src="https://unpkg.com/@rsksmart/ethr-did@1.1.1-beta.1/lib/index.js"></script>
-    <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js"></script>
     <script src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script>
 
     <script type="text/javascript">
+      // prevent metamask reload
       window.ethereum.autoRefreshOnNetworkChange = false
 
+      // setup rLogin
       const rLogin = new window.RLogin.default({
         cacheProvider: false,
         providerOptions: {
@@ -41,31 +58,133 @@
           }
         },
         backendUrl: 'http://localhost:3007',
-        network: 30
+        network: 31
       })
 
+      // setup login button
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider));
-
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider));
 
+      // ui - display handlers
+      const setElementInnerHTML = (elementId, html) => { document.getElementById(elementId).innerHTML = html }
+      const displayAccounts = (accounts) => setElementInnerHTML('accounts', accounts.map(account => `<li>${account}</li>`))
+      const handleError = (error) => setElementInnerHTML('error', `Error: ${error.message}`)
+      const displayChainId = (chainId) => setElementInnerHTML('chain-id', chainId)
+      const displayDisconnectError = ({ message, code, data }) => setElementInnerHTML('error', `message: ${message} - code: ${code} - data: ${data}`)
+      const displayAccessToken = (accessToken) => setElementInnerHTML('access-token', accessToken)
+
+      // json rpc methods
+      const getAccounts = (provider) => provider.request({ method: 'eth_accounts' })
+      const getNetwork = (provider) => provider.request({ method: 'net_version' }).then(parseInt)
+      const getChainId = (provider) => getNetwork(provider).then(networkId => `0x${networkId.toString(16)}`) // keeping it consistent with eip-1193
+      const sendTransaction = (provider, params) => provider.request({ method: 'eth_sendTransaction', params })
+      const sign = (provider, params) => provider.request({ method: 'personal_sign', params })
+      const ecRecover = (provider, params) => provider.request({ method: 'personal_ecRecover', params })
+      const signTypedData = (provider, params) => provider.request({ method: 'eth_signTypedData_v4', params })
+
       function handleProvider(provider) {
-        const web3 = new Web3(provider)
+        document.getElementById('connected').innerHTML = 'Yes'
 
-        web3.eth.getAccounts()
-          .then(acct => document.getElementById('address').innerHTML = acct);
+        // handle eip-1193
+        provider.on(window.RLogin.ACCOUNTS_CHANGED, displayAccounts)
+        provider.on(window.RLogin.CHAIN_CHANGED, displayChainId)
 
-        document.getElementById('access-token').innerHTML = localStorage.getItem(window.RLogin.RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY)
+        // query wallet provider info
+        getAccounts(provider).then(displayAccounts)
+        getChainId(provider).then(displayChainId)
 
+        // did auth
+        displayAccessToken(localStorage.getItem(window.RLogin.RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY))
+
+        // setup actions
+
+        // eth_sendTransaction
         let sendButton = document.getElementById('send-tx')
-        sendButton.removeAttribute('disabled')
 
+        sendButton.removeAttribute('disabled')
         sendButton.addEventListener('click', () => {
-          web3.eth.getAccounts().then(accounts => {
-            web3.eth.sendTransaction({ from: accounts[0], to: accounts[0], value: '10000000' }, (err, tx) => {
-              document.getElementById('tx').innerHTML = tx
-            })
-          })
+          getAccounts(provider)
+            .then(accounts => accounts[0])
+            .then(from => sendTransaction(provider, [{ from, to: from, value: '100000' }]))
+            .then(txHash => setElementInnerHTML('tx', txHash))
+            .catch(handleError)
         });
+
+        // eth_sign (arbitrary)
+        let signButton = document.getElementById('sign')
+        const message = 'Hello rLogin!'
+
+        signButton.removeAttribute('disabled')
+        signButton.addEventListener('click', () => {
+          getAccounts(provider)
+            .then(accounts => accounts[0])
+            .then(from => sign(provider, [
+              from,
+              message
+            ]))
+            .then(signature => {
+              setElementInnerHTML('signature', signature)
+              return ecRecover(provider, [message, signature])
+            })
+            .then(recovery => setElementInnerHTML('recovery', recovery))
+            .catch(handleError)
+        })
+
+
+        // eip-721 eth_signTypedData
+        let signTypedDataButton = document.getElementById('sign-typed-data')
+
+        // ref: https://docs.metamask.io/guide/signing-data.html#sign-typed-data-v4
+        const typedDataByChain = (chainId) => JSON.stringify({
+          domain: {
+            chainId,
+            name: 'rLogin sample app',
+            verifyingContract: '0x285b30492a3f444d7bf75261a35cb292fc8f41a6',
+            version: '1',
+          },
+          message: {
+            contents: 'Welcome to rLogin!',
+            num: 1500,
+          },
+          // Refers to the keys of the *types* object below.
+          primaryType: 'Sample',
+          types: {
+            EIP712Domain: [
+              { name: 'name', type: 'string' },
+              { name: 'version', type: 'string' },
+              { name: 'chainId', type: 'uint256' },
+              { name: 'verifyingContract', type: 'address' },
+            ],
+            // Not an EIP712Domain definition
+            Sample: [
+              { name: 'contents', type: 'string' },
+              { name: 'num', type: 'uint256' },
+            ],
+          },
+        });
+
+
+        signTypedDataButton.removeAttribute('disabled')
+        signTypedDataButton.addEventListener('click', () => {
+          Promise.all([
+            getAccounts(provider).then(accounts => accounts[0]), getNetwork(provider)
+          ]).then(([from, chainId]) => {
+            const typedData = typedDataByChain(chainId)
+            signTypedData(provider, [from, typedData])
+              .then(signature => {
+                setElementInnerHTML('typed-signature', signature)
+                return ecRecover(provider, [typedData, signature]) // THIS VERIFICATION IS ERRORED!!!
+              })
+              .then(recovery => { }/*setElementInnerHTML('typed-recovery', recovery)*/)
+              .catch(handleError)
+          })
+        })
+
+      }
+
+/*
+
+        // setup actions
 
         let signButton = document.getElementById('sign')
         signButton.removeAttribute('disabled')
@@ -83,7 +202,7 @@
       document.getElementById('reset').addEventListener('click', () => {
         localStorage.removeItem('RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY')
         localStorage.removeItem('walletconnect')
-      })
+      })*/
     </script>
   </body>
 </html>
