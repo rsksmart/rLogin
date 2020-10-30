@@ -1,11 +1,10 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import axios from 'axios'
-import { SimpleFunction, IProviderUserOptions } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions, getChainId } from 'web3modal'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
-import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 import { Modal } from './modal'
 import { ErrorMessage } from './shared/ErrorMessage'
@@ -21,10 +20,6 @@ declare global {
     web3: any;
     updateWeb3Modal: any;
   }
-}
-
-interface RLoginExternalProvider extends ExternalProvider {
-  on(event: any, method: SimpleFunction): void
 }
 
 interface IModalProps {
@@ -55,7 +50,7 @@ interface IModalState {
   sdr?: any // TBD
   sd?: any // TBD
   challenge?: number
-  did?: string
+  address?: string
   chainId?: number
   errorReason?: ErrorDetails
 }
@@ -66,36 +61,59 @@ const INITIAL_STATE: IModalState = {
   currentStep: 'Step1'
 }
 
+function getPrefix (chainId: number) {
+  switch (chainId) {
+    case 30: return 'rsk:'
+    case 31: return 'rsk:testnet:'
+    default: return ''
+  }
+}
+
+function getDID (chainId: number, address: string) {
+  return 'did:ethr:' + getPrefix(chainId) + address.toLowerCase()
+}
+
+function getChainName (chainId: number) {
+  switch (chainId) {
+    case 30: return 'RSK'
+    case 31: return 'RSK Testnet'
+    default: return `network Id ${chainId}`
+  }
+}
+
 export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl, supportedChains } = props
+    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
+      this.setState({ provider })
+
       Promise.all([
         provider.request({ method: 'eth_accounts' }),
         provider.request({ method: 'net_version' })
       ]).then(([eth_accounts, net_version]) => {
         const chainId = parseInt(net_version)
+        this.setState({ chainId })
 
-        if (supportedChains && !supportedChains.includes(chainId)) {
-          provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
-
-          return this.setState({
-            currentStep: 'error',
-            errorReason: { title: 'Incorrect Network', description: `Please change your wallet's network to ${this.getChainName(providerController.network)}` }
-          })
-        }
+        if (!this.validateCurrentChain()) return;
 
         const address  = provider.selectedAddress || eth_accounts[0]
-        const did = 'did:ethr:' + this.getPrefix(chainId) + address.toLowerCase()
+        const did = getDID(chainId,address)
 
-        this.setState({ provider, did, chainId })
+        this.setState({ provider, address })
 
-        provider.on(ACCOUNTS_CHANGED, (accounts: string[]) => onAccountsChange(accounts))
-        provider.on(CHAIN_CHANGED, (chain: number | string) => onChainChange(chain))
+        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+        provider.on(CHAIN_CHANGED, (_chainId: number | string) => {
+          const chainId = typeof _chainId === 'number' ? _chainId : parseInt(_chainId)
+          this.setState({ chainId })
+
+          onChainChange(chainId)
+
+          this.validateCurrentChain()
+        })
 
         // if no back end, decentralized flavor
         if (!backendUrl) {
@@ -143,13 +161,34 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private validateCurrentChain() {
+    const { supportedChains, providerController } = this.props
+    const { chainId, provider } = this.state
+
+    const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
+
+    if (!isCurrentChainSupported) {
+      provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
+
+      // this message can be improved
+      this.setState({
+        currentStep: 'error',
+        errorReason: { title: 'Incorrect Network', description: `Please change your wallet's network to one of ${supportedChains!.map(getChainName).join()}` }
+      })
+    }
+
+    return isCurrentChainSupported
+  }
+
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, chainId } = this.state
+    const { provider, challenge, chainId, address } = this.state
 
-    new Web3Provider(provider, chainId).getSigner().signMessage(challenge!.toString())
-      .then(response => axios.post(backendUrl + '/auth', { response }))
-      .then(({ data }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
+    console.log(challenge!.toString(16))
+
+    provider.request({ method: 'personal_sign', params: [address, challenge!.toString()] })
+      .then((response: string) => axios.post(backendUrl + '/auth', { response }))
+      .then(({ data }: { data: string }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
       .then(() => onConnect(provider))
   }
 
@@ -157,24 +196,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.lightboxRef = c
   }
 
-  private getPrefix = (chainId: number) => {
-    switch (chainId) {
-      case 30: return 'rsk:'
-      case 31: return 'rsk:testnet:'
-      default: return ''
-    }
-  }
-
-  private getChainName = (chainId: number) => {
-    switch (chainId) {
-      case 30: return 'RSK'
-      case 31: return 'RSK Testnet'
-      default: return `network Id ${chainId}`
-    }
-  }
-
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, did, errorReason } = this.state
+    const { show, lightboxOffset, currentStep, sd, chainId, address, errorReason } = this.state
 
     const { onClose, userProviders } = this.props
 
@@ -187,7 +210,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
       {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
-      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={did!} sd={sd} onConfirm={this.onConfirmAuth} />}
+      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={chainId && address && getDID(chainId, address) || ''} sd={sd} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
   }
