@@ -167,7 +167,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     console.log(challenge!.toString(16))
 
-    provider.request({ method: 'personal_sign', params: [address, challenge!.toString()] })
+    provider.request({ method: 'personal_sign', params: [challenge!.toString(), address] })
       .then((response: string) => axios.post(backendUrl + '/auth', { response }))
       .then(({ data }: { data: string }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
       .then(() => onConnect(provider))
