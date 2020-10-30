@@ -30,7 +30,6 @@ const defaultOpts: IProviderControllerOptions = {
 
 interface RLoginOptions {
   backendUrl?: string
-  autoRefreshOnNetworkChange?: boolean
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -59,7 +58,6 @@ export class RLogin {
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
-    this.autoRefreshOnNetworkChange = opts && opts.autoRefreshOnNetworkChange
 
     // setup modal
     this.userProviders = this.providerController.getUserOptions()

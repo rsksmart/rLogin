@@ -64,7 +64,7 @@
     "jest-enzyme": "^7.1.2",
     "jsdom": "^16.4.0",
     "jsdom-global": "^3.0.2",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.6",
     "serve": "^11.3.2",
     "ts-jest": "^26.4.1",
     "ts-loader": "^8.0.4",

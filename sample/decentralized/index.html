@@ -18,6 +18,8 @@
     <script src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script>
 
     <script type="text/javascript">
+      window.ethereum.autoRefreshOnNetworkChange = false
+
       const rLogin = new window.RLogin.default({
         cacheProvider: false,
         providerOptions: {
@@ -33,7 +35,7 @@
           }
         },
         autoRefreshOnNetworkChange: false,
-        network: 31
+        chainId: '31'
       })
 
       document.getElementById('login').addEventListener('click', () => 
