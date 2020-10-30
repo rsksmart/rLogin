@@ -30,7 +30,7 @@ const defaultOpts: IProviderControllerOptions = {
 
 interface RLoginOptions {
   backendUrl?: string
-  autoRefreshOnNetworkChange?: boolean
+  supportedChains?: number[]
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -40,8 +40,8 @@ export class RLogin {
   private eventController: EventController = new EventController();
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
+  private supportedChains?: number[];
   private backendUrl?: string;
-  private autoRefreshOnNetworkChange?: boolean;
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -57,9 +57,10 @@ export class RLogin {
       network: options.network
     })
 
+    this.supportedChains = opts && opts.supportedChains
+
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
-    this.autoRefreshOnNetworkChange = opts && opts.autoRefreshOnNetworkChange
 
     // setup modal
     this.userProviders = this.providerController.getUserOptions()
@@ -132,7 +133,7 @@ export class RLogin {
         onAccountsChange={this.onAccountsChange}
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
-        autoRefreshOnNetworkChange={this.autoRefreshOnNetworkChange}
+        supportedChains={this.supportedChains}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )
