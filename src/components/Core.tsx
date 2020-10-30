@@ -8,6 +8,7 @@ import { ConfirmSelectiveDisclosure } from './step3'
 import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
 import { Modal } from './modal'
 import { ErrorMessage } from './shared/ErrorMessage'
+import { getDID, getChainName } from '../adapters'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -59,26 +60,6 @@ const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
   currentStep: 'Step1'
-}
-
-function getPrefix (chainId: number) {
-  switch (chainId) {
-    case 30: return 'rsk:'
-    case 31: return 'rsk:testnet:'
-    default: return ''
-  }
-}
-
-function getDID (chainId: number, address: string) {
-  return 'did:ethr:' + getPrefix(chainId) + address.toLowerCase()
-}
-
-function getChainName (chainId: number) {
-  switch (chainId) {
-    case 30: return 'RSK'
-    case 31: return 'RSK Testnet'
-    default: return `network Id ${chainId}`
-  }
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
