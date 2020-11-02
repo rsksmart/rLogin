@@ -26,3 +26,7 @@ export const HEADER3_CLASS = 'rlogin-header3'
 export const PARAGRAPH_CLASS = 'rlogin-paragraph'
 export const ANCHOR_CLASSNAME = 'rlogin-anchor'
 export const BUTTON_CLASSNAME = 'rlogin-button'
+
+// Error Handling
+export const ERROR_MESSAGE_WRAPPER = 'rlogin-error-message'
+export const ERROR_ICON_WRAPPER = 'rlogin-error-icon'

@@ -1,3 +1,0 @@
-## Decentralized app sample
-
-

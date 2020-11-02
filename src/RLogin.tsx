@@ -6,12 +6,11 @@ import {
   IProviderControllerOptions,
   IProviderUserOptions,
   SimpleFunction,
-  CONNECT_EVENT,
-  ERROR_EVENT,
-  CLOSE_EVENT,
   EventController,
   ProviderController
 } from 'web3modal'
+
+import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED } from './constants/events'
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
@@ -29,17 +28,19 @@ const defaultOpts: IProviderControllerOptions = {
   network: ''
 }
 
-interface BackendOptions {
+interface RLoginOptions {
   backendUrl?: string
+  supportedChains?: number[]
 }
 
-type Options = Partial<IProviderControllerOptions> & BackendOptions
+type Options = Partial<IProviderControllerOptions> & RLoginOptions
 
 export class RLogin {
   private show: boolean = INITIAL_STATE.show;
   private eventController: EventController = new EventController();
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
+  private supportedChains?: number[];
   private backendUrl?: string;
 
   constructor (opts?: Options) {
@@ -55,6 +56,8 @@ export class RLogin {
       providerOptions: options.providerOptions,
       network: options.network
     })
+
+    this.supportedChains = opts && opts.supportedChains
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
@@ -94,6 +97,8 @@ export class RLogin {
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
   private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
+  private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
+  private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
     this.on(CONNECT_EVENT, provider => resolve(provider))
@@ -125,7 +130,10 @@ export class RLogin {
         providerController={this.providerController}
         onConnect={this.onConnect}
         onError={this.onError}
+        onAccountsChange={this.onAccountsChange}
+        onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
+        supportedChains={this.supportedChains}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

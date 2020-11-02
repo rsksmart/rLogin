@@ -47,10 +47,6 @@ Get RSK standard login modal in your dApp:
 
 The interface is to be defined, this is just a demo.
 
-## Styling the modal and interface
-
-The modal comes with basic RIF styling and can be overwritten using CSS. All of the elements contain class and id selectors to allow style customizations. A list of the selectors can be found in the [cssSelector.ts constants file](https://github.com/rsksmart/rLogin/tree/master/src/constants/cssSelectors.ts).
-
 ## What is rLogin?
 
 rlogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information within their permission.
@@ -64,6 +60,58 @@ rlogin is a tool that allows the front end developer to connect their user with 
 - Permissioned apps: for example, apps using Google OAuth to receive user's email are categorized in this flavor. This process of requestion credentials to grant user access is common and usually relies on centralized data cylos. This dApp flavor will cover requesting user's Verifiable Credentials in a fully user-centric manner - this is setup in the backend activating _Selective disclosure requests_
 
 - Closed apps: for example, a back office. This are apps that only specific user's can access. This flavor is used to prove the user accessing an app holds or is delegated by a specific identity - perform this validations in your server's business logic
+
+## Event Listeners
+
+### accountsChanged
+
+Event is fired when the user changes the account/persona.
+
+```js
+rLogin.on("accountsChanged", (accounts) => {
+    document.getElementById('address').innerHTML = 'Account: ' + accounts[0]
+});
+```
+
+### chainChanged
+
+Event is fired when the user changes the network in the wallet.
+
+```js
+rLogin.on("chainChanged", (chainId) => {
+    document.getElementById('chainId').innerHTML = 'ChainId: ' + parseInt(chainId)
+})
+```
+
+#### About Metamask and chain ID change
+
+Changing the chain may result in the wallet refreshing the page. If this is not the desired effect, and the wallet supports EIP-1198 `chainChanged`, you can use:
+
+```javascript
+window.ethereum.autoRefreshOnNetworkChange = false
+```
+
+> Reference: https://github.com/MetaMask/metamask-extension/pull/6330
+
+When loading the wallet you will find a console alert
+
+MetaMask will soon stop reloading pages on network change. For more information, see: https://docs.metamask.io/guide/ethereum-provider.html#ethereum-autorefreshonnetworkchange
+
+## Optional parameters
+
+### supportedNetworks
+
+Specify the network IDs that the dApp supports and the wallet should use.
+
+```js
+const rLogin = new window.RLogin.default({
+    supportedNetworks: [30, 31],
+})
+```
+
+## Styling the modal and interface
+
+The modal comes with basic RIF styling and can be overwritten using CSS. All of the elements contain class and id selectors to allow style customizations. A list of the selectors can be found in the [cssSelector.ts constants file](https://github.com/rsksmart/rLogin/tree/master/src/constants/cssSelectors.ts).
 
 ## The code
 
@@ -124,5 +172,5 @@ Please first build for production.
 | Flavor | Import from | Location | Command |  |
 | - | - | - | - | - |
 | Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample:dapp` | Serves the library in _http://localhost:3005_ and a dApp in _http://localhost:3006_. Go to _3006_ with your browser |
-| Open app | HTML DOM | _./sample/with_be_ | `npm run sample:open` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006_ and back end in _http://localhost:3007_. This mode will not ask for Data Vault access. Go to _3006_ with your browser |
+| Open app | HTML DOM | _./sample/with_be_ | `npm run sample:open` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006/?backend=yes_ and back end in _http://localhost:3007_. This mode will not ask for Data Vault access. Go to _3006_ with your browser |
 | Permissioned app | HTML DOM | _./sample/decentralized_ | `npm run sample:permissioned` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006_ and back end in _http://localhost:3007_. This mode will ask for Data Vault access. Go to _3006_ with your browser |

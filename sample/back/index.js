@@ -14,7 +14,7 @@ if(process.argv.length > 2 && process.argv[2] === '--permissioned') challenge.sd
 
 app.post('/request_auth', function (req, res) {
   console.log(req.body.did)
-  challenge.challenge = Math.floor(Math.random() * 12345)
+  challenge.challenge = Math.floor(Math.random() * 9999999999999)
   res.status(200).send(challenge)
 })
 
