@@ -1,8 +1,11 @@
 {
   "name": "@rsksmart/rlogin",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.1",
   "description": "rLogin - the web3.0 SDK",
   "main": "dist/main.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
