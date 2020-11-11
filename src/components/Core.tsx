@@ -73,8 +73,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState({ provider })
 
       Promise.all([
-        provider.request({ method: 'eth_accounts' }),
-        provider.request({ method: 'net_version' })
+        provider.send({ method: 'eth_accounts' }),
+        provider.send({ method: 'net_version' })
       ]).then(([accounts, netVersion]) => {
         const chainId = parseInt(netVersion)
         this.setState({ chainId })
