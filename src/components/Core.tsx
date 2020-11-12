@@ -76,7 +76,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         provider.send({ method: 'eth_accounts' }),
         provider.send({ method: 'net_version' })
       ]).then(([accounts, netVersion]) => {
-        const chainId = parseInt(netVersion)
+        const chainId = parseInt(netVersion.result || netVersion)
         this.setState({ chainId })
 
         if (!this.validateCurrentChain()) return
