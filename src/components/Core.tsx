@@ -72,39 +72,44 @@ export class Core extends React.Component<IModalProps, IModalState> {
     providerController.on(CONNECT_EVENT, (provider: any) => {
       this.setState({ provider })
 
-      const chainId = parseInt(provider.chainId)
-      this.setState({ chainId })
-
-      if (!this.validateCurrentChain()) return
-
-      const address = provider.selectedAddress || provider.accounts[0]
-      const did = getDID(chainId, address)
-
-      this.setState({ provider, address })
-
-      provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-      provider.on(CHAIN_CHANGED, (_chainId: number | string) => {
-        const chainId = typeof _chainId === 'number' ? _chainId : parseInt(_chainId)
+      Promise.all([
+        this.providerRPC({ method: 'eth_accounts' }),
+        this.providerRPC({ method: 'net_version' })
+      ]).then(([accounts, netVersion]) => {
+        const chainId = parseInt(netVersion as string)
         this.setState({ chainId })
 
-        onChainChange(chainId)
+        if (!this.validateCurrentChain()) return
 
-        this.validateCurrentChain()
-      })
+        const address = provider.selectedAddress || (accounts as string[])[0]
+        const did = getDID(chainId, address)
 
-      // if no back end, decentralized flavor
-      if (!backendUrl) {
-        return onConnect(provider)
-      } else {
-        // request schema to back end
-        axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
-          if (sdr) { // schema has selective disclosure request, permissioned app flavor
-            this.setState({ sdr, currentStep: 'Step2' })
-          } else { // open app flavor
-            this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
-          }
+        this.setState({ provider, address })
+
+        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+        provider.on(CHAIN_CHANGED, (_chainId: number | string) => {
+          const chainId = typeof _chainId === 'number' ? _chainId : parseInt(_chainId)
+          this.setState({ chainId })
+
+          onChainChange(chainId)
+
+          this.validateCurrentChain()
         })
-      }
+
+        // if no back end, decentralized flavor
+        if (!backendUrl) {
+          return onConnect(provider)
+        } else {
+          // request schema to back end
+          axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
+            if (sdr) { // schema has selective disclosure request, permissioned app flavor
+              this.setState({ sdr, currentStep: 'Step2' })
+            } else { // open app flavor
+              this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
+            }
+          })
+        }
+      })
     })
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
@@ -137,6 +142,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private providerRPC (args: {
+    readonly method: string;
+    readonly params?: readonly unknown[] | object;
+  }): Promise<unknown> {
+    const { provider } = this.state
+
+    // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
+    if (provider.isNiftyWallet) return provider.send(args.method, args.params)
+    return provider.request(args)
+  }
+
   private validateCurrentChain () {
     const { supportedChains } = this.props
     const { chainId, provider } = this.state
@@ -162,8 +178,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     console.log(challenge!.toString(16))
 
-    provider.request({ method: 'personal_sign', params: [challenge!.toString(), address] })
-      .then((response: string) => axios.post(backendUrl + '/auth', { response }))
+    this.providerRPC({ method: 'personal_sign', params: [challenge!.toString(), address] })
+      .then((response: any) => axios.post(backendUrl + '/auth', { response: response as string }))
       .then(({ data }: { data: string }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
       .then(() => onConnect(provider))
   }

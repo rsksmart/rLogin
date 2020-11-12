@@ -85,14 +85,19 @@
       const displayDisconnectError = ({ message, code, data }) => setElementInnerHTML('error', `message: ${message} - code: ${code} - data: ${data}`)
       const displayAccessToken = (accessToken) => setElementInnerHTML('access-token', accessToken)
 
+      function providerRPC (provider, args) {
+        // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
+        if (provider.isNiftyWallet) return provider.send(args.method, args.params)
+        return provider.request(args)
+      }
       // json rpc methods
-      const getAccounts = (provider) => provider.request({ method: 'eth_accounts' })
-      const getNetwork = (provider) => provider.request({ method: 'net_version' }).then(parseInt)
+      const getAccounts = (provider) => providerRPC(provider, { method: 'eth_accounts' })
+      const getNetwork = (provider) => providerRPC(provider, { method: 'net_version' }).then(parseInt)
       const getChainId = (provider) => getNetwork(provider).then(networkId => `0x${networkId.toString(16)}`) // keeping it consistent with eip-1193
-      const sendTransaction = (provider, params) => provider.request({ method: 'eth_sendTransaction', params })
-      const sign = (provider, params) => provider.request({ method: 'personal_sign', params })
-      const ecRecover = (provider, params) => provider.request({ method: 'personal_ecRecover', params })
-      const signTypedData = (provider, params) => provider.request({ method: 'eth_signTypedData_v4', params })
+      const sendTransaction = (provider, params) => providerRPC(provider, { method: 'eth_sendTransaction', params })
+      const sign = (provider, params) => providerRPC(provider, { method: 'personal_sign', params })
+      const ecRecover = (provider, params) => providerRPC(provider, { method: 'personal_ecRecover', params })
+      const signTypedData = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData', params })
 
       function handleProvider(provider) {
         document.getElementById('connected').innerHTML = 'Yes'
