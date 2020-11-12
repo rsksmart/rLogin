@@ -72,44 +72,39 @@ export class Core extends React.Component<IModalProps, IModalState> {
     providerController.on(CONNECT_EVENT, (provider: any) => {
       this.setState({ provider })
 
-      Promise.all([
-        provider.send({ method: 'eth_accounts' }),
-        provider.send({ method: 'net_version' })
-      ]).then(([accounts, netVersion]) => {
-        const chainId = parseInt(netVersion.result || netVersion)
+      const chainId = parseInt(provider.chainId)
+      this.setState({ chainId })
+
+      if (!this.validateCurrentChain()) return
+
+      const address = provider.selectedAddress || provider.accounts[0]
+      const did = getDID(chainId, address)
+
+      this.setState({ provider, address })
+
+      provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+      provider.on(CHAIN_CHANGED, (_chainId: number | string) => {
+        const chainId = typeof _chainId === 'number' ? _chainId : parseInt(_chainId)
         this.setState({ chainId })
 
-        if (!this.validateCurrentChain()) return
+        onChainChange(chainId)
 
-        const address = provider.selectedAddress || accounts[0]
-        const did = getDID(chainId, address)
-
-        this.setState({ provider, address })
-
-        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-        provider.on(CHAIN_CHANGED, (_chainId: number | string) => {
-          const chainId = typeof _chainId === 'number' ? _chainId : parseInt(_chainId)
-          this.setState({ chainId })
-
-          onChainChange(chainId)
-
-          this.validateCurrentChain()
-        })
-
-        // if no back end, decentralized flavor
-        if (!backendUrl) {
-          return onConnect(provider)
-        } else {
-          // request schema to back end
-          axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
-            if (sdr) { // schema has selective disclosure request, permissioned app flavor
-              this.setState({ sdr, currentStep: 'Step2' })
-            } else { // open app flavor
-              this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
-            }
-          })
-        }
+        this.validateCurrentChain()
       })
+
+      // if no back end, decentralized flavor
+      if (!backendUrl) {
+        return onConnect(provider)
+      } else {
+        // request schema to back end
+        axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
+          if (sdr) { // schema has selective disclosure request, permissioned app flavor
+            this.setState({ sdr, currentStep: 'Step2' })
+          } else { // open app flavor
+            this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
+          }
+        })
+      }
     })
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
