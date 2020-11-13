@@ -3,53 +3,103 @@
 </p>
 <h3 align="middle">rLogin</h3>
 <p align="middle">
-    A web tool that combines Web3 and W3C standard protocols to manage user's identity.
+    Connect your dApp to RSK blockchain and SSI in breeze
 </p>
+
+rLogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information within their permission.
+
+## Features
+
+- Supported wallet providers
+    - Browser wallets - wallets that are installed as an extension of the web browser
+        - [Metamask wallet](https://metamask.io/)
+        - [Nifty wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid)
+    - Mobile wallets - wallets that are installed in mobile phone and support [Wallet Connect](https://walletconnect.org/)
+        - [rWallet](https://developers.rsk.co/wallet/rwallet/)
+        - [Trust wallet](https://trustwallet.com/)
+- Supported networks
+    - RSK Mainnet
+    - RSK Testnet
+    - Ethereum Mainnet
+    - Ganache (test network)
+
+> We express support for wallet providers and networks that are manually tested against each PR as QA process. Formalizing manual test schedule and automated tests are a work in progress, and are planned in the scope of this project.
 
 ## Quick start
 
-Get RSK standard login modal in your dApp:
+1. Install rLogin
 
-1. Build and serve the library<sup><a href="#run-for-development">*</a></sup>
-2. Import the library
-
-    ```html
-    <script src="http://localhost:3005/main.js"></script>
     ```
-2. Connect to rLogin
+    npm i @rsksmart/rlogin
+    ```
 
-    ```html
-    <script type="text/javascript">
-        document.getElementById('login').addEventListener('click', handleLogin);
+2. Create `rLogin` DOM element, configure supported networks and wallet providers
 
-        function handleLogin() {
-            const rLogin = new window.RLogin.default({
-                cachedProvider: false,
-                providerOptions: {}
-            })
+    ```typescript
+    import RLogin from '@rsksmart/rlogin'
+    import WalletConnectProvider from '@walletconnect/web3-provider'
 
-            rLogin.connect().then(provider => {
-                document.getElementById('address').innerHTML = provider.selectedAddress
-            })
+    export const rLogin = new RLogin({
+      cachedProvider: false,
+      providerOptions: {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            rpc: {
+              1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+              30: 'https://public-node.rsk.co',
+              31: 'https://public-node.testnet.rsk.co'
+            }
+          }
         }
-    </script>
+      },
+      supportedChains: [1, 30, 31]
+    })
     ```
+    
+    > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/rLogin.ts
+    
+3. Show the pop-up to the user
 
-    If using backend with DID Auth, pass `backendUrl` key into the `RLogin` options
+    ```typescript
+    const handleLogin = () => {
+        rLogin.connect().then((provider: any) => context?.setProvider(provider))
+            .catch((err: string) => console.log(err))
+    }
+    ```
+    
+    > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/app/LoginScreen.tsx
+    
+4. Request RPC methods
 
-    ```js
+    ```
+    export const getAccounts = (provider: any) => provider.request({ method: 'eth_accounts' })
+    ```
+    
+    Or use `provider` as Web3 provider for your client of preference: [`Web3.js`](https://github.com/ethereum/web3.js/), [`ethjs`](https://github.com/ethjs/ethjs), [`ethers.js`](https://github.com/ethers-io/ethers.js/) or other.
+    
+    > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/helpers.ts
+    
+As an example, [this PR](https://github.com/rsksmart/rif-identity-manager/pull/2) can be used as example-driven integration guide.
+    
+**For HTML-only apps:**
+
+```html
+<script src="http://unpkg.com/@rsksmart/rlogin"></script>
+<script type="text/javascript">
     const rLogin = new window.RLogin.default({
-            cachedProvider: false,
-            providerOptions: {}
-            backendUrl: 'http://localhost:3007'
+        providerOptions: {} // see above options
+    })
+
+    function handleLogin() {
+        rLogin.connect().then(provider => {
+            document.getElementById('address').innerHTML = provider.selectedAddress
         })
-    ```
+    }
 
-The interface is to be defined, this is just a demo.
-
-## What is rLogin?
-
-rlogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information within their permission.
+    document.getElementById('login').addEventListener('click', handleLogin);
+</script>
+```
 
 ### Flavors
 
@@ -61,7 +111,11 @@ rlogin is a tool that allows the front end developer to connect their user with 
 
 - Closed apps: for example, a back office. This are apps that only specific user's can access. This flavor is used to prove the user accessing an app holds or is delegated by a specific identity - perform this validations in your server's business logic
 
-## Event Listeners
+## EIP-1193 support
+
+rLogin express support for [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) propossal for a _Ethereum Provider JavaScript API_. Wallet providers that implement EIP-1193 are prone to be integrated seamlessly into this library.
+
+Read this sections to understand how to handle EIP-1193 rLogin.
 
 ### accountsChanged
 
@@ -97,6 +151,12 @@ When loading the wallet you will find a console alert
 
 MetaMask will soon stop reloading pages on network change. For more information, see: https://docs.metamask.io/guide/ethereum-provider.html#ethereum-autorefreshonnetworkchange
 
+#### About Nifty and RPC `request` method
+
+Nifty does not support EIP-1193 regarding `request` API, it still uses `send` method as API for sending RPCs. Consider this in your implementation.
+
+Follow up the feature request: [poanetwork/nifty-wallet#421](https://github.com/poanetwork/nifty-wallet/issues/421)
+
 ## Optional parameters
 
 ### supportedNetworks
@@ -108,6 +168,12 @@ const rLogin = new window.RLogin.default({
     supportedNetworks: [30, 31],
 })
 ```
+
+### `web3modal` options
+
+Options available for [`web3modal`](https://github.com/web3Modal/web3modal/) are available for `rLogin`. To understand how this works go to section [_the code_](#the-code).
+
+Wallet providers and networks that are listed in [_features_](#features) section are supported and tested, but other can be provided seamlessly with `web3modal` options. We cannot assure quality for using other providers or networks.
 
 ## Styling the modal and interface
 
