@@ -5,6 +5,20 @@
 <p align="middle">
     Connect your dApp to RSK blockchain and SSI in breeze
 </p>
+<p align="middle">
+    <a href="https://badge.fury.io/js/%40rsksmart%2Frlogin">
+        <img src="https://badge.fury.io/js/%40rsksmart%2Frlogin.svg" alt="npm" />
+    </a>
+    <a href="https://circleci.com/gh/rsksmart/rLogin">
+        <img src="https://img.shields.io/circleci/build/github/rsksmart/rLogin?label=CircleCI" alt="npm" />
+    </a>
+    <a href="https://lgtm.com/projects/g/rsksmart/rLogin/alerts/">
+      <img src="https://img.shields.io/lgtm/alerts/github/rsksmart/rLogin" alt="alerts">
+    </a>
+    <a href="https://lgtm.com/projects/g/rsksmart/rLogin/context:javascript">
+      <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/rLogin">
+    </a>
+</p>
 
 rLogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information within their permission.
 
