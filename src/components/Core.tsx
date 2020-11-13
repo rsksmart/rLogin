@@ -73,15 +73,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState({ provider })
 
       Promise.all([
-        provider.request({ method: 'eth_accounts' }),
-        provider.request({ method: 'net_version' })
+        this.providerRPC({ method: 'eth_accounts' }),
+        this.providerRPC({ method: 'net_version' })
       ]).then(([accounts, netVersion]) => {
-        const chainId = parseInt(netVersion)
+        const chainId = parseInt(netVersion as string)
         this.setState({ chainId })
 
         if (!this.validateCurrentChain()) return
 
-        const address = provider.selectedAddress || accounts[0]
+        const address = provider.selectedAddress || (accounts as string[])[0]
         const did = getDID(chainId, address)
 
         this.setState({ provider, address })
@@ -142,6 +142,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private providerRPC (args: {
+    readonly method: string;
+    readonly params?: readonly unknown[] | object;
+  }): Promise<unknown> {
+    const { provider } = this.state
+
+    // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
+    if (provider.isNiftyWallet) return provider.send(args.method, args.params)
+    return provider.request(args)
+  }
+
   private validateCurrentChain () {
     const { supportedChains } = this.props
     const { chainId, provider } = this.state
@@ -167,8 +178,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     console.log(challenge!.toString(16))
 
-    provider.request({ method: 'personal_sign', params: [challenge!.toString(), address] })
-      .then((response: string) => axios.post(backendUrl + '/auth', { response }))
+    this.providerRPC({ method: 'personal_sign', params: [challenge!.toString(), address] })
+      .then((response: any) => axios.post(backendUrl + '/auth', { response: response as string }))
       .then(({ data }: { data: string }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
       .then(() => onConnect(provider))
   }
