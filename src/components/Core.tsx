@@ -174,7 +174,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, address, sdr } = this.state
+    const { provider, challenge, address } = this.state
 
     console.log(challenge!.toString(16))
 
@@ -189,7 +189,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, chainId, address, errorReason } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
 
     const { onClose, userProviders } = this.props
 
