@@ -174,7 +174,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, address } = this.state
+    const { provider, challenge, address, sdr } = this.state
 
     console.log(challenge!.toString(16))
 
@@ -201,7 +201,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
-      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet<br />SDR: {sdr.toString()}</p>}
+      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet<br />SDR: {sdr && sdr.toString()}</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? getDID(chainId, address) : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
