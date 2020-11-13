@@ -1,5 +1,3 @@
-const path = require("path");
-
 module.exports = env => ({
   mode: env,
   entry: "./src/index.ts",
