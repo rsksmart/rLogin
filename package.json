@@ -16,7 +16,8 @@
     "sample:dapp": "concurrently \"node sample/launcher.js\" \"serve dist -l 3005\" \"serve sample/front -l 3006 \"",
     "sample:open": "concurrently \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006 \" \"nodemon sample/back/index.js \"",
     "sample:permissioned": "concurrently \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006 \" \"nodemon sample/back/index.js --permissioned \"",
-    "serve": "serve dist -l 3005"
+    "serve": "serve dist -l 3005",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
