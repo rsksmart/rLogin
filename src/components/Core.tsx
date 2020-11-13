@@ -189,7 +189,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, chainId, address, errorReason } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
 
     const { onClose, userProviders } = this.props
 
@@ -201,7 +201,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
-      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
+      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet<br />SDR: {sdr && sdr.toString()}</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? getDID(chainId, address) : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
