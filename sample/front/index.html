@@ -22,6 +22,8 @@
       <h2 class="be-only">Backend connection info</h2>
       <h3 class="be-only">Access token</h3>
       <p id="access-token" class="be-only"></p>
+      <h3 class="be-only">Refresh token</h3>
+      <p id="refresh-token" class="be-only"></p>
       <hr />
       <h2>Actions</h2>
       <button id="send-tx" disabled>send</button>
@@ -84,6 +86,7 @@
       const displayChainId = (chainId) => setElementInnerHTML('chain-id', chainId)
       const displayDisconnectError = ({ message, code, data }) => setElementInnerHTML('error', `message: ${message} - code: ${code} - data: ${data}`)
       const displayAccessToken = (accessToken) => setElementInnerHTML('access-token', accessToken)
+      const displayRefreshToken = (refreshToken) => setElementInnerHTML('refresh-token', refreshToken)
 
       function providerRPC (provider, args) {
         // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
@@ -97,7 +100,7 @@
       const sendTransaction = (provider, params) => providerRPC(provider, { method: 'eth_sendTransaction', params })
       const sign = (provider, params) => providerRPC(provider, { method: 'personal_sign', params })
       const ecRecover = (provider, params) => providerRPC(provider, { method: 'personal_ecRecover', params })
-      const signTypedData = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData', params })
+      const signTypedData = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData_v4', params })
 
       function handleProvider(provider) {
         document.getElementById('connected').innerHTML = 'Yes'
@@ -111,7 +114,8 @@
         getChainId(provider).then(displayChainId)
 
         // did auth
-        displayAccessToken(localStorage.getItem(window.RLogin.RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY))
+        displayRefreshToken(localStorage.getItem(window.RLogin.RLOGIN_REFRESH_TOKEN))
+        displayAccessToken(localStorage.getItem(window.RLogin.RLOGIN_ACCESS_TOKEN))
 
         // setup actions
 
@@ -199,27 +203,10 @@
 
       }
 
-/*
-
-        // setup actions
-
-        let signButton = document.getElementById('sign')
-        signButton.removeAttribute('disabled')
-
-        signButton.addEventListener('click', () => {
-          new window.ethers.providers.Web3Provider(provider).getSigner().signMessage('message').then(sig => {
-            document.getElementById('signature').innerHTML = sig
-          })
-        });
-
-        document.getElementById('login').setAttribute('disabled', true)
-        document.getElementById('loginMetamask').setAttribute('disabled', true)
-      }
-
       document.getElementById('reset').addEventListener('click', () => {
         localStorage.removeItem('RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY')
         localStorage.removeItem('walletconnect')
-      })*/
+      })
     </script>
   </body>
 </html>

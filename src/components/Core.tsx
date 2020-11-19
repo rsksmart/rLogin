@@ -5,7 +5,7 @@ import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
-import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
+import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from '../constants'
 import { Modal } from './modal'
 import { ErrorMessage } from './shared/ErrorMessage'
 import { getDID, getChainName } from '../adapters'
@@ -101,7 +101,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
           return onConnect(provider)
         } else {
           // request schema to back end
-          axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
+          axios.get(backendUrl + `/request-signup/${did}`).then(({ data: { challenge, sdr } }) => {
             if (sdr) { // schema has selective disclosure request, permissioned app flavor
               this.setState({ sdr, currentStep: 'Step2' })
             } else { // open app flavor
@@ -174,13 +174,16 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, address } = this.state
+    const { provider, challenge, chainId, address } = this.state
 
-    console.log(challenge!.toString(16))
+    const did = getDID(chainId!, address!)
 
-    this.providerRPC({ method: 'personal_sign', params: [challenge!.toString(), address] })
-      .then((response: any) => axios.post(backendUrl + '/auth', { response: response as string }))
-      .then(({ data }: { data: string }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
+    this.providerRPC({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
+      .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did } }))
+      .then(({ data }: { data: { refreshToken: string, accessToken: string } }) => {
+        localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
+        localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
+      })
       .then(() => onConnect(provider))
   }
 
