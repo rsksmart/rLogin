@@ -29,6 +29,7 @@ const Header3Wrapper = styled.h3`
   font-weight: 500 !important;
   font-size: 18px;
   color: #6C6B6C;
+  margin: 18px 0;
 `
 
 export const Header3: React.FC<TypographyInterface> = ({ children, className }) => (
@@ -42,6 +43,7 @@ const ParagraphWrapper = styled.p`
   font-weight: 400 !important;
   font-size: 12px;
   color: #B0AEB1;
+  margin: 12px 0;
 `
 export const Paragraph: React.FC<TypographyInterface> = ({ children, className }) => (
   <ParagraphWrapper className={className ? `${PARAGRAPH_CLASS} ${className}` : PARAGRAPH_CLASS}>
