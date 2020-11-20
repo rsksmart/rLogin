@@ -19,7 +19,7 @@ const authMiddleware = didAuth.default({ serviceDid, serviceSigner, serviceUrl, 
 
 app.use(authMiddleware)
 
-if (process.argv.length > 2 && process.argv[2] === '--permissioned') challenge.sdr = ['EmailCredential']
+if (process.argv.length > 2 && process.argv[2] === '--permissioned') throw new Error('Permissioned flavor not supported yet.')
 
 const port = 3007
 
