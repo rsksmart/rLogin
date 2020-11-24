@@ -1,33 +1,25 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const uuid = require('uuid')
+const didAuth = require('@rsksmart/express-did-auth')
+const { SimpleSigner } = require('did-jwt')
+
+const privateKey = '72e7d4571572838d3e0fe7ab18ea84d183beaf3f92d6c8add8193b53c1a542a2'
+const serviceDid = 'did:ethr:rsk:0x45eDF63532b4dD5ee131e0530e9FB12f7DA1915c'
+const serviceSigner = SimpleSigner(privateKey)
+const challengeSecret = 'secret-pass'
+const serviceUrl = 'http://localhost:3007'
 
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
 
-let challenge = {}
+const authMiddleware = didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret })(app)
 
-if(process.argv.length > 2 && process.argv[2] === '--permissioned') challenge.sdr = ['EmailCredential']
+app.use(authMiddleware)
 
-app.post('/request_auth', function (req, res) {
-  console.log(req.body.did)
-  challenge.challenge = Math.floor(Math.random() * 9999999999999)
-  res.status(200).send(challenge)
-})
-
-app.post('/auth', function (req, res) {
-  console.log(req.body.response)
-
-  // verify response signature
-  // compare challenge
-  // verify credentials
-  // perform business logic
-
-  res.status(200).send(uuid.v4())
-})
+if (process.argv.length > 2 && process.argv[2] === '--permissioned') throw new Error('Permissioned flavor not supported yet.')
 
 const port = 3007
 

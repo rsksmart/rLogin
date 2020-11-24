@@ -5,7 +5,7 @@ import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
 import { WalletProviders } from './step1'
 import { ConfirmSelectiveDisclosure } from './step3'
-import { RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY } from '../constants'
+import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from '../constants'
 import { Modal } from './modal'
 import { ErrorMessage } from './shared/ErrorMessage'
 import { getDID, getChainName } from '../adapters'
@@ -73,15 +73,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState({ provider })
 
       Promise.all([
-        provider.request({ method: 'eth_accounts' }),
-        provider.request({ method: 'net_version' })
+        this.providerRPC({ method: 'eth_accounts' }),
+        this.providerRPC({ method: 'net_version' })
       ]).then(([accounts, netVersion]) => {
-        const chainId = parseInt(netVersion)
+        const chainId = parseInt(netVersion as string)
         this.setState({ chainId })
 
         if (!this.validateCurrentChain()) return
 
-        const address = provider.selectedAddress || accounts[0]
+        const address = provider.selectedAddress || (accounts as string[])[0]
         const did = getDID(chainId, address)
 
         this.setState({ provider, address })
@@ -101,7 +101,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
           return onConnect(provider)
         } else {
           // request schema to back end
-          axios.post(backendUrl + '/request_auth', { did }).then(({ data: { challenge, sdr } }) => {
+          axios.get(backendUrl + `/request-signup/${did}`).then(({ data: { challenge, sdr } }) => {
             if (sdr) { // schema has selective disclosure request, permissioned app flavor
               this.setState({ sdr, currentStep: 'Step2' })
             } else { // open app flavor
@@ -142,6 +142,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private providerRPC (args: {
+    readonly method: string;
+    readonly params?: readonly unknown[] | object;
+  }): Promise<unknown> {
+    const { provider } = this.state
+
+    // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
+    if (provider.isNiftyWallet) return provider.send(args.method, args.params)
+    return provider.request(args)
+  }
+
   private validateCurrentChain () {
     const { supportedChains } = this.props
     const { chainId, provider } = this.state
@@ -163,13 +174,16 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, address } = this.state
+    const { provider, challenge, chainId, address } = this.state
 
-    console.log(challenge!.toString(16))
+    const did = getDID(chainId!, address!)
 
-    provider.request({ method: 'personal_sign', params: [challenge!.toString(), address] })
-      .then((response: string) => axios.post(backendUrl + '/auth', { response }))
-      .then(({ data }: { data: string }) => localStorage.setItem(RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY, data))
+    this.providerRPC({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
+      .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did } }))
+      .then(({ data }: { data: { refreshToken: string, accessToken: string } }) => {
+        localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
+        localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
+      })
       .then(() => onConnect(provider))
   }
 
@@ -178,7 +192,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, chainId, address, errorReason } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
 
     const { onClose, userProviders } = this.props
 
@@ -190,7 +204,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
-      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet</p>}
+      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet<br />SDR: {sdr && sdr.toString()}</p>}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? getDID(chainId, address) : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
