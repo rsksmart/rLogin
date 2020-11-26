@@ -151,20 +151,6 @@ rLogin.on("chainChanged", (chainId) => {
 })
 ```
 
-#### About Metamask and chain ID change
-
-Changing the chain may result in the wallet refreshing the page. If this is not the desired effect, and the wallet supports EIP-1198 `chainChanged`, you can use:
-
-```javascript
-window.ethereum.autoRefreshOnNetworkChange = false
-```
-
-> Reference: https://github.com/MetaMask/metamask-extension/pull/6330
-
-When loading the wallet you will find a console alert
-
-MetaMask will soon stop reloading pages on network change. For more information, see: https://docs.metamask.io/guide/ethereum-provider.html#ethereum-autorefreshonnetworkchange
-
 #### About Nifty and RPC `request` method
 
 Nifty does not support EIP-1193 regarding `request` API, it still uses `send` method as API for sending RPCs. Consider this in your implementation.
