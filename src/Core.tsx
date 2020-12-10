@@ -2,13 +2,13 @@
 import * as React from 'react'
 import axios from 'axios'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
-import { WalletProviders } from './step1'
-import { ConfirmSelectiveDisclosure } from './step3'
-import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from '../constants'
-import { Modal } from './modal'
-import { ErrorMessage } from './shared/ErrorMessage'
-import { getDID, getChainName } from '../adapters'
+import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
+import { WalletProviders } from './ux/step1'
+import { ConfirmSelectiveDisclosure } from './ux/step3'
+import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
+import { Modal } from './ui/modal'
+import { ErrorMessage } from './ui/shared/ErrorMessage'
+import { getDID, getChainName } from './adapters'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx

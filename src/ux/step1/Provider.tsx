@@ -2,7 +2,7 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import { Header3, Paragraph } from '../shared/Typography'
+import { Header3, Paragraph } from '../../ui/shared/Typography'
 import {
   PROVIDER_CONTAINER_CLASSNAME,
   PROVIDER_ICON_CLASSNAME

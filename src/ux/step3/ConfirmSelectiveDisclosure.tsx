@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import React from 'react'
-import { Header2, Paragraph } from '../shared/Typography'
-import { Button } from '../shared/Button'
+import { Header2, Paragraph } from '../../ui/shared/Typography'
+import { Button } from '../../ui/shared/Button'
 
 interface ConfirmSelectiveDisclosureProps {
   did: string
