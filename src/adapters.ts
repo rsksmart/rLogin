@@ -17,3 +17,5 @@ export function getChainName (chainId: number) {
     default: return `network Id ${chainId}`
   }
 }
+
+export const getChainId = (chainId: string) => parseInt(chainId)
