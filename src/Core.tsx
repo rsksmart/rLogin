@@ -4,11 +4,13 @@ import axios from 'axios'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { WalletProviders } from './ux/step1'
+import { SelectiveDisclosure } from './ux/step2'
 import { ConfirmSelectiveDisclosure } from './ux/step3'
 import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
 import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { getDID, getChainName, getChainId } from './adapters'
+import { verifyDidJwt } from './jwt'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -104,7 +106,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
           // request schema to back end
           axios.get(backendUrl + `/request-signup/${did}`).then(({ data: { challenge, sdr } }) => {
             if (sdr) { // schema has selective disclosure request, permissioned app flavor
-              this.setState({ sdr, currentStep: 'Step2' })
+              verifyDidJwt(sdr).then(verifiedSdr => {
+                this.setState({
+                  sdr: {
+                    credentials: verifiedSdr.payload.credentials,
+                    claims: verifiedSdr.payload.claims
+                  },
+                  currentStep: 'Step2'
+                })
+              })
             } else { // open app flavor
               this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
             }
@@ -184,7 +194,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
 
-    const { onClose, userProviders } = this.props
+    const { onClose, userProviders, backendUrl } = this.props
 
     return <Modal
       lightboxOffset={lightboxOffset}
@@ -194,7 +204,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
-      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet<br />SDR: {sdr && sdr.toString()}</p>}
+      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr} backendUrl={backendUrl!} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? getDID(chainId, address) : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
