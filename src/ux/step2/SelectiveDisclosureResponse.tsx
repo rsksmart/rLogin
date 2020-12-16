@@ -1,6 +1,9 @@
 // eslint-disable-next-line
 import React, { useState } from 'react'
 import { Button } from '../../ui/shared/Button'
+import { Paragraph, LeftBigParagraph } from '../../ui/shared/Typography'
+import { Box } from '../../ui/shared/Box'
+import { decodeJWT } from 'did-jwt'
 
 type DataField = { [key: string]: string[] }
 
@@ -24,20 +27,44 @@ interface SelectiveDisclosureProps {
 
 interface DataListProps {
   dataField: DataField
-  title: string
+  areCredentials: boolean
   select: (key: string, value: string) => void
 }
 
-const DataList = ({ dataField, title, select }: DataListProps) => Object.keys(dataField).length ? <div style={{ maxWidth: 300 }}>
-  <p>{title}</p>
-  {Object.keys(dataField).map((key) => <div key={key}>
-    {dataField[key].map((value, i) => <div key={i}>
-      <input type="radio" name={key} onChange={(e) => {
+// Use this function to add new Verifiable Credential Schema rendering
+// We need to improve the errors thrown at this stage. We could display
+// the credential ID with a link to the Id Manager
+function credentialToText (schema: string, jwt: string) {
+  try {
+    const jwtDecoded = decodeJWT(jwt)
+    console.log(jwtDecoded)
+    try {
+      const credentialSubject = jwtDecoded.payload.vc.credentialSubject
+      switch (schema) {
+        case 'Email': return `Email address: ${credentialSubject.emailAddress}`
+        default: return JSON.stringify(credentialSubject)
+      }
+    } catch (e) {
+      return 'Invalid credential schema...'
+    }
+  } catch (e) {
+    return 'Invalid credential...'
+  }
+}
+
+const DataList = ({ dataField, areCredentials, select }: DataListProps) => Object.keys(dataField).length ? <div>
+  {Object.keys(dataField).map((key) => <React.Fragment key={key}>
+    <LeftBigParagraph>{key}</LeftBigParagraph>
+    {dataField[key].map((value, i) => <React.Fragment key={i}>
+      <input type="radio" name={key} style={{ float: 'left' }} onChange={(e) => {
         if (e.target.value) select(key, value)
       }} />
-      {value}
-    </div>)}
-  </div>)}
+      <Paragraph>
+        {areCredentials ? credentialToText(key, value) : value}
+        {areCredentials && <><br/>{' (Verifiable Credential)'}</>}
+      </Paragraph>
+    </React.Fragment>)}
+  </React.Fragment>)}
 </div> : <></>
 
 const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl, onConfirm }: SelectiveDisclosureProps) => {
@@ -54,10 +81,11 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
   const selectClaims = (key: string, value: string) => selectField(key, value, selectedClaims, setSelectedClaims)
 
   return <>
-    <p>Would you like to give us access to info in your data vault?</p>
-    <p>Select the information you want to share with {backendUrl}</p>
-    <DataList dataField={credentials} select={selectCredentials} title="Credentials" />
-    <DataList dataField={claims} select={selectClaims} title="Claims" />
+    <Paragraph>Select the information you want to share with {backendUrl}</Paragraph>
+    <Box>
+      <DataList dataField={claims} select={selectClaims} areCredentials={false} />
+      <DataList dataField={credentials} select={selectCredentials} areCredentials={true} />
+    </Box>
     <Button onClick={() => onConfirm({
       credentials: selectedCredentials,
       claims: selectedClaims

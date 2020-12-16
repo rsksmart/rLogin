@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import React from 'react'
 import { Button } from '../../ui/shared/Button'
-import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography'
+import { Paragraph, LeftBigParagraph } from '../../ui/shared/Typography'
 import { Box } from '../../ui/shared/Box'
 
 export interface SDR {
@@ -21,8 +21,7 @@ const RequestsList = ({ requests }: { requests: string[] }) => requests.length ?
 </> : <></>
 
 const SelectiveDisclosureRequest = ({ sdr: { credentials, claims }, backendUrl, onConfirm }: SelectiveDisclosureRequestProps) => <>
-  <Header2>Would you like to give us<br />access to info in your data vault?</Header2>
-  <Paragraph>Get the information you want to share<br />with {backendUrl} from you Data Vault</Paragraph>
+  <Paragraph>Get the information you want to share with {backendUrl} from you Data Vault</Paragraph>
   <Box>
     <RequestsList requests={claims} />
     <RequestsList requests={credentials} />
