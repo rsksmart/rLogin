@@ -1,6 +1,8 @@
 // eslint-disable-next-line
 import React from 'react'
 import { Button } from '../../ui/shared/Button'
+import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography'
+import { Box } from '../../ui/shared/Box'
 
 export interface SDR {
   credentials: string[]
@@ -13,18 +15,18 @@ interface SelectiveDisclosureRequestProps {
   onConfirm: () => void
 }
 
-const RequestsList = ({ requests, title }: { requests: string[], title: string }) => requests.length ? <>
-  <p>{title}</p>
-  <ul>
-    {requests.map((request, i) => <li key={i}>{request}</li>)}
-  </ul>
+// TODO: add optional fields to fetch
+const RequestsList = ({ requests }: { requests: string[] }) => requests.length ? <>
+  {requests.map((request, i) => <LeftBigParagraph key={i}>{request}</LeftBigParagraph>)}
 </> : <></>
 
 const SelectiveDisclosureRequest = ({ sdr: { credentials, claims }, backendUrl, onConfirm }: SelectiveDisclosureRequestProps) => <>
-  <p>Would you like to give us access to info in your data vault?</p>
-  <p>Select the information you want to share with {backendUrl}</p>
-  <RequestsList requests={credentials} title="Credentials" />
-  <RequestsList requests={claims} title="Claims" />
+  <Header2>Would you like to give us<br />access to info in your data vault?</Header2>
+  <Paragraph>Get the information you want to share<br />with {backendUrl} from you Data Vault</Paragraph>
+  <Box>
+    <RequestsList requests={claims} />
+    <RequestsList requests={credentials} />
+  </Box>
   <Button onClick={onConfirm}>Access Data Vault</Button>
 </>
 
