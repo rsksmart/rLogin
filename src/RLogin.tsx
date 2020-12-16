@@ -14,7 +14,7 @@ import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGE
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
-import { Core } from './Core'
+import { Core, DataVaultOptions } from './Core'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
@@ -31,6 +31,7 @@ const defaultOpts: IProviderControllerOptions = {
 interface RLoginOptions {
   backendUrl?: string
   supportedChains?: number[]
+  dataVaultOptions: DataVaultOptions
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -42,6 +43,7 @@ export class RLogin {
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
   private backendUrl?: string;
+  private dataVaultOptions?: DataVaultOptions
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -65,6 +67,8 @@ export class RLogin {
     // setup modal
     this.userProviders = this.providerController.getUserOptions()
     this.renderModal()
+
+    this.dataVaultOptions = opts && opts.dataVaultOptions
   }
 
   get cachedProvider (): string {
@@ -134,6 +138,7 @@ export class RLogin {
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
         supportedChains={this.supportedChains}
+        // dataVaultOptions={this.dataVaultOptions}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

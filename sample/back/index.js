@@ -21,7 +21,8 @@ const authMiddleware = !permissioned
   ? didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret })(app)
   : didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret,
     requiredCredentials: ['Email'],
-    requiredClaims: ['Name']
+    requiredClaims: ['Name'],
+    signupBusinessLogic: (payload) => { console.log(payload); return true; }
   })(app)
 
 app.use(authMiddleware)
