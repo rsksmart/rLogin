@@ -2,7 +2,7 @@
 import React from 'react'
 import { Button } from '../../ui/shared/Button'
 import { Paragraph, LeftBigParagraph } from '../../ui/shared/Typography'
-import { Box } from '../../ui/shared/Box'
+import { NarrowBox } from '../../ui/shared/Box'
 
 export interface SDR {
   credentials: string[]
@@ -22,10 +22,10 @@ const RequestsList = ({ requests }: { requests: string[] }) => requests.length ?
 
 const SelectiveDisclosureRequest = ({ sdr: { credentials, claims }, backendUrl, onConfirm }: SelectiveDisclosureRequestProps) => <>
   <Paragraph>Get the information you want to share with {backendUrl} from you Data Vault</Paragraph>
-  <Box>
+  <NarrowBox>
     <RequestsList requests={claims} />
     <RequestsList requests={credentials} />
-  </Box>
+  </NarrowBox>
   <Button onClick={onConfirm}>Access Data Vault</Button>
 </>
 

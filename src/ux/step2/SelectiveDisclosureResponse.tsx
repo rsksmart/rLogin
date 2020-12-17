@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Button } from '../../ui/shared/Button'
 import { Paragraph, LeftBigParagraph } from '../../ui/shared/Typography'
-import { Box } from '../../ui/shared/Box'
+import { WideBox } from '../../ui/shared/Box'
 import { decodeJWT } from 'did-jwt'
 
 type DataField = { [key: string]: string[] }
@@ -82,10 +82,10 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
 
   return <>
     <Paragraph>Select the information you want to share with {backendUrl}</Paragraph>
-    <Box>
+    <WideBox>
       <DataList dataField={claims} select={selectClaims} areCredentials={false} />
       <DataList dataField={credentials} select={selectCredentials} areCredentials={true} />
-    </Box>
+    </WideBox>
     <Button onClick={() => onConfirm({
       credentials: selectedCredentials,
       claims: selectedClaims
