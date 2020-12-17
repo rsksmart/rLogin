@@ -262,7 +262,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
-      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
+      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
   }

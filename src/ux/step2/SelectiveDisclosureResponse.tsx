@@ -1,9 +1,9 @@
 // eslint-disable-next-line
 import React, { useState } from 'react'
 import { Button } from '../../ui/shared/Button'
-import { Paragraph, LeftBigParagraph } from '../../ui/shared/Typography'
+import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography'
 import { WideBox } from '../../ui/shared/Box'
-import { decodeJWT } from 'did-jwt'
+import { credentialToText } from '../../vc-json-schema-adapter'
 
 type DataField = { [key: string]: string[] }
 
@@ -31,26 +31,6 @@ interface DataListProps {
   select: (key: string, value: string) => void
 }
 
-// Use this function to add new Verifiable Credential Schema rendering
-// We need to improve the errors thrown at this stage. We could display
-// the credential ID with a link to the Id Manager
-function credentialToText (schema: string, jwt: string) {
-  try {
-    const jwtDecoded = decodeJWT(jwt)
-    console.log(jwtDecoded)
-    try {
-      const credentialSubject = jwtDecoded.payload.vc.credentialSubject
-      switch (schema) {
-        case 'Email': return `Email address: ${credentialSubject.emailAddress}`
-        default: return JSON.stringify(credentialSubject)
-      }
-    } catch (e) {
-      return 'Invalid credential schema...'
-    }
-  } catch (e) {
-    return 'Invalid credential...'
-  }
-}
 
 const DataList = ({ dataField, areCredentials, select }: DataListProps) => Object.keys(dataField).length ? <div>
   {Object.keys(dataField).map((key) => <React.Fragment key={key}>
@@ -81,7 +61,8 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
   const selectClaims = (key: string, value: string) => selectField(key, value, selectedClaims, setSelectedClaims)
 
   return <>
-    <Paragraph>Select the information you want to share with {backendUrl}</Paragraph>
+    <Header2>Select information to share</Header2>
+    <Paragraph>Sharing your information is optional. It will only be shared with {backendUrl}</Paragraph>
     <WideBox>
       <DataList dataField={claims} select={selectClaims} areCredentials={false} />
       <DataList dataField={credentials} select={selectCredentials} areCredentials={true} />
