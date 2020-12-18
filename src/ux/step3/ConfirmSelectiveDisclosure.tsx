@@ -17,8 +17,8 @@ export function ConfirmSelectiveDisclosure ({ did, sd, onConfirm }: ConfirmSelec
     <Header2>Use this Identity?</Header2>
     <Paragraph>{did}</Paragraph>
     {sd != null && <>
-      {Object.keys(sd.claims).map(key => <Paragraph>{key}: {data[key]}</Paragraph>)}
-      {Object.keys(sd.credentials).map(key => <Paragraph>{credentialToText(key, data[key])}</Paragraph>)}
+      {Object.keys(sd.claims).map(key => <Paragraph key={key}>{key}: {data[key]}</Paragraph>)}
+      {Object.keys(sd.credentials).map(key => <Paragraph key={key}>{credentialToText(key, data[key])}</Paragraph>)}
     </>}
     <Button onClick={onConfirm}>Confirm Identity</Button>
   </>

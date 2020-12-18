@@ -31,7 +31,6 @@ interface DataListProps {
   select: (key: string, value: string) => void
 }
 
-
 const DataList = ({ dataField, areCredentials, select }: DataListProps) => Object.keys(dataField).length ? <div>
   {Object.keys(dataField).map((key) => <React.Fragment key={key}>
     <LeftBigParagraph>{key}</LeftBigParagraph>
