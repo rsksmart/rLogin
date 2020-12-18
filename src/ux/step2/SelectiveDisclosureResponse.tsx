@@ -4,20 +4,7 @@ import { Button } from '../../ui/shared/Button'
 import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography'
 import { WideBox } from '../../ui/shared/Box'
 import { credentialToText } from '../../vc-json-schema-adapter'
-
-type DataField = { [key: string]: string[] }
-
-export type Data = {
-  credentials: DataField
-  claims: DataField
-}
-
-type SelectiveDisclosureField = { [key: string]: string }
-
-export interface SD {
-  credentials: SelectiveDisclosureField
-  claims: SelectiveDisclosureField
-}
+import { Data, DataField, SD, SelectiveDisclosureField } from '../../lib/sdr'
 
 interface SelectiveDisclosureProps {
   data: Data

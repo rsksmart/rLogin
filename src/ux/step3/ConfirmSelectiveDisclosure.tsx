@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import React from 'react'
-import { SD } from '../step2/SelectiveDisclosureResponse'
+import { SD } from '../../lib/sdr'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import { credentialToText } from '../../vc-json-schema-adapter'

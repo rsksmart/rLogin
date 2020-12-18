@@ -5,14 +5,14 @@ import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import DataVault from '@rsksmart/ipfs-cpinner-client'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { WalletProviders } from './ux/step1'
-import { SelectiveDisclosure, SDR, SD, Data } from './ux/step2'
+import { SelectiveDisclosure, SDR, SD } from './ux/step2'
 import { ConfirmSelectiveDisclosure } from './ux/step3'
 import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
 import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { getDID, getChainName, getChainId } from './adapters'
 import { eth_accounts, eth_chainId } from './lib/provider'
-import { requestSignup } from './lib/did-auth'
+import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 
@@ -64,7 +64,7 @@ interface IModalState {
   provider?: any
   sdr?: SDR
   sd?: SD
-  challenge?: number
+  challenge?: string
   address?: string
   chainId?: number
   errorReason?: ErrorDetails
@@ -210,7 +210,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
   }
 
-  /** Step 2 */
   private onConfirmSelectiveDisclosure (sd: SD) {
     this.setState({ sd, currentStep: 'Step3' })
   }
@@ -222,13 +221,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     const did = this.did()
 
-    provider.request({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
-      .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did, sd } }))
-      .then(({ data }: { data: { refreshToken: string, accessToken: string } }) => {
-        localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
-        localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
-      })
-      .then(() => onConnect(provider))
+    confirmAuth(provider, address!, backendUrl!, did, challenge!, onConnect, sd)
   }
 
   private setLightboxRef (c: HTMLDivElement | null) {

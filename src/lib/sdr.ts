@@ -1,16 +1,23 @@
 import DataVault from '@rsksmart/ipfs-cpinner-client'
 import { getContentsFromDataVault } from './data-vault'
 
-type DataField = { [key: string]: string[] }
+export interface SDR {
+  credentials: string[]
+  claims: string[]
+}
+
+export type DataField = { [key: string]: string[] }
 
 export type Data = {
   credentials: DataField
   claims: DataField
 }
 
-export interface SDR {
-  credentials: string[]
-  claims: string[]
+export type SelectiveDisclosureField = { [key: string]: string }
+
+export interface SD {
+  credentials: SelectiveDisclosureField
+  claims: SelectiveDisclosureField
 }
 
 const fillDataField = async (data: Data, sdr: SDR, dataVault: DataVault, did: string, field: 'credentials' | 'claims', keyAdapter: (key: string) => string) => {
