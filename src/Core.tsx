@@ -60,12 +60,12 @@ interface IModalState {
   lightboxOffset: number
   provider?: any
   sdr?: SDR
-  sd?: SD // TBD
+  sd?: SD
   challenge?: number
   address?: string
   chainId?: number
   errorReason?: ErrorDetails
-  dataVault?: DataVault // the rif data vault
+  dataVault?: DataVault
 }
 
 const INITIAL_STATE: IModalState = {
