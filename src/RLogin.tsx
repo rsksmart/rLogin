@@ -43,7 +43,7 @@ export class RLogin {
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
   private backendUrl?: string;
-  private dataVaultOptions?: DataVaultOptions
+  // private dataVaultOptions?: DataVaultOptions
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -68,7 +68,7 @@ export class RLogin {
     this.userProviders = this.providerController.getUserOptions()
     this.renderModal()
 
-    this.dataVaultOptions = opts && opts.dataVaultOptions
+    // this.dataVaultOptions = opts && opts.dataVaultOptions
   }
 
   get cachedProvider (): string {
