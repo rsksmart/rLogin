@@ -80,26 +80,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl /*, dataVaultOptions */ } = props
+    const { providerController, onConnect, onError, backendUrl /*, dataVaultOptions */ } = props
+    const { address } = this.state
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setState({ provider })
-
-      Promise.all([
-        eth_accounts(provider),
-        eth_chainId(provider)
-      ]).then(([accounts, chainId]) => {
-        if (!this.setChainId(chainId)) return
-
-        const address = accounts[0]
-
-        this.setState({ provider, address })
-
-        const onChainIdChanged = (chainId: string) => this.setChainId(chainId)
-
-        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-        provider.on(CHAIN_CHANGED, onChainIdChanged)
-
+      this.setupProvider(provider).then(() => {
         // if no back end, decentralized flavor
         if (!backendUrl) {
           return onConnect(provider)
@@ -146,24 +131,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
   }
 
-  private setChainId(rpcChainId: string) {
-    const { onChainChange } = this.props
-    const chainId = getChainId(rpcChainId)
-    onChainChange(chainId)
-    this.setState({ chainId })
-    return this.validateCurrentChain()
-  }
-
-  public lightboxRef?: HTMLDivElement | null;
-  public mainModalCard?: HTMLDivElement | null;
-
-  did () {
-    return this.state.chainId && this.state.address ? getDID(this.state.chainId, this.state.address) : ''
-  }
-
   public state: IModalState = {
     ...INITIAL_STATE
   };
+
+  public lightboxRef?: HTMLDivElement | null;
+  public mainModalCard?: HTMLDivElement | null;
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
@@ -181,6 +154,21 @@ export class Core extends React.Component<IModalProps, IModalState> {
       }
     }
   }
+
+  /** accounts related */
+  private did () {
+    return this.state.chainId && this.state.address ? getDID(this.state.chainId, this.state.address) : ''
+  }
+
+  /** chain id related */
+  private setChainId(rpcChainId: string) {
+    const { onChainChange } = this.props
+    const chainId = getChainId(rpcChainId)
+    onChainChange(chainId)
+    this.setState({ chainId })
+    return this.validateCurrentChain()
+  }
+
 
   private validateCurrentChain () {
     const { supportedChains } = this.props
@@ -201,6 +189,30 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return isCurrentChainSupported
   }
 
+  /** Step 1 confirmed - user picked a wallet provider */
+  private setupProvider(provider: any) {
+    this.setState({ provider })
+
+    const { onAccountsChange } = this.props
+
+    return Promise.all([
+      eth_accounts(provider),
+      eth_chainId(provider)
+    ]).then(([accounts, chainId]) => {
+      if (!this.setChainId(chainId)) return
+
+      const address = accounts[0]
+
+      this.setState({ provider, address })
+
+      const onChainIdChanged = (chainId: string) => this.setChainId(chainId)
+
+      provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+      provider.on(CHAIN_CHANGED, onChainIdChanged)
+    })
+  }
+
+  /** Step 2/3 detection */
   private async fetchSelectiveDisclosureRequest () {
     const { sdr, dataVault } = this.state
     const did = this.did()
@@ -225,10 +237,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return data
   }
 
+  /** Step 2 */
   private onConfirmSelectiveDisclosure (sd: SD) {
     this.setState({ sd, currentStep: 'Step3' })
   }
 
+  /** Step 3 */
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
     const { provider, challenge, address, sd } = this.state
