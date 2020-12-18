@@ -3,11 +3,7 @@ import React from 'react'
 import { Button } from '../../ui/shared/Button'
 import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography'
 import { NarrowBox } from '../../ui/shared/Box'
-
-export interface SDR {
-  credentials: string[]
-  claims: string[]
-}
+import { SDR } from '../../lib/sdr'
 
 interface SelectiveDisclosureRequestProps {
   sdr: SDR

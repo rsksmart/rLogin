@@ -13,6 +13,8 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { getDID, getChainName, getChainId } from './adapters'
 import { eth_accounts, eth_chainId } from './lib/provider'
 import { requestSignup } from './lib/did-auth'
+import { createDataVault } from './lib/data-vault'
+import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -185,12 +187,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
       return onConnect(provider)
     } else {
       // request schema to back end
-      return requestSignup(backendUrl!, this.did(), address!, provider).then(({ challenge, sdr, dataVault}) => {
+      return requestSignup(backendUrl!, this.did(), address!, provider).then(({ challenge, sdr }) => {
         this.setState({
           challenge,
           sdr,
           sd: undefined,
-          dataVault,
           currentStep: sdr ? 'Step2' : 'Step3'
         })
       })
@@ -199,27 +200,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   /** Step 2  */
   private async fetchSelectiveDisclosureRequest () {
-    const { sdr, dataVault } = this.state
+    const { provider, address, sdr } = this.state
     const did = this.did()
 
-    const data: Data = {
-      credentials: {},
-      claims: {}
-    }
+    // TODO: this dependency should be taken as parameter
+    // if (!dataVaultOptions) throw new Error('Invalid setup')
+    const dataVault = createDataVault(provider, address!, did)
 
-    const fillDataField = async (field: 'credentials' | 'claims', keyAdapter: (key: string) => string) => {
-      for (const credential of sdr![field]) {
-        const key = keyAdapter(credential)
-        // TODO: add get many on Data Vault
-        data[field][credential] = await dataVault!.get({ did, key })
-          .then(contents => contents.map(({ content }) => content))
-      }
-    }
-
-    await fillDataField('credentials', (credential: string) => `${credential}VerifiableCredential`)
-    await fillDataField('claims', (claim: string) => `DD_${claim.toUpperCase()}`)
-
-    return data
+    return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
   }
 
   /** Step 2 */

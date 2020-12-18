@@ -8,17 +8,13 @@ export const requestSignup = async (backendUrl: string, did: string, address: st
 
   if (sdr) { // schema has selective disclosure request, permissioned app flavor
     const verifiedSdr = await verifyDidJwt(sdr)
-    // TODO: this dependency should be taken as parameter
-    // if (!dataVaultOptions) throw new Error('Invalid setup')
-    const dataVault = createDataVault(provider, did, address)
 
     return {
       challenge,
       sdr: {
         credentials: verifiedSdr.payload.credentials,
         claims: verifiedSdr.payload.claims
-      },
-      dataVault
+      }
     }
   } else { // open app flavor
     return { challenge }

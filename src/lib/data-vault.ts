@@ -8,3 +8,6 @@ export const createDataVault = (provider: EIP1193Provider, did: string, address:
   did,
   rpcPersonalSign: (data: string) => provider.request({ method: 'personal_sign', params: [address, data] })
 })
+
+export const getContentsFromDataVault = (dataVault: DataVault, did: string, key: string) =>dataVault!.get({ did, key })
+  .then(contents => contents.map(({ content }) => content))

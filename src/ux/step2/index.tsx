@@ -1,7 +1,8 @@
 // eslint-disable-next-line
 import React, { useState } from 'react'
-import { SelectiveDisclosureRequest, SDR } from './SelectiveDisclosureRequest'
+import { SelectiveDisclosureRequest } from './SelectiveDisclosureRequest'
 import { SelectiveDisclosureResponse, SD, Data } from './SelectiveDisclosureResponse'
+import { SDR } from '../../lib/sdr'
 
 interface Step2Props {
   sdr: {
