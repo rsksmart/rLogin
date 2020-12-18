@@ -4,7 +4,7 @@ interface RequestArguments {
   readonly params?: readonly unknown[] | object;
 }
 
-interface EIP1193Provider {
+export interface EIP1193Provider {
   request<T = unknown>(args: RequestArguments): Promise<T>
 }
 

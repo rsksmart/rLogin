@@ -11,8 +11,8 @@ import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
 import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { getDID, getChainName, getChainId } from './adapters'
-import { verifyDidJwt } from './jwt'
 import { eth_accounts, eth_chainId } from './lib/provider'
+import { requestSignup } from './lib/did-auth'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -80,55 +80,20 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, backendUrl /*, dataVaultOptions */ } = props
-    const { address } = this.state
+    const { providerController, onError } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setupProvider(provider).then(() => {
-        // if no back end, decentralized flavor
-        if (!backendUrl) {
-          return onConnect(provider)
-        } else {
-          const did = this.did()
-          // request schema to back end
-          axios.get(backendUrl + `/request-signup/${did}`).then(({ data: { challenge, sdr } }) => {
-            this.setState({ challenge })
-
-            if (sdr) { // schema has selective disclosure request, permissioned app flavor
-              verifyDidJwt(sdr).then(verifiedSdr => {
-                // TODO: this dependency should be taken as parameter
-                // if (!dataVaultOptions) throw new Error('Invalid setup')
-                const dataVault = new DataVault({
-                  serviceUrl: 'https://identity.staging.rifcomputing.net',
-                  serviceDid: 'did:ethr:rsk:testnet:0x285B30492a3F444d78f75261A35cB292Fc8F41A6',
-                  did,
-                  rpcPersonalSign: (data: string) => provider.request({ method: 'personal_sign', params: [address, data] })
-                })
-
-                this.setState({
-                  sdr: {
-                    credentials: verifiedSdr.payload.credentials,
-                    claims: verifiedSdr.payload.claims
-                  },
-                  currentStep: 'Step2',
-                  dataVault
-                })
-              })
-            } else { // open app flavor
-              this.setState({ sdr: undefined, sd: undefined, currentStep: 'Step3' })
-            }
-          })
-        }
-      })
+      this.setupProvider(provider).then(() => this.detectFlavor())
     })
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
 
-    this.onConfirmAuth = this.onConfirmAuth.bind(this)
-    this.setLightboxRef = this.setLightboxRef.bind(this)
     this.did = this.did.bind(this)
+    this.setLightboxRef = this.setLightboxRef.bind(this)
+
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
+    this.onConfirmAuth = this.onConfirmAuth.bind(this)
   }
 
   public state: IModalState = {
@@ -212,7 +177,27 @@ export class Core extends React.Component<IModalProps, IModalState> {
     })
   }
 
-  /** Step 2/3 detection */
+  private detectFlavor() {
+    const { backendUrl, onConnect } = this.props
+    const { provider, address } = this.state
+
+    if (!backendUrl) {
+      return onConnect(provider)
+    } else {
+      // request schema to back end
+      return requestSignup(backendUrl!, this.did(), address!, provider).then(({ challenge, sdr, dataVault}) => {
+        this.setState({
+          challenge,
+          sdr,
+          sd: undefined,
+          dataVault,
+          currentStep: sdr ? 'Step2' : 'Step3'
+        })
+      })
+    }
+  }
+
+  /** Step 2  */
   private async fetchSelectiveDisclosureRequest () {
     const { sdr, dataVault } = this.state
     const did = this.did()
