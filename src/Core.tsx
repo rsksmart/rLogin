@@ -87,9 +87,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
       Promise.all([
         provider.request({ method: 'eth_accounts' }),
         provider.request({ method: 'eth_chainId' })
-      ]).then(([accounts, _chainId]) => {
-        const chainId = getChainId(_chainId)
-        this.setState({ chainId })
+      ]).then(([accounts, chainId]) => {
+        this.setChainId(chainId)
 
         if (!this.validateCurrentChain()) return
 
@@ -98,12 +97,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
         this.setState({ provider, address })
 
         provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-        provider.on(CHAIN_CHANGED, (_chainId: string) => {
-          const chainId = getChainId(_chainId)
-
-          this.setState({ chainId })
-
-          onChainChange(chainId)
+        provider.on(CHAIN_CHANGED, (chainId: string) => {
+          this.setChainId(chainId)
 
           this.validateCurrentChain()
         })
@@ -152,6 +147,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.did = this.did.bind(this)
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
+  }
+
+  private setChainId(rpcChainId: string) {
+    const { onChainChange } = this.props
+    const chainId = getChainId(rpcChainId)
+    onChainChange(chainId)
+    this.setState({ chainId })
   }
 
   public lightboxRef?: HTMLDivElement | null;
