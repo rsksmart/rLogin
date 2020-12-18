@@ -8,5 +8,6 @@ export interface EIP1193Provider {
   request<T = unknown>(args: RequestArguments): Promise<T>
 }
 
-export const eth_accounts = (provider: EIP1193Provider) => provider.request<string[]>({ method: 'eth_accounts' })
-export const eth_chainId = (provider: EIP1193Provider) => provider.request<string>({ method: 'eth_chainId' })
+export const ethAccounts = (provider: EIP1193Provider) => provider.request<string[]>({ method: 'eth_accounts' })
+export const ethChainId = (provider: EIP1193Provider) => provider.request<string>({ method: 'eth_chainId' })
+export const personalSign = (provider: EIP1193Provider, address: string, data: string) => provider.request({ method: 'personal_sign', params: [data, address] })

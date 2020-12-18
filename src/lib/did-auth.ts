@@ -1,13 +1,14 @@
 import axios from 'axios'
-import { EIP1193Provider } from './provider'
+import { EIP1193Provider, personalSign } from './provider'
 import { verifyDidJwt } from './jwt'
 import { SD } from './sdr'
+
 import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from '../constants'
 
-export const requestSignup = async (backendUrl: string, did: string, address: string, provider: EIP1193Provider) => {
+export const requestSignup = async (backendUrl: string, did: string) => {
   const { data: { challenge, sdr } } = await axios.get(backendUrl + `/request-signup/${did}`)
 
-  if (sdr) { // schema has selective disclosure request, permissioned app flavor
+  if (sdr) {
     const verifiedSdr = await verifyDidJwt(sdr)
 
     return {
@@ -17,9 +18,15 @@ export const requestSignup = async (backendUrl: string, did: string, address: st
         claims: verifiedSdr.payload.claims
       }
     }
-  } else { // open app flavor
+  } else {
     return { challenge }
   }
+}
+
+const buildMessage = (backendUrl: string, challenge: string) => `Login to ${backendUrl}\nVerification code: ${challenge}`
+const storeAuthData = ({ data }: { data: { refreshToken: string, accessToken: string } }) => {
+  localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
+  localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
 }
 
 export const confirmAuth = (
@@ -30,10 +37,7 @@ export const confirmAuth = (
   challenge: string,
   onConnect: (provider: any) => Promise<void>,
   sd?: SD
-) => provider.request({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
+) => personalSign(provider, address, buildMessage(backendUrl, challenge))
   .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did, sd } }))
-  .then(({ data }: { data: { refreshToken: string, accessToken: string } }) => {
-    localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
-    localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
-  })
+  .then(storeAuthData)
   .then(() => onConnect(provider))

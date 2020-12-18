@@ -1,17 +1,18 @@
 // eslint-disable-next-line
 import * as React from 'react'
-import axios from 'axios'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import DataVault from '@rsksmart/ipfs-cpinner-client'
-import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
+
 import { WalletProviders } from './ux/step1'
 import { SelectiveDisclosure, SDR, SD } from './ux/step2'
 import { ConfirmSelectiveDisclosure } from './ux/step3'
-import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
+
 import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
+
+import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainName, getChainId } from './adapters'
-import { eth_accounts, eth_chainId } from './lib/provider'
+import { ethAccounts, ethChainId } from './lib/provider'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
@@ -128,14 +129,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /** chain id related */
-  private setChainId(rpcChainId: string) {
+  private setChainId (rpcChainId: string) {
     const { onChainChange } = this.props
     const chainId = getChainId(rpcChainId)
     onChainChange(chainId)
     this.setState({ chainId })
     return this.validateCurrentChain()
   }
-
 
   private validateCurrentChain () {
     const { supportedChains } = this.props
@@ -157,14 +157,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /** Step 1 confirmed - user picked a wallet provider */
-  private setupProvider(provider: any) {
+  private setupProvider (provider: any) {
     this.setState({ provider })
 
     const { onAccountsChange } = this.props
 
     return Promise.all([
-      eth_accounts(provider),
-      eth_chainId(provider)
+      ethAccounts(provider),
+      ethChainId(provider)
     ]).then(([accounts, chainId]) => {
       if (!this.setChainId(chainId)) return
 
@@ -179,20 +179,21 @@ export class Core extends React.Component<IModalProps, IModalState> {
     })
   }
 
-  private detectFlavor() {
+  private detectFlavor () {
     const { backendUrl, onConnect } = this.props
-    const { provider, address } = this.state
+    const { provider } = this.state
 
     if (!backendUrl) {
       return onConnect(provider)
     } else {
       // request schema to back end
-      return requestSignup(backendUrl!, this.did(), address!, provider).then(({ challenge, sdr }) => {
+      return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
         this.setState({
           challenge,
           sdr,
           sd: undefined,
           currentStep: sdr ? 'Step2' : 'Step3'
+          // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
         })
       })
     }
