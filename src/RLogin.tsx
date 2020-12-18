@@ -14,7 +14,7 @@ import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGE
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
-import { Core } from './components'
+import { Core } from './Core'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx

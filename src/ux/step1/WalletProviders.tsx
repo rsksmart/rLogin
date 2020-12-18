@@ -3,7 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Provider } from './Provider'
 import { IProviderUserOptions } from 'web3modal'
-import { Header2, Paragraph } from '../shared/Typography'
+import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
 
 interface IWalletProvidersProps {

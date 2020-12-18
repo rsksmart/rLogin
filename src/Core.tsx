@@ -2,13 +2,13 @@
 import * as React from 'react'
 import axios from 'axios'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from '../constants/events'
-import { WalletProviders } from './step1'
-import { ConfirmSelectiveDisclosure } from './step3'
-import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from '../constants'
-import { Modal } from './modal'
-import { ErrorMessage } from './shared/ErrorMessage'
-import { getDID, getChainName } from '../adapters'
+import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
+import { WalletProviders } from './ux/step1'
+import { ConfirmSelectiveDisclosure } from './ux/step3'
+import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
+import { Modal } from './ui/modal'
+import { ErrorMessage } from './ui/shared/ErrorMessage'
+import { getDID, getChainName, getChainId } from './adapters'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -73,22 +73,22 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState({ provider })
 
       Promise.all([
-        this.providerRPC({ method: 'eth_accounts' }),
-        this.providerRPC({ method: 'net_version' })
-      ]).then(([accounts, netVersion]) => {
-        const chainId = parseInt(netVersion as string)
+        provider.request({ method: 'eth_accounts' }),
+        provider.request({ method: 'eth_chainId' })
+      ]).then(([accounts, _chainId]) => {
+        const chainId = getChainId(_chainId)
         this.setState({ chainId })
 
         if (!this.validateCurrentChain()) return
 
-        const address = provider.selectedAddress || (accounts as string[])[0]
-        const did = getDID(chainId, address)
+        const address = (accounts as string[])[0]
 
         this.setState({ provider, address })
 
         provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-        provider.on(CHAIN_CHANGED, (_chainId: number | string) => {
-          const chainId = typeof _chainId === 'number' ? _chainId : parseInt(_chainId)
+        provider.on(CHAIN_CHANGED, (_chainId: string) => {
+          const chainId = getChainId(_chainId)
+
           this.setState({ chainId })
 
           onChainChange(chainId)
@@ -100,6 +100,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         if (!backendUrl) {
           return onConnect(provider)
         } else {
+          const did = getDID(chainId, address)
           // request schema to back end
           axios.get(backendUrl + `/request-signup/${did}`).then(({ data: { challenge, sdr } }) => {
             if (sdr) { // schema has selective disclosure request, permissioned app flavor
@@ -142,17 +143,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
-  private providerRPC (args: {
-    readonly method: string;
-    readonly params?: readonly unknown[] | object;
-  }): Promise<unknown> {
-    const { provider } = this.state
-
-    // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
-    if (provider.isNiftyWallet) return provider.send(args.method, args.params)
-    return provider.request(args)
-  }
-
   private validateCurrentChain () {
     const { supportedChains } = this.props
     const { chainId, provider } = this.state
@@ -178,7 +168,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     const did = getDID(chainId!, address!)
 
-    this.providerRPC({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
+    provider.request({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
       .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did } }))
       .then(({ data }: { data: { refreshToken: string, accessToken: string } }) => {
         localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
