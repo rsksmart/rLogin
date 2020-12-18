@@ -12,6 +12,7 @@ import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { getDID, getChainName, getChainId } from './adapters'
 import { verifyDidJwt } from './jwt'
+import { eth_accounts, eth_chainId } from './lib/provider'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -85,23 +86,19 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState({ provider })
 
       Promise.all([
-        provider.request({ method: 'eth_accounts' }),
-        provider.request({ method: 'eth_chainId' })
+        eth_accounts(provider),
+        eth_chainId(provider)
       ]).then(([accounts, chainId]) => {
-        this.setChainId(chainId)
+        if (!this.setChainId(chainId)) return
 
-        if (!this.validateCurrentChain()) return
-
-        const address = (accounts as string[])[0]
+        const address = accounts[0]
 
         this.setState({ provider, address })
 
-        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-        provider.on(CHAIN_CHANGED, (chainId: string) => {
-          this.setChainId(chainId)
+        const onChainIdChanged = (chainId: string) => this.setChainId(chainId)
 
-          this.validateCurrentChain()
-        })
+        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+        provider.on(CHAIN_CHANGED, onChainIdChanged)
 
         // if no back end, decentralized flavor
         if (!backendUrl) {
@@ -154,6 +151,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const chainId = getChainId(rpcChainId)
     onChainChange(chainId)
     this.setState({ chainId })
+    return this.validateCurrentChain()
   }
 
   public lightboxRef?: HTMLDivElement | null;
