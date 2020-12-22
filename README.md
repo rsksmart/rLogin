@@ -18,6 +18,9 @@
     <a href="https://lgtm.com/projects/g/rsksmart/rLogin/context:javascript">
       <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/rLogin">
     </a>
+    <a href="https://codecov.io/gh/rsksmart/rLogin">
+      <img src="https://codecov.io/gh/rsksmart/rLogin/branch/master/graph/badge.svg?token=0Z3R6G9QFE"/>
+    </a>
 </p>
 
 rLogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information with their permission.
