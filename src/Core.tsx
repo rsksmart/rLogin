@@ -1,14 +1,21 @@
 // eslint-disable-next-line
 import * as React from 'react'
-import axios from 'axios'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
+import DataVault from '@rsksmart/ipfs-cpinner-client'
+
 import { WalletProviders } from './ux/step1'
+import { SelectiveDisclosure, SDR, SD } from './ux/step2'
 import { ConfirmSelectiveDisclosure } from './ux/step3'
-import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from './constants'
+
 import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
+
+import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainName, getChainId } from './adapters'
+import { ethAccounts, ethChainId } from './lib/provider'
+import { confirmAuth, requestSignup } from './lib/did-auth'
+import { createDataVault } from './lib/data-vault'
+import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -23,6 +30,13 @@ declare global {
   }
 }
 
+export interface DataVaultOptions {
+  [id: string]: {
+    package: any
+    options?: any
+  }
+}
+
 interface IModalProps {
   userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
@@ -34,6 +48,7 @@ interface IModalProps {
   onChainChange: (chainId : string | number) => void
   backendUrl?: string
   supportedChains?: number[]
+  // dataVaultOptions?: DataVaultOptions
 }
 
 type Step = 'Step1' | 'Step2' | 'Step3' | 'error'
@@ -48,12 +63,13 @@ interface IModalState {
   currentStep: Step
   lightboxOffset: number
   provider?: any
-  sdr?: any // TBD
-  sd?: any // TBD
-  challenge?: number
+  sdr?: SDR
+  sd?: SD
+  challenge?: string
   address?: string
   chainId?: number
   errorReason?: ErrorDetails
+  dataVault?: DataVault
 }
 
 const INITIAL_STATE: IModalState = {
@@ -67,64 +83,28 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
-    const { providerController, onConnect, onError, onAccountsChange, onChainChange, backendUrl } = props
+    const { providerController, onError } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setState({ provider })
-
-      Promise.all([
-        provider.request({ method: 'eth_accounts' }),
-        provider.request({ method: 'eth_chainId' })
-      ]).then(([accounts, _chainId]) => {
-        const chainId = getChainId(_chainId)
-        this.setState({ chainId })
-
-        if (!this.validateCurrentChain()) return
-
-        const address = (accounts as string[])[0]
-
-        this.setState({ provider, address })
-
-        provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-        provider.on(CHAIN_CHANGED, (_chainId: string) => {
-          const chainId = getChainId(_chainId)
-
-          this.setState({ chainId })
-
-          onChainChange(chainId)
-
-          this.validateCurrentChain()
-        })
-
-        // if no back end, decentralized flavor
-        if (!backendUrl) {
-          return onConnect(provider)
-        } else {
-          const did = getDID(chainId, address)
-          // request schema to back end
-          axios.get(backendUrl + `/request-signup/${did}`).then(({ data: { challenge, sdr } }) => {
-            if (sdr) { // schema has selective disclosure request, permissioned app flavor
-              this.setState({ sdr, currentStep: 'Step2' })
-            } else { // open app flavor
-              this.setState({ sdr: null, sd: null, currentStep: 'Step3', challenge })
-            }
-          })
-        }
-      })
+      this.setupProvider(provider).then(() => this.detectFlavor())
     })
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
 
-    this.onConfirmAuth = this.onConfirmAuth.bind(this)
+    this.did = this.did.bind(this)
     this.setLightboxRef = this.setLightboxRef.bind(this)
-  }
 
-  public lightboxRef?: HTMLDivElement | null;
-  public mainModalCard?: HTMLDivElement | null;
+    this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
+    this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
+    this.onConfirmAuth = this.onConfirmAuth.bind(this)
+  }
 
   public state: IModalState = {
     ...INITIAL_STATE
   };
+
+  public lightboxRef?: HTMLDivElement | null;
+  public mainModalCard?: HTMLDivElement | null;
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
@@ -141,6 +121,20 @@ export class Core extends React.Component<IModalProps, IModalState> {
         this.setState({ lightboxOffset })
       }
     }
+  }
+
+  /** accounts related */
+  private did () {
+    return this.state.chainId && this.state.address ? getDID(this.state.chainId, this.state.address) : ''
+  }
+
+  /** chain id related */
+  private setChainId (rpcChainId: string) {
+    const { onChainChange } = this.props
+    const chainId = getChainId(rpcChainId)
+    onChainChange(chainId)
+    this.setState({ chainId })
+    return this.validateCurrentChain()
   }
 
   private validateCurrentChain () {
@@ -162,19 +156,73 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return isCurrentChainSupported
   }
 
+  /** Step 1 confirmed - user picked a wallet provider */
+  private setupProvider (provider: any) {
+    this.setState({ provider })
+
+    const { onAccountsChange } = this.props
+
+    return Promise.all([
+      ethAccounts(provider),
+      ethChainId(provider)
+    ]).then(([accounts, chainId]) => {
+      if (!this.setChainId(chainId)) return
+
+      const address = accounts[0]
+
+      this.setState({ provider, address })
+
+      const onChainIdChanged = (chainId: string) => this.setChainId(chainId)
+
+      provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+      provider.on(CHAIN_CHANGED, onChainIdChanged)
+    })
+  }
+
+  private detectFlavor () {
+    const { backendUrl, onConnect } = this.props
+    const { provider } = this.state
+
+    if (!backendUrl) {
+      return onConnect(provider)
+    } else {
+      // request schema to back end
+      return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
+        this.setState({
+          challenge,
+          sdr,
+          sd: undefined,
+          currentStep: sdr ? 'Step2' : 'Step3'
+          // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
+        })
+      })
+    }
+  }
+
+  /** Step 2  */
+  private async fetchSelectiveDisclosureRequest () {
+    const { provider, address, sdr } = this.state
+    const did = this.did()
+
+    // TODO: this dependency should be taken as parameter
+    // if (!dataVaultOptions) throw new Error('Invalid setup')
+    const dataVault = createDataVault(provider, address!, did)
+
+    return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
+  }
+
+  private onConfirmSelectiveDisclosure (sd: SD) {
+    this.setState({ sd, currentStep: 'Step3' })
+  }
+
+  /** Step 3 */
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, chainId, address } = this.state
+    const { provider, challenge, address, sd } = this.state
 
-    const did = getDID(chainId!, address!)
+    const did = this.did()
 
-    provider.request({ method: 'personal_sign', params: [`Login to ${backendUrl}\nVerification code: ${challenge}`, address] })
-      .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did } }))
-      .then(({ data }: { data: { refreshToken: string, accessToken: string } }) => {
-        localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
-        localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
-      })
-      .then(() => onConnect(provider))
+    confirmAuth(provider, address!, backendUrl!, did, challenge!, onConnect, sd)
   }
 
   private setLightboxRef (c: HTMLDivElement | null) {
@@ -183,8 +231,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
-
-    const { onClose, userProviders } = this.props
+    const { onClose, userProviders, backendUrl } = this.props
+    const did = this.did()
 
     return <Modal
       lightboxOffset={lightboxOffset}
@@ -194,8 +242,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
-      {currentStep === 'Step2' && <p>Access to Data Vault not supported yet<br />SDR: {sdr && sdr.toString()}</p>}
-      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? getDID(chainId, address) : ''} sd={sd} onConfirm={this.onConfirmAuth} />}
+      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
+      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
     </Modal>
   }

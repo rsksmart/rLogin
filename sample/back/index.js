@@ -15,7 +15,15 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-const authMiddleware = didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret })(app)
+const permissioned = process.argv.length > 2 && process.argv[2] === 'permissioned'
+
+const authMiddleware = !permissioned
+  ? didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret })(app)
+  : didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret,
+    requiredCredentials: ['Email'],
+    requiredClaims: ['Name'],
+    signupBusinessLogic: (payload) => { console.log(payload); return true; }
+  })(app)
 
 app.use(authMiddleware)
 
