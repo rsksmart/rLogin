@@ -9,6 +9,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:ci": "jest --coverage --ci",
     "lint": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts",
     "lint:fix": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts --fix",
     "build": "webpack --env=production",
