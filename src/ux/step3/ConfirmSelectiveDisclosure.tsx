@@ -12,7 +12,8 @@ interface ConfirmSelectiveDisclosureProps {
 }
 
 export function ConfirmSelectiveDisclosure ({ did, sd, onConfirm }: ConfirmSelectiveDisclosureProps) {
-  const data = Object.assign({}, sd.credentials, sd.claims)
+  const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
+
   return <>
     <Header2>Use this Identity?</Header2>
     <Paragraph>{did}</Paragraph>
