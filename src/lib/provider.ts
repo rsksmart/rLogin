@@ -5,7 +5,7 @@ interface RequestArguments {
 }
 
 export interface EIP1193Provider {
-  request<T = unknown>(args: RequestArguments): Promise<T>
+  request<T = string>(args: RequestArguments): Promise<T>
 }
 
 export const ethAccounts = (provider: EIP1193Provider) => provider.request<string[]>({ method: 'eth_accounts' })
