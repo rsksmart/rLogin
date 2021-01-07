@@ -1,13 +1,19 @@
 import { EIP1193Provider } from './provider'
 
-import DataVault from '@rsksmart/ipfs-cpinner-client'
+import DataVaultWebClient, { AuthManager, EncryptionManager } from '@rsksmart/ipfs-cpinner-client'
 
-export const createDataVault = (provider: EIP1193Provider, did: string, address: string) => new DataVault({
-  serviceUrl: 'https://identity.staging.rifcomputing.net',
-  serviceDid: 'did:ethr:rsk:testnet:0x285B30492a3F444d78f75261A35cB292Fc8F41A6',
-  did,
-  rpcPersonalSign: (data: string) => provider.request({ method: 'personal_sign', params: [address, data] })
-})
+export const createDataVault = (provider: EIP1193Provider, did: string, address: string) => {
+  const serviceUrl = 'https://identity.staging.rifcomputing.net'
+  const personalSign = (data: string) => provider.request({ method: 'personal_sign', params: [address, data] })
+  const decrypt = (hexCypher: string) => provider.request({ method: 'eth_decrypt', params: [hexCypher, address] })
+  const getEncryptionPublicKey = () => provider.request({ method: 'eth_getEncryptionPublicKey', params: [address] })
 
-export const getContentsFromDataVault = (dataVault: DataVault, did: string, key: string) => dataVault!.get({ did, key })
+  return new DataVaultWebClient({
+    serviceUrl,
+    authManager: new AuthManager({ did, serviceUrl, personalSign }),
+    encryptionManager: new EncryptionManager({ getEncryptionPublicKey, decrypt })
+  })
+}
+
+export const getContentsFromDataVault = (dataVault: DataVaultWebClient, did: string, key: string) => dataVault!.get({ key })
   .then(contents => contents.map(({ content }) => content))
