@@ -6,6 +6,8 @@ interface RequestArguments {
 
 export interface EIP1193Provider {
   request<T = string>(args: RequestArguments): Promise<T>
+  isMetaMask: boolean | null
+  isNifty: boolean | null
 }
 
 export const ethAccounts = (provider: EIP1193Provider) => provider.request<string[]>({ method: 'eth_accounts' })
