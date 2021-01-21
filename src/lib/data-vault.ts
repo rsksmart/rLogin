@@ -1,7 +1,7 @@
 import { EIP1193Provider } from './provider'
 
 import DataVaultWebClient, { AuthManager, EncryptionManager } from '@rsksmart/ipfs-cpinner-client'
-import { DECRYPT_ERROR } from '../constants/events'
+import { DECRYPT_ERROR } from '../constants'
 
 export const createDataVault = (provider: EIP1193Provider, did: string, address: string) => {
   const serviceUrl = 'https://identity.staging.rifcomputing.net/v0'
