@@ -36,6 +36,7 @@ rLogin is a tool that allows the front end developer to connect their user with 
     - Browser wallets - wallets that are installed as an extension of the web browser
         - [Metamask wallet](https://metamask.io/)
         - [Nifty wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid)
+        - [Liquality wallet](https://liquality.io/atomic-swap-wallet.html)
     - Mobile wallets - wallets that are installed in mobile phone and support [Wallet Connect](https://walletconnect.org/)
         - [rWallet](https://developers.rsk.co/wallet/rwallet/)
         - [Trust wallet](https://trustwallet.com/)
