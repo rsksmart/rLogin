@@ -22,7 +22,7 @@ describe('Component: RLogoutButton', () => {
     const setItem = (key: string, value: string) => localStorage.setItem(key, value)
 
     beforeEach(() => {
-      global.localStorage = LocalStorageMock()
+      global.localStorage = LocalStorageMock
       localStorage.clear()
 
       setItem('DAPP_CUSTOM', 'customData')
