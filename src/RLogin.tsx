@@ -99,13 +99,13 @@ export class RLogin {
 
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
-  private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
+  private onConnect = (provider: any, disconnect: () => void) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
-    this.on(CONNECT_EVENT, provider => resolve(provider))
+    this.on(CONNECT_EVENT, response => resolve(response))
     this.on(ERROR_EVENT, error => reject(error))
     this.on(CLOSE_EVENT, () => reject('Modal closed by user'))
   }

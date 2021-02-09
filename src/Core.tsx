@@ -16,6 +16,7 @@ import { ethAccounts, ethChainId } from './lib/provider'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN } from './constants'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -42,7 +43,7 @@ interface IModalProps {
   onClose: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -97,6 +98,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
+    this.disconnect = this.disconnect.bind(this)
   }
 
   public state: IModalState = {
@@ -184,7 +186,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { provider } = this.state
 
     if (!backendUrl) {
-      return onConnect(provider)
+      return onConnect(provider, this.disconnect)
     } else {
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
@@ -222,11 +224,32 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     const did = this.did()
 
-    confirmAuth(provider, address!, backendUrl!, did, challenge!, onConnect, sd)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect)
+    confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
   }
 
   private setLightboxRef (c: HTMLDivElement | null) {
     this.lightboxRef = c
+  }
+
+  /**
+   * Handle disconnect and cleanup state
+   */
+  public disconnect (): void {
+    const { providerController } = this.props
+
+    localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
+    localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
+    localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
+    localStorage.removeItem('walletconnect')
+    Object.keys(localStorage).map((key: string) => {
+      if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
+        localStorage.removeItem(key)
+      }
+    })
+
+    providerController.clearCachedProvider()
+    this.setState(INITIAL_STATE)
   }
 
   public render = () => {
