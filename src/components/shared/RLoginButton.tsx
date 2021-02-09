@@ -3,9 +3,10 @@ import React, { ReactNode } from 'react'
 interface RLoginButtonInterface {
   children: ReactNode
   onClick?: () => void
+  disabled?: boolean
 }
 
-export const RLoginButton: React.FC<RLoginButtonInterface> = ({ children, onClick }) => {
+export const RLoginButton: React.FC<RLoginButtonInterface> = ({ children, disabled, onClick }) => {
   const styles = {
     display: 'inline-block',
     margin: '10px',
@@ -20,11 +21,19 @@ export const RLoginButton: React.FC<RLoginButtonInterface> = ({ children, onClic
     lineHeight: '100%'
   }
 
+  const stylesDisabled = {
+    ...styles,
+    backgroundColor: '#EFEFEF',
+    cursor: 'auto',
+    color: '#CCCCCC'
+  }
+
   return (
     <button
       onClick={onClick}
       className="rlogin-button"
-      style={styles}
+      style={disabled ? stylesDisabled : styles}
+      disabled={disabled || false}
     >{children}</button>
   )
 }
