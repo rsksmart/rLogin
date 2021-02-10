@@ -21,15 +21,17 @@ interface DataListProps {
 const DataList = ({ dataField, areCredentials, select }: DataListProps) => Object.keys(dataField).length ? <div>
   {Object.keys(dataField).map((key) => <React.Fragment key={key}>
     <LeftBigParagraph>{key}</LeftBigParagraph>
-    {dataField[key].map((value, i) => <React.Fragment key={i}>
-      <input type="radio" name={key} style={{ float: 'left' }} onChange={(e) => {
-        if (e.target.value) select(key, value)
-      }} />
-      <Paragraph>
-        {areCredentials ? credentialToText(key, value) : value}
-        {areCredentials && <><br/>{' (Verifiable Credential)'}</>}
-      </Paragraph>
-    </React.Fragment>)}
+    <label>
+      {dataField[key].map((value, i) => <React.Fragment key={i}>
+        <input type="radio" name={key} style={{ float: 'left' }} onChange={(e) => {
+          if (e.target.value) select(key, value)
+        }} />
+        <Paragraph>
+          {areCredentials ? credentialToText(key, value) : value}
+          {areCredentials && <><br/>{' (Verifiable Credential)'}</>}
+        </Paragraph>
+      </React.Fragment>)}
+    </label>
   </React.Fragment>)}
 </div> : <></>
 
