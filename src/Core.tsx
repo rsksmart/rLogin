@@ -43,7 +43,7 @@ interface IModalProps {
   onClose: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, dataVault?: DataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -183,10 +183,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private detectFlavor () {
     const { backendUrl, onConnect } = this.props
-    const { provider } = this.state
+    const { provider, dataVault } = this.state
 
     if (!backendUrl) {
-      return onConnect(provider, this.disconnect)
+      return onConnect(provider, this.disconnect, dataVault)
     } else {
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
@@ -210,6 +210,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     // if (!dataVaultOptions) throw new Error('Invalid setup')
     const dataVault = createDataVault(provider, did, address!)
 
+    this.setState({ dataVault })
+
     return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
   }
 
@@ -220,11 +222,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
   /** Step 3 */
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, address, sd } = this.state
+    const { provider, dataVault, challenge, address, sd } = this.state
 
     const did = this.did()
 
-    const handleConnect = (provider: any) => onConnect(provider, this.disconnect)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
   }
 
