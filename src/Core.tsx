@@ -238,10 +238,16 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public disconnect (): void {
     const { providerController } = this.props
 
+    // send disconnect method to wallet connect
+    if (this.state.provider.wc) {
+      this.state.provider.disconnect()
+      localStorage.removeItem('walletconnect')
+    }
+
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
     localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
-    localStorage.removeItem('walletconnect')
+
     Object.keys(localStorage).map((key: string) => {
       if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
         localStorage.removeItem(key)
