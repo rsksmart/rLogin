@@ -228,6 +228,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+      .catch((error: Error) =>
+        this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
+      )
   }
 
   private setLightboxRef (c: HTMLDivElement | null) {
