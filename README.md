@@ -84,8 +84,16 @@ rLogin is a tool that allows the front end developer to connect their user with 
 
     ```typescript
     const handleLogin = () => {
-        rLogin.connect().then((provider: any) => context?.setProvider(provider))
-            .catch((err: string) => console.log(err))
+        rLogin.connect()
+          .then((rLoginResponse: any) => {
+            const provider = rLoginResponse.provider;
+            const dataVault = rLoginResponse.dataVault;
+            const disconnect = rLoginResponse.disconnect;
+
+            // save the response to be used later, here we are using React context
+            context.rLoginresponse(rLoginResponse)
+          })
+          .catch((err: string) => console.log(err))
     }
     ```
     
