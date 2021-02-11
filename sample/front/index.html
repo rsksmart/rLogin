@@ -81,13 +81,13 @@
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider));
 
       // ui - display handlers
-      const setElementInnerHTML = (elementId, html) => { document.getElementById(elementId).innerHTML = html }
-      const displayAccounts = (accounts) => setElementInnerHTML('accounts', accounts.map(account => `<li>${account}</li>`))
-      const handleError = (error) => setElementInnerHTML('error', `Error: ${error.message}`)
-      const displayChainId = (chainId) => setElementInnerHTML('chain-id', parseInt(chainId))
-      const displayDisconnectError = ({ message, code, data }) => setElementInnerHTML('error', `message: ${message} - code: ${code} - data: ${data}`)
-      const displayAccessToken = (accessToken) => setElementInnerHTML('access-token', accessToken)
-      const displayRefreshToken = (refreshToken) => setElementInnerHTML('refresh-token', refreshToken)
+      const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
+      const displayAccounts = (accounts) => setElementInnerText('accounts', accounts.join(', '))
+      const handleError = (error) => setElementInnerText('error', `Error: ${error.message}`)
+      const displayChainId = (chainId) => setElementInnerText('chain-id', parseInt(chainId))
+      const displayDisconnectError = ({ message, code, data }) => setElementInnerText('error', `message: ${message} - code: ${code} - data: ${data}`)
+      const displayAccessToken = (accessToken) => setElementInnerText('access-token', accessToken)
+      const displayRefreshToken = (refreshToken) => setElementInnerText('refresh-token', refreshToken)
 
       function providerRPC (provider, args) {
         // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
@@ -105,14 +105,15 @@
 
       function handleProvider(rLoginResponse) {
         const provider = rLoginResponse.provider
-        document.getElementById('connected').innerHTML = 'Yes'
+        setElementInnerText('connected', 'Yes')
 
         document.getElementById('login').setAttribute('disabled', true)
         document.getElementById('loginMetamask').setAttribute('disabled', true)
         document.getElementById('reset').removeAttribute('disabled')
 
         // handle eip-1193
-        provider.on(window.RLogin.ACCOUNTS_CHANGED, displayAccounts)
+        provider.on(window.RLogin.ACCOUNTS_CHANGED, (response) =>
+          (response.length !== 0) ? displayAccounts(response) : disconnect())
         provider.on(window.RLogin.CHAIN_CHANGED, displayChainId)
 
         // query wallet provider info
@@ -133,7 +134,7 @@
           getAccounts(provider)
             .then(accounts => accounts[0])
             .then(from => sendTransaction(provider, [{ from, to: from, value: '100000' }]))
-            .then(txHash => setElementInnerHTML('tx', txHash))
+            .then(txHash => setElementInnerText('tx', txHash))
             .catch(handleError)
         });
 
@@ -147,10 +148,10 @@
             .then(accounts => accounts[0])
             .then(from => sign(provider, [message, from]))
             .then(signature => {
-              setElementInnerHTML('signature', signature)
+              setElementInnerText('signature', signature)
               return ecRecover(provider, [message, signature])
             })
-            .then(recovery => setElementInnerHTML('recovery', recovery))
+            .then(recovery => setElementInnerText('recovery', recovery))
             .catch(handleError)
         })
 
@@ -196,10 +197,10 @@
             const typedData = typedDataByChain(chainId)
             signTypedData(provider, [from, typedData])
               .then(signature => {
-                setElementInnerHTML('typed-signature', signature)
+                setElementInnerText('typed-signature', signature)
                 return ecRecover(provider, [typedData, signature]) // THIS VERIFICATION IS ERRORED!!!
               })
-              .then(recovery => { }/*setElementInnerHTML('typed-recovery', recovery)*/)
+              .then(recovery => { }/*setElementInnerText('typed-recovery', recovery)*/)
               .catch(handleError)
           })
         })
@@ -209,17 +210,17 @@
           provider.removeAllListeners()
 
           // clean up all HTML elements (top to bottom):
-          setElementInnerHTML('error', '')
-          setElementInnerHTML('connected', '')
-          setElementInnerHTML('accounts', '')
-          setElementInnerHTML('chain-id', '')
-          setElementInnerHTML('access-token', '')
-          setElementInnerHTML('refresh-token', '')
-          setElementInnerHTML('accounts', '')
-          setElementInnerHTML('signature', '')
-          setElementInnerHTML('recovery', '')
-          setElementInnerHTML('typed-signature', '')
-          setElementInnerHTML('typed-recovery', '')
+          setElementInnerText('error', '')
+          setElementInnerText('connected', '')
+          setElementInnerText('accounts', '')
+          setElementInnerText('chain-id', '')
+          setElementInnerText('access-token', '')
+          setElementInnerText('refresh-token', '')
+          setElementInnerText('accounts', '')
+          setElementInnerText('signature', '')
+          setElementInnerText('recovery', '')
+          setElementInnerText('typed-signature', '')
+          setElementInnerText('typed-recovery', '')
 
           // reset button states:
           document.getElementById('login').removeAttribute('disabled')
