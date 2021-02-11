@@ -6,12 +6,12 @@
   </head>
   <body>
     <div style="width: 100%; height: 100%;">
-      <p id="error"></p>
       <h2>Login</h2>
       <button id="login">login with rLogin</button>
       <button id="loginMetamask">login with rLogin (defaults: Metamask)</button>
       <hr />
       <h2>Wallet provider info</h2>
+      <p id="error" style="color: red;"></p>
       <h3>Connected</h3>
       <p id="connected">No</p>
       <h3>Accounts</h3>
@@ -35,7 +35,7 @@
       <p id="typed-signature"></p>
       <p id="typed-recovery"></p>
       <hr />
-      <button id="reset">reset cache</button>
+      <button id="reset" disabled>Reset</button>
     </div>
 
     <script src="http://localhost:3005/main.js"></script>
@@ -84,7 +84,7 @@
       const setElementInnerHTML = (elementId, html) => { document.getElementById(elementId).innerHTML = html }
       const displayAccounts = (accounts) => setElementInnerHTML('accounts', accounts.map(account => `<li>${account}</li>`))
       const handleError = (error) => setElementInnerHTML('error', `Error: ${error.message}`)
-      const displayChainId = (chainId) => setElementInnerHTML('chain-id', chainId)
+      const displayChainId = (chainId) => setElementInnerHTML('chain-id', parseInt(chainId))
       const displayDisconnectError = ({ message, code, data }) => setElementInnerHTML('error', `message: ${message} - code: ${code} - data: ${data}`)
       const displayAccessToken = (accessToken) => setElementInnerHTML('access-token', accessToken)
       const displayRefreshToken = (refreshToken) => setElementInnerHTML('refresh-token', refreshToken)
@@ -103,8 +103,13 @@
       const ecRecover = (provider, params) => providerRPC(provider, { method: 'personal_ecRecover', params })
       const signTypedData = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData_v4', params })
 
-      function handleProvider(provider) {
+      function handleProvider(rLoginResponse) {
+        const provider = rLoginResponse.provider
         document.getElementById('connected').innerHTML = 'Yes'
+
+        document.getElementById('login').setAttribute('disabled', true)
+        document.getElementById('loginMetamask').setAttribute('disabled', true)
+        document.getElementById('reset').removeAttribute('disabled')
 
         // handle eip-1193
         provider.on(window.RLogin.ACCOUNTS_CHANGED, displayAccounts)
@@ -199,12 +204,34 @@
           })
         })
 
-      }
+        const disconnect = () => {
+          rLoginResponse.disconnect()
+          provider.removeAllListeners()
 
-      document.getElementById('reset').addEventListener('click', () => {
-        localStorage.removeItem('RLOGIN_AUTH_TOKEN_LOCAL_STORAGE_KEY')
-        localStorage.removeItem('walletconnect')
-      })
+          // clean up all HTML elements (top to bottom):
+          setElementInnerHTML('error', '')
+          setElementInnerHTML('connected', '')
+          setElementInnerHTML('accounts', '')
+          setElementInnerHTML('chain-id', '')
+          setElementInnerHTML('access-token', '')
+          setElementInnerHTML('refresh-token', '')
+          setElementInnerHTML('accounts', '')
+          setElementInnerHTML('signature', '')
+          setElementInnerHTML('recovery', '')
+          setElementInnerHTML('typed-signature', '')
+          setElementInnerHTML('typed-recovery', '')
+
+          // reset button states:
+          document.getElementById('login').removeAttribute('disabled')
+          document.getElementById('loginMetamask').removeAttribute('disabled')
+          document.getElementById('send-tx').setAttribute('disabled', true)
+          document.getElementById('sign').setAttribute('disabled', true)
+          document.getElementById('sign-typed-data').setAttribute('disabled', true)
+        }
+
+        provider.on('disconnect', disconnect)
+        document.getElementById('reset').addEventListener('click', disconnect)
+      }
     </script>
   </body>
 </html>
