@@ -268,10 +268,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { onClose, userProviders, backendUrl } = this.props
     const did = this.did()
 
+    const handleClose = () => {
+      this.setState({ currentStep: 'Step1' })
+      onClose()
+    }
+
     return <Modal
       lightboxOffset={lightboxOffset}
       show={show}
-      onClose={onClose}
+      onClose={handleClose}
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
