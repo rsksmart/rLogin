@@ -18,6 +18,7 @@ interface Step2Props {
 const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest, onConfirm }: Step2Props) => {
   const [sdrConfirmed, setSdrConfirmed] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [data, setData] = useState({
     credentials: {},
     claims: {}
@@ -25,18 +26,20 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
 
   const onSdrConfirm = () => {
     setError(null)
+    setIsLoading(true)
     fetchSelectiveDisclosureRequest().then(data => {
       setData(data)
       setSdrConfirmed(true)
     })
-      .catch((error: string) => setError(error))
+      .catch((error: any) => setError(error.message ? error.message : error))
+      .finally(() => setIsLoading(false))
   }
 
   return <>
     {!sdrConfirmed
-      ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
+      ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} isLoading={isLoading} />
       : <SelectiveDisclosureResponse data={data} backendUrl={backendUrl} onConfirm={onConfirm} />}
-    {error && <ErrorMessage title="Decrypt Error" description="Please log in with Metamask to decrypt your Data Vault content." />}
+    {error && <ErrorMessage title="DavaVault Error" description={error} />}
   </>
 }
 

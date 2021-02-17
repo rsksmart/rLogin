@@ -16,6 +16,7 @@ import { ethAccounts, ethChainId } from './lib/provider'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN } from './constants'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -42,7 +43,7 @@ interface IModalProps {
   onClose: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, dataVault?: DataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -97,6 +98,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
+    this.disconnect = this.disconnect.bind(this)
   }
 
   public state: IModalState = {
@@ -181,10 +183,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private detectFlavor () {
     const { backendUrl, onConnect } = this.props
-    const { provider } = this.state
+    const { provider, dataVault } = this.state
 
     if (!backendUrl) {
-      return onConnect(provider)
+      return onConnect(provider, this.disconnect, dataVault)
     } else {
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
@@ -208,6 +210,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     // if (!dataVaultOptions) throw new Error('Invalid setup')
     const dataVault = createDataVault(provider, did, address!)
 
+    this.setState({ dataVault })
+
     return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
   }
 
@@ -218,15 +222,45 @@ export class Core extends React.Component<IModalProps, IModalState> {
   /** Step 3 */
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
-    const { provider, challenge, address, sd } = this.state
+    const { provider, dataVault, challenge, address, sd } = this.state
 
     const did = this.did()
 
-    confirmAuth(provider, address!, backendUrl!, did, challenge!, onConnect, sd)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
+    confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+      .catch((error: Error) =>
+        this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
+      )
   }
 
   private setLightboxRef (c: HTMLDivElement | null) {
     this.lightboxRef = c
+  }
+
+  /**
+   * Handle disconnect and cleanup state
+   */
+  public disconnect (): void {
+    const { providerController } = this.props
+
+    // send disconnect method to wallet connect
+    if (this.state.provider.wc) {
+      this.state.provider.disconnect()
+      localStorage.removeItem('walletconnect')
+    }
+
+    localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
+    localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
+    localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
+
+    Object.keys(localStorage).map((key: string) => {
+      if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
+        localStorage.removeItem(key)
+      }
+    })
+
+    providerController.clearCachedProvider()
+    this.setState(INITIAL_STATE)
   }
 
   public render = () => {
@@ -234,10 +268,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { onClose, userProviders, backendUrl } = this.props
     const did = this.did()
 
+    const handleClose = () => {
+      this.setState({ currentStep: 'Step1' })
+      onClose()
+    }
+
     return <Modal
       lightboxOffset={lightboxOffset}
       show={show}
-      onClose={onClose}
+      onClose={handleClose}
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >

@@ -9,6 +9,7 @@ interface SelectiveDisclosureRequestProps {
   sdr: SDR
   backendUrl: string
   onConfirm: () => void
+  isLoading: boolean
 }
 
 // TODO: add optional fields to fetch
@@ -16,14 +17,14 @@ const RequestsList = ({ requests }: { requests: string[] }) => requests.length ?
   {requests.map((request, i) => <LeftBigParagraph key={i}>{request}</LeftBigParagraph>)}
 </> : <></>
 
-const SelectiveDisclosureRequest = ({ sdr: { credentials, claims }, backendUrl, onConfirm }: SelectiveDisclosureRequestProps) => <>
+const SelectiveDisclosureRequest = ({ sdr: { credentials, claims }, backendUrl, onConfirm, isLoading }: SelectiveDisclosureRequestProps) => <>
   <Header2>Would you like to give us<br />access to info in your data vault?</Header2>
   <Paragraph>Get the information you want to share with {backendUrl} from you Data Vault</Paragraph>
   <NarrowBox>
     <RequestsList requests={claims} />
     <RequestsList requests={credentials} />
   </NarrowBox>
-  <Button onClick={onConfirm}>Access Data Vault</Button>
+  <Button onClick={onConfirm} disabled={isLoading}>Access Data Vault</Button>
 </>
 
 export { RequestsList, SelectiveDisclosureRequest }

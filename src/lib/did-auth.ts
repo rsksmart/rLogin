@@ -23,7 +23,7 @@ export const requestSignup = async (backendUrl: string, did: string) => {
   }
 }
 
-const buildMessage = (backendUrl: string, challenge: string) => `Login to ${backendUrl}\nVerification code: ${challenge}`
+const buildMessage = (backendUrl: string, challenge: string) => `URL: ${backendUrl}\nVerification code: ${challenge}`
 const storeAuthData = ({ data }: { data: { refreshToken: string, accessToken: string } }) => {
   localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
   localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)

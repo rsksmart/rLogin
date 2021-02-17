@@ -4,7 +4,7 @@ import DataVaultWebClient, { AuthManager, EncryptionManager } from '@rsksmart/ip
 import { DECRYPT_ERROR } from '../constants'
 
 export const createDataVault = (provider: EIP1193Provider, did: string, address: string) => {
-  const serviceUrl = 'https://identity.staging.rifcomputing.net/v0'
+  const serviceUrl = 'https://identity.staging.rifcomputing.net'
   const personalSign = (data: string) => provider.request({ method: 'personal_sign', params: [data, address] })
 
   const decrypt = (provider.isMetaMask && !provider.isNifty)

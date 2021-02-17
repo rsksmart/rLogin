@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import React from 'react'
+import React, { useState } from 'react'
 import { SD } from '../../lib/sdr'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
@@ -12,7 +12,13 @@ interface ConfirmSelectiveDisclosureProps {
 }
 
 export function ConfirmSelectiveDisclosure ({ did, sd, onConfirm }: ConfirmSelectiveDisclosureProps) {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
+
+  const handleSubmit = () => {
+    setIsLoading(true)
+    onConfirm()
+  }
 
   return <>
     <Header2>Use this Identity?</Header2>
@@ -21,6 +27,6 @@ export function ConfirmSelectiveDisclosure ({ did, sd, onConfirm }: ConfirmSelec
       {Object.keys(sd.claims).map(key => <Paragraph key={key}>{key}: {data[key]}</Paragraph>)}
       {Object.keys(sd.credentials).map(key => <Paragraph key={key}>{credentialToText(key, data[key])}</Paragraph>)}
     </>}
-    <Button onClick={onConfirm}>Confirm Identity</Button>
+    <Button onClick={handleSubmit} disabled={isLoading}>Confirm Identity</Button>
   </>
 }
