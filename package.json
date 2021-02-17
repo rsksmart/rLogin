@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rlogin",
-  "version": "1.0.0",
+  "version": "1.0.0.beta-1",
   "description": "rLogin - the web3.0 SDK",
   "main": "dist/main.js",
   "files": [
