@@ -7,16 +7,21 @@ jobs:
       - node/install-packages
       - run:
           name: 'Test'
-          command: npm run test
+          command: npm run test:ci
       - run:
           name: 'Lint'
           command: npm run lint
       - run:
           name: 'Build'
           command: npm run build
+      - codecov/upload:
+          file: ./coverage/coverage-final.json
+      - store_artifacts:
+          path: ./dist/
 
 orbs:
   node: circleci/node@4.0.1
+  codecov: codecov/codecov@1.0.2
 
 version: 2.1
 

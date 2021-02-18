@@ -7,6 +7,7 @@ import { typeShared } from './Typography'
 interface ButtonInterface {
   onClick: () => void;
   className?: string;
+  disabled?: boolean;
 }
 
 const ButtonWrapper = styled.button`
@@ -18,15 +19,20 @@ const ButtonWrapper = styled.button`
   color: #ffffff;
   font-size: 14px;
   cursor: pointer;
-  :hover {
+  :hover:enabled {
     background: #0066CC;
-  }
+  };
+  :disabled {
+    opacity: 0.4;
+    cursor: auto;
+  };
 `
 
-export const Button: React.FC<ButtonInterface> = ({ children, className, onClick }) => (
+export const Button: React.FC<ButtonInterface> = ({ children, className, disabled, onClick }) => (
   <ButtonWrapper
     onClick={onClick}
     className={className ? `${BUTTON_CLASSNAME} ${className}` : BUTTON_CLASSNAME}
+    disabled={disabled}
   >
     {children}
   </ButtonWrapper>

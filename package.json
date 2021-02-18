@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rlogin",
-  "version": "0.1.1",
+  "version": "1.0.0-beta.1",
   "description": "rLogin - the web3.0 SDK",
   "main": "dist/main.js",
   "files": [
@@ -9,13 +9,14 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:ci": "jest --coverage --ci",
     "lint": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts",
     "lint:fix": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts --fix",
     "build": "webpack --env=production",
     "build:dev": "webpack --env=development",
     "sample:dapp": "concurrently \"npm run build:dev\" \"node sample/launcher.js\" \"serve dist -l 3005\" \"serve sample/front -l 3006\"",
-    "sample:open": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon sample/back/index.js\"",
-    "sample:permissioned": "concurrently \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon sample/back/index.js --permissioned\"",
+    "sample:open": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js\"",
+    "sample:permissioned": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js permissioned\"",
     "serve": "serve dist -l 3005",
     "prepublish": "npm run build"
   },
@@ -30,7 +31,7 @@
     "ipfs"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rsksmart/rLogin/issues"
   },
@@ -39,7 +40,7 @@
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.10.4",
-    "@rsksmart/express-did-auth": "^0.1.1-beta.2",
+    "@rsksmart/express-did-auth": "^0.1.2",
     "@types/enzyme": "^3.10.7",
     "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/jest": "^26.0.14",
@@ -53,7 +54,7 @@
     "body-parser": "^1.19.0",
     "concurrently": "^5.3.0",
     "cors": "^2.8.5",
-    "did-jwt": "^4.6.3",
+    "did-jwt": "^4.8.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.5",
     "enzyme-to-json": "^3.6.1",
@@ -80,8 +81,10 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "@rsksmart/ipfs-cpinner-client": "0.1.1-beta.9",
     "@types/styled-components": "^5.1.3",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
+    "ethr-did-resolver": "^3.0.2",
     "web3-eth-personal": "^1.3.0",
     "web3modal": "^1.9.1"
   },

@@ -24,6 +24,7 @@ export const PROVIDERS_FOOTER_TEXT_CLASSNAME = 'rlogin-footer-text'
 export const HEADER2_CLASS = 'rlogin-header2'
 export const HEADER3_CLASS = 'rlogin-header3'
 export const PARAGRAPH_CLASS = 'rlogin-paragraph'
+export const BIG_PARAGRAPH_CLASS = 'rlogin-big-paragraph'
 export const ANCHOR_CLASSNAME = 'rlogin-anchor'
 export const BUTTON_CLASSNAME = 'rlogin-button'
 

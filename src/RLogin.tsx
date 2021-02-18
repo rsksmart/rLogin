@@ -14,8 +14,9 @@ import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGE
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
-import { Core } from './Core'
+import { Core, DataVaultOptions } from './Core'
 
+import DataVault from '@rsksmart/ipfs-cpinner-client'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -31,6 +32,7 @@ const defaultOpts: IProviderControllerOptions = {
 interface RLoginOptions {
   backendUrl?: string
   supportedChains?: number[]
+  dataVaultOptions: DataVaultOptions
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -42,6 +44,7 @@ export class RLogin {
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
   private backendUrl?: string;
+  // private dataVaultOptions?: DataVaultOptions
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -65,6 +68,8 @@ export class RLogin {
     // setup modal
     this.userProviders = this.providerController.getUserOptions()
     this.renderModal()
+
+    // this.dataVaultOptions = opts && opts.dataVaultOptions
   }
 
   get cachedProvider (): string {
@@ -95,13 +100,13 @@ export class RLogin {
 
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
-  private onConnect = (provider: any) => this.handleOnAndTrigger(CONNECT_EVENT, provider)
+  private onConnect = (provider: any, disconnect: () => void, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, dataVault })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
-    this.on(CONNECT_EVENT, provider => resolve(provider))
+    this.on(CONNECT_EVENT, response => resolve(response))
     this.on(ERROR_EVENT, error => reject(error))
     this.on(CLOSE_EVENT, () => reject('Modal closed by user'))
   }
@@ -134,6 +139,7 @@ export class RLogin {
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
         supportedChains={this.supportedChains}
+        // dataVaultOptions={this.dataVaultOptions}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )
