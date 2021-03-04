@@ -208,7 +208,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     // TODO: this dependency should be taken as parameter
     // if (!dataVaultOptions) throw new Error('Invalid setup')
-    const dataVault = createDataVault(provider, did, address!)
+    const dataVault = await createDataVault(provider, did, address!)
 
     this.setState({ dataVault })
 
