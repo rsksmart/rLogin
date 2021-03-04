@@ -2,7 +2,7 @@ import { EIP1193Provider } from './provider'
 import DataVaultWebClient, { AuthManager, AsymmetricEncryptionManager, SignerEncryptionManager } from '@rsksmart/ipfs-cpinner-client'
 
 export const createDataVault = async (provider: EIP1193Provider, did: string, address: string) => {
-  const serviceUrl = 'https://identity-data-vault.testnet.rifos.org'
+  const serviceUrl = 'https://data-vault.identity.rifos.org'
   const personalSign = (data: string) => provider.request({ method: 'personal_sign', params: [data, address] })
 
   return new DataVaultWebClient({
