@@ -10,8 +10,6 @@ const ModalCardWrapper = styled.div`
   border-radius: 12px;
   margin: 10px;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   max-width: 440px;
   min-width: fit-content;
   max-height: 100%;
