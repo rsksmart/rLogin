@@ -50,7 +50,7 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
 
   return <>
     <Header2>Select information to share</Header2>
-    <Paragraph>Sharing your information is optional. It will only be shared with {backendUrl}</Paragraph>
+    <Paragraph>Sharing your information is optional. It will only be shared with <span style={{ wordBreak: 'break-all' }}>{backendUrl}</span></Paragraph>
     <WideBox>
       <DataList dataField={claims} select={selectClaims} areCredentials={false} />
       <DataList dataField={credentials} select={selectCredentials} areCredentials={true} />
