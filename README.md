@@ -181,14 +181,6 @@ Please first build for production.
 | Open app | HTML DOM | _./sample/with_be_ | `npm run sample:open` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006/?backend=yes_ and back end in _http://localhost:3007_. This mode will not ask for Data Vault access. Go to _3006_ with your browser |
 | Permissioned app | HTML DOM | _./sample/decentralized_ | `npm run sample:permissioned` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006_ and back end in _http://localhost:3007_. This mode will ask for Data Vault access. Go to _3006_ with your browser |
 
-## The code
-
-The tool tries not to re-implement functionalities that are provided by other libraries. The work is strongly based on:
-
-- [`web3modal`](https://github.com/web3Modal/web3modal/)
-    - Wallet provider integrations are imported from npm package
-    - Core and components are re-implemented to enable developing custom UX flow and custom components
-
 ## Acknowledgements
 
 Find all acknowledged bugs, future features, and improvements in [repo issues](issues)
