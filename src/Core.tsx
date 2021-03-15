@@ -87,7 +87,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { providerController, onError } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setupProvider(provider).then(() => this.detectFlavor())
+      this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
     })
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
@@ -168,7 +168,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       ethAccounts(provider),
       ethChainId(provider)
     ]).then(([accounts, chainId]) => {
-      if (!this.setChainId(chainId)) return
+      if (!this.setChainId(chainId)) return false
 
       const address = accounts[0]
 
@@ -178,6 +178,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
       provider.on(ACCOUNTS_CHANGED, onAccountsChange)
       provider.on(CHAIN_CHANGED, onChainIdChanged)
+
+      return true
     })
   }
 
