@@ -90,8 +90,6 @@
       const displayRefreshToken = (refreshToken) => setElementInnerText('refresh-token', refreshToken)
 
       function providerRPC (provider, args) {
-        // ref: https://github.com/rsksmart/rLogin/pull/15#pullrequestreview-529574033
-        if (provider.isNiftyWallet) return provider.send(args.method, args.params)
         return provider.request(args)
       }
       // json rpc methods
