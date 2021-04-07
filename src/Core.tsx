@@ -267,11 +267,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
-    const { onClose, userProviders, backendUrl } = this.props
+    const { onClose, userProviders, backendUrl, providerController } = this.props
     const did = this.did()
 
+    /**
+     * handleClose is fired when the modal or providerModal is closed by the user
+     */
     const handleClose = () => {
       this.setState({ currentStep: 'Step1' })
+      providerController.clearCachedProvider()
       onClose()
     }
 
