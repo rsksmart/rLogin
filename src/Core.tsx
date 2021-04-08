@@ -16,7 +16,7 @@ import { ethAccounts, ethChainId } from './lib/provider'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN } from './constants'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -240,16 +240,25 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /**
+   * Disconnect from WalletConnect if it is the selected provider
+   * @param provider web3 Provider
+   */
+  private disconnectWC (provider: any): void {
+    if (provider.wc) {
+      provider.disconnect()
+      localStorage.removeItem(WALLETCONNECT)
+    }
+  }
+
+  /**
    * Handle disconnect and cleanup state
    */
   public disconnect (): void {
     const { providerController } = this.props
+    const { provider } = this.state
 
     // send disconnect method to wallet connect
-    if (this.state.provider.wc) {
-      this.state.provider.disconnect()
-      localStorage.removeItem('walletconnect')
-    }
+    this.disconnectWC(provider)
 
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
@@ -266,12 +275,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason } = this.state
-    const { onClose, userProviders, backendUrl } = this.props
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider } = this.state
+    const { onClose, userProviders, backendUrl, providerController } = this.props
     const did = this.did()
 
+    /**
+     * handleClose is fired when the modal or providerModal is closed by the user
+     */
     const handleClose = () => {
       this.setState({ currentStep: 'Step1' })
+      this.disconnectWC(provider)
+      providerController.clearCachedProvider()
       onClose()
     }
 
