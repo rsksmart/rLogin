@@ -19,6 +19,9 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
     return <></>
   }
 
+  const handleChangeNetwork = (params: AddEthereumChainParameter | undefined) =>
+    params !== undefined && changeNetwork(params)
+
   return (
     <div>
       <Header2>Incorrect Network</Header2>
@@ -34,7 +37,7 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
         {supportedNetworks.map((chainId: number) =>
           <li key={chainId}>
             {networks.get(chainId) && isMetamask
-              ? <button className="changeNetwork" onClick={() => changeNetwork(networks.get(chainId))}>{getChainName(chainId)}</button>
+              ? <button className="changeNetwork" onClick={() => handleChangeNetwork(networks.get(chainId))}>{getChainName(chainId)}</button>
               : <span>{getChainName(chainId)}</span>
             }
           </li>
