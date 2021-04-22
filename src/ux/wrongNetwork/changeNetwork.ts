@@ -1,6 +1,5 @@
-import { AddEthereumChainParameter } from "../../lib/provider"
+import { AddEthereumChainParameter } from '../../lib/provider'
 
-// export const networks: [chainId: number, params: AddEthereumChainParameter] = {
 export const networks: Map<number, AddEthereumChainParameter> = new Map([
   [
     30, {
@@ -29,17 +28,3 @@ export const networks: Map<number, AddEthereumChainParameter> = new Map([
     }
   ]
 ])
-
-export const canAddChain = (chainId: number) => {
-  return networks.get(chainId)
-  // const answer = <AddEthereumChainParameter | null> networks[chainId]
-  // return networks.hasOwnProperty!(chainId) ? networks[chainId] : null
-  // return networks[chainId.toString()] || null
-  /*
-  switch (chainId) {
-    case 30: return networks[30]
-    case 31: return networks[31]
-    default: return null
-  }
-  */
-}

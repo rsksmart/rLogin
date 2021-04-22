@@ -60,7 +60,7 @@ describe('Component: WrongNetworkComponent', () => {
 
   describe('non-metamask', () => {
     it('shows text instead of buttons if !isMetamask', () => {
-      const wrapper = mount(<WrongNetworkComponent {...sharedProps} isMetamask={false} />)
+      const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[30]} isMetamask={false} />)
       expect(wrapper.find('button')).toHaveLength(0)
     })
   })
