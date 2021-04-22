@@ -4,11 +4,12 @@ import { getChainName } from '../../adapters'
 import { networks } from './changeNetwork'
 import { Paragraph, Header2 } from '../../ui/shared/Typography'
 import NetworkUnorderedList from './NetworkUnorderedList'
+import { AddEthereumChainParameter } from '../../lib/provider'
 
 interface WrongNetworkComponentInterface {
   supportedNetworks: number[] | undefined,
   isMetamask: boolean | null,
-  changeNetwork: (params: any) => void
+  changeNetwork: (params: AddEthereumChainParameter) => void
 }
 
 const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
