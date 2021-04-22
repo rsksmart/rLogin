@@ -6,7 +6,6 @@ import { networks } from './changeNetwork'
 import { Paragraph, Header2 } from '../../ui/shared/Typography'
 
 interface WrongNetworkComponentInterface {
-  currentNetwork: number | undefined,
   supportedNetworks: number[] | undefined,
   isMetamask: boolean | null,
   changeNetwork: (params: any) => void
@@ -41,7 +40,7 @@ const NetworkUnorderedList = styled.ul`
 `
 
 const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
-  currentNetwork, supportedNetworks, isMetamask, changeNetwork
+  supportedNetworks, isMetamask, changeNetwork
 }) => {
   if (!supportedNetworks) {
     return <></>

@@ -6,7 +6,6 @@ import { networks } from './changeNetwork'
 
 describe('Component: WrongNetworkComponent', () => {
   const sharedProps = {
-    currentNetwork: 31,
     supportedNetworks: [1],
     isMetamask: true,
     changeNetwork: jest.fn()
