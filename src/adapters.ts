@@ -13,8 +13,12 @@ export function getDID (chainId: number, address: string) {
 export function getChainName (chainId: number) {
   switch (chainId) {
     case 1: return 'Ethereum Mainnet'
+    case 3: return 'Ropsten Testnet'
+    case 4: return 'Rinkeby Testnet'
     case 30: return 'RSK Mainnet'
     case 31: return 'RSK Testnet'
+    case 42: return 'Kovan Testnet'
+    case 420: return 'Goerli Testnet'
     default: return `Network Id ${chainId}`
   }
 }
