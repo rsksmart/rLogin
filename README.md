@@ -45,6 +45,8 @@ rLogin is a tool that allows the front end developer to connect their user with 
     - RSK Testnet
     - Ethereum Mainnet
     - Ganache (test network)
+- Add or Switch to Network if the user is on a different network.
+  - Supports RSK networks, but open to PRs for additional chains
 
 ## Quick start
 
