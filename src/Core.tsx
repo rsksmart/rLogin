@@ -157,13 +157,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   private changeMetamaskNetwork (params: AddEthereumChainParameter) {
-    console.log('params', params)
     const { provider } = this.state
     addEthereumChain(provider, params)
-      .then(() => {
-        this.setState({ currentStep: 'Step1' })
-      })
-      .catch((err: Error) => console.log('da error', err.message))
+      .then(() => this.setState({ currentStep: 'Step1' }))
+      // user cancelled the addition or switch, don't do anything:
+      .catch()
   }
 
   /** Step 1 confirmed - user picked a wallet provider */

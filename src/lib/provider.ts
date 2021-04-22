@@ -12,13 +12,13 @@ export interface EIP1193Provider {
 
 export interface AddEthereumChainParameter {
   chainId: string;
-  chainName?: string;
-  nativeCurrency?: {
-    name?: string;
-    symbol?: string;
-    decimals?: 18;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: 18;
   };
-  rpcUrls?: string[];
+  rpcUrls: string[];
   blockExplorerUrls?: string[];
   iconUrls?: string[]; // Currently ignored.
 }
