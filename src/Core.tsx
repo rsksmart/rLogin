@@ -87,9 +87,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     const { providerController, onError } = props
 
-    providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
-    })
+    providerController.on(CONNECT_EVENT, (provider: any) => this.continueSettingUp(provider))
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
 
@@ -97,6 +95,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.setLightboxRef = this.setLightboxRef.bind(this)
 
     this.changeMetamaskNetwork = this.changeMetamaskNetwork.bind(this)
+    this.continueSettingUp = this.continueSettingUp.bind(this)
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
@@ -141,6 +140,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return this.validateCurrentChain()
   }
 
+  private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
+
   private validateCurrentChain () {
     const { supportedChains } = this.props
     const { chainId, provider } = this.state
@@ -148,7 +149,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
 
     if (!isCurrentChainSupported) {
-      provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
+      provider.on(CHAIN_CHANGED, () => this.continueSettingUp(provider))
 
       this.setState({ currentStep: 'wrongNetwork' })
     }
@@ -159,7 +160,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private changeMetamaskNetwork (params: AddEthereumChainParameter) {
     const { provider } = this.state
     addEthereumChain(provider, params)
-      .then(() => this.setState({ currentStep: 'Step1' }))
+      .then(() => this.continueSettingUp(provider))
       // user cancelled the addition or switch, don't do anything:
       .catch()
   }
