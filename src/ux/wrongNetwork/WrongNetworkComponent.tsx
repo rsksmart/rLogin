@@ -5,6 +5,7 @@ import { networks } from './changeNetwork'
 import { Paragraph, Header2 } from '../../ui/shared/Typography'
 import NetworkUnorderedList from './NetworkUnorderedList'
 import { AddEthereumChainParameter } from '../../lib/provider'
+import ChangeNetworkButton from './ChangeNetworkButton'
 
 interface WrongNetworkComponentInterface {
   supportedNetworks: number[] | undefined,
@@ -37,8 +38,8 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
         {supportedNetworks.map((chainId: number) =>
           <li key={chainId}>
             {networks.get(chainId) && isMetamask
-              ? <button className="changeNetwork" onClick={() => handleChangeNetwork(networks.get(chainId))}>{getChainName(chainId)}</button>
-              : <span>{getChainName(chainId)}</span>
+              ? <ChangeNetworkButton params={networks.get(chainId)} changeNetwork={handleChangeNetwork} />
+              : <span className="text">{getChainName(chainId)}</span>
             }
           </li>
         )}

@@ -11,7 +11,8 @@ export const networks: Map<number, AddEthereumChainParameter> = new Map([
         decimals: 18
       },
       rpcUrls: ['https://public-node.rsk.co'],
-      blockExplorerUrls: ['https://explorer.rsk.co']
+      blockExplorerUrls: ['https://explorer.rsk.co'],
+      iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
     }
   ],
   [
@@ -24,7 +25,8 @@ export const networks: Map<number, AddEthereumChainParameter> = new Map([
         decimals: 18
       },
       rpcUrls: ['https://public-node.testnet.rsk.co'],
-      blockExplorerUrls: ['https://explorer.testnet.rsk.co']
+      blockExplorerUrls: ['https://explorer.testnet.rsk.co'],
+      iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
     }
   ]
 ])
