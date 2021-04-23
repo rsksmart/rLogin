@@ -16,7 +16,9 @@ const NetworkButton = styled.button`
   background-color: #F2F2F2;
   border-radius: 12px;
   padding: 12px;
-  font-size: 18px;
+  font-size: 15px;
+  color: #6C6B6C;
+  font-weight: 500 !important;
 
   :hover {
     background-color: #E4E4E4;
@@ -29,8 +31,8 @@ const NetworkButton = styled.button`
 
 const IconBox = styled.span`
   display: inline-block;
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   background-image: url(${(props: { url: string; }) => props.url});
   background-size: cover;
   vertical-align: middle;
