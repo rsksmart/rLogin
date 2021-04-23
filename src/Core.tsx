@@ -13,11 +13,12 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
-import { addEthereumChain, AddEthereumChainParameter, ethAccounts, ethChainId, isMetamask } from './lib/provider'
+import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx

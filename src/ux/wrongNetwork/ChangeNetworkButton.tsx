@@ -1,11 +1,11 @@
 // eslint-disable-next-line
 import React from 'react'
 import styled from 'styled-components'
-import { AddEthereumChainParameter } from '../../lib/provider'
+import { AddEthereumChainParameter } from './changeNetwork'
 
 interface ChangeNetworkButtonInterface {
   params: AddEthereumChainParameter | undefined,
-  changeNetwork: any
+  changeNetwork: (params: AddEthereumChainParameter) => void
 }
 
 const NetworkButton = styled.button`
@@ -38,19 +38,14 @@ const IconBox = styled.span`
   vertical-align: middle;
 `
 
-const ChangeNetworkButton: React.FC<ChangeNetworkButtonInterface> = ({ params, changeNetwork }) => {
-  if (!params) return <></>
-
-  const handleChangeNetwork = () => changeNetwork(params)
-
-  return params ? (
+const ChangeNetworkButton: React.FC<ChangeNetworkButtonInterface> = ({ params, changeNetwork }) =>
+  params ? (
     <NetworkButton
       className={`changeNetwork chain${parseInt(params.chainId)}`}
-      onClick={handleChangeNetwork}>
+      onClick={() => changeNetwork(params)}>
       {params.iconUrls && params.iconUrls[0] && <IconBox className="icon" url={params.iconUrls[0]} />}
       {params.chainName}
     </NetworkButton>
   ) : <></>
-}
 
 export default ChangeNetworkButton

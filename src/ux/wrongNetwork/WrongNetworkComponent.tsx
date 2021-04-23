@@ -1,10 +1,9 @@
 // eslint-disable-next-line
 import React from 'react'
 import { getChainName } from '../../adapters'
-import { networks } from './changeNetwork'
+import { AddEthereumChainParameter, networks } from './changeNetwork'
 import { Paragraph, Header2 } from '../../ui/shared/Typography'
 import NetworkUnorderedList from './NetworkUnorderedList'
-import { AddEthereumChainParameter } from '../../lib/provider'
 import ChangeNetworkButton from './ChangeNetworkButton'
 
 interface WrongNetworkComponentInterface {

@@ -1,4 +1,15 @@
-import { AddEthereumChainParameter } from '../../lib/provider'
+export interface AddEthereumChainParameter {
+  chainId: string;
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: 18;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls?: string[];
+  iconUrls?: string[]; // Currently ignored.
+}
 
 export const networks: Map<number, AddEthereumChainParameter> = new Map([
   [
