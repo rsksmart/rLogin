@@ -35,8 +35,9 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
 
   return (
     <div>
-      <Header2>Incorrect Network</Header2>
+      <Header2>Select Network</Header2>
       <Paragraph>
+        {`You are connected to an incorrect network on ${isMetamask ? 'Metamask' : 'your wallet'}. `}
         {'Please change your wallet to '}
         {supportedNetworks.length === 1
           ? <>the following network:</>
@@ -47,7 +48,7 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
       {quickConnect.length !== 0 && (
         <>
           <Header3>Automatically connect Metamask to</Header3>
-          <NetworkUnorderedList className="manual">
+          <NetworkUnorderedList className="automatic">
             {quickConnect.map((chainId: number) => (
               <li key={chainId}><ChangeNetworkButton params={networks.get(chainId)} changeNetwork={handleChangeNetwork} /></li>))}
           </NetworkUnorderedList>

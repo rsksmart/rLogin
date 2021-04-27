@@ -19,7 +19,7 @@ describe('Component: ChangeNetworkButton', () => {
 
   it('displays an image when passed', () => {
     const wrapper = mount(<ChangeNetworkButton {...sharedProps} />)
-    expect(wrapper.find('span')).toHaveLength(1)
+    expect(wrapper.find('span')).toHaveLength(2)
   })
 
   it('handles changeNetwork click', () => {

@@ -5,6 +5,7 @@ import WrongNetworkComponent from './WrongNetworkComponent'
 import { networks } from './changeNetwork'
 
 describe('Component: WrongNetworkComponent', () => {
+  const metamaskParagraph = 'You are connected to an incorrect network on Metamask. '
   const sharedProps = {
     supportedNetworks: [1],
     isMetamask: true,
@@ -17,19 +18,19 @@ describe('Component: WrongNetworkComponent', () => {
   })
 
   describe('text', () => {
-    it('shows error message about incorrect network', () => {
+    it('shows error message too select network', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} />)
-      expect(wrapper.find('h2').text()).toBe('Incorrect Network')
+      expect(wrapper.find('h2').text()).toBe('Select Network')
     })
 
     it('shows singular text', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} />)
-      expect(wrapper.find('p').text()).toBe('Please change your wallet to the following network:')
+      expect(wrapper.find('p').text()).toBe(metamaskParagraph + 'Please change your wallet to the following network:')
     })
 
     it('shows plural text', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[1, 30, 31]} />)
-      expect(wrapper.find('p').text()).toBe('Please change your wallet to one of the following networks:')
+      expect(wrapper.find('p').text()).toBe(metamaskParagraph + 'Please change your wallet to one of the following networks:')
     })
 
     it('displays network names or chainIds', () => {
@@ -44,8 +45,8 @@ describe('Component: WrongNetworkComponent', () => {
     it('displays text when it can not change network', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[1, 30, 31]} />)
 
-      expect(wrapper.find('li').at(0).text()).toBe('Ethereum Mainnet')
-      expect(wrapper.find('button').at(0).text()).toBe('RSK Mainnet')
+      expect(wrapper.find('ul.automatic li').at(0).text()).toBe('RSK Mainnet')
+      expect(wrapper.find('ul.manual li').at(0).text()).toBe('Ethereum Mainnet')
     })
 
     it('sends the params when clicked', () => {
