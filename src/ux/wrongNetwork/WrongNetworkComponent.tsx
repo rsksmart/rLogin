@@ -59,7 +59,7 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
       {manualConnect.length !== 0 && (
         <>
           <Header3>
-            Available networks to be selected from 
+            Available networks to be selected from
             {isMetamask ? ' Metamask' : ' your wallet'}
           </Header3>
           <NetworkUnorderedList className="manual">
