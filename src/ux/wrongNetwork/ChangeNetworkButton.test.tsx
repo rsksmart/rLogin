@@ -15,6 +15,7 @@ describe('Component: ChangeNetworkButton', () => {
     const wrapper = mount(<ChangeNetworkButton {...sharedProps} />)
     expect(wrapper).toBeDefined()
     expect(wrapper.text()).toBe('RSK Mainnet')
+    expect(wrapper.find('button.changeNetwork').hasClass('chain30')).toBeTruthy()
   })
 
   it('displays an image when passed', () => {

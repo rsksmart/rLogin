@@ -46,7 +46,7 @@ const IconBox = styled.span`
 
 const ChainName = styled.span`
   display: inline-block;
-  font-weight: ${(props: { isTestnet: boolean }) => props.isTestnet ? '400' : '600' } !important;
+  ${(props: { isTestnet: boolean }) => props.isTestnet && 'color: #AAAAAA;' }
 `
 
 const ChangeNetworkButton: React.FC<ChangeNetworkButtonInterface> = ({ params, changeNetwork }) =>
