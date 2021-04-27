@@ -18,8 +18,8 @@
     <a href="https://lgtm.com/projects/g/rsksmart/rLogin/context:javascript">
       <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/rLogin">
     </a>
-    <a href="https://codecov.io/gh/rsksmart/rLogin">
-      <img src="https://codecov.io/gh/rsksmart/rLogin/branch/master/graph/badge.svg?token=0Z3R6G9QFE"/>
+    <a href='https://coveralls.io/github/rsksmart/rLogin?branch=develop'>
+      <img src='https://coveralls.io/repos/github/rsksmart/rLogin/badge.svg?branch=develop' alt='Coverage Status' />
     </a>
     <a href="https://developers.rsk.co/rif/identity/rlogin/libraries/modal/">
         <img src="https://img.shields.io/badge/-docs-brightgreen" alt="docs" />
