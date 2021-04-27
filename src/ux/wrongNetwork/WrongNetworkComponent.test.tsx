@@ -5,7 +5,8 @@ import WrongNetworkComponent from './WrongNetworkComponent'
 import { networks } from './changeNetwork'
 
 describe('Component: WrongNetworkComponent', () => {
-  const metamaskParagraph = 'You are connected to an incorrect network on Metamask. '
+  const metamaskParagraph = 'You are connected to an incorrect network with Metamask. '
+  const singleText = 'Please change your wallet to the following network:'
   const sharedProps = {
     supportedNetworks: [1],
     isMetamask: true,
@@ -25,12 +26,17 @@ describe('Component: WrongNetworkComponent', () => {
 
     it('shows singular text', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} />)
-      expect(wrapper.find('p').text()).toBe(metamaskParagraph + 'Please change your wallet to the following network:')
+      expect(wrapper.find('p').text()).toBe(metamaskParagraph + singleText)
     })
 
     it('shows plural text', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[1, 30, 31]} />)
       expect(wrapper.find('p').text()).toBe(metamaskParagraph + 'Please change your wallet to one of the following networks:')
+    })
+
+    it('shows generic wallet message when not with metamask', () => {
+      const wrapper = mount(<WrongNetworkComponent {...sharedProps} isMetamask={false} />)
+      expect(wrapper.find('p').text()).toBe('You are connected to an incorrect network with your wallet. ' + singleText)
     })
 
     it('displays network names or chainIds', () => {

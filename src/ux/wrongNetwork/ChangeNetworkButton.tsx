@@ -27,11 +27,6 @@ const NetworkButton = styled.button`
   :focus {
     outline:0;
   }
-
-  .text {
-    display: inline-block;
-    margin-top: 2px;
-  }
 `
 type IconBoxType = {
   url: string,
@@ -46,6 +41,12 @@ const IconBox = styled.span`
   background-size: cover;
   vertical-align: middle;
   ${(props: IconBoxType) => props.isTestnet && 'filter: grayscale(100%);'}
+  margin-top: -2px;
+`
+
+const ChainName = styled.span`
+  display: inline-block;
+  font-weight: ${(props: { isTestnet: boolean }) => props.isTestnet ? '400' : '600' } !important;
 `
 
 const ChangeNetworkButton: React.FC<ChangeNetworkButtonInterface> = ({ params, changeNetwork }) =>
@@ -54,7 +55,7 @@ const ChangeNetworkButton: React.FC<ChangeNetworkButtonInterface> = ({ params, c
       className={`changeNetwork chain${parseInt(params.chainId)}`}
       onClick={() => changeNetwork(params)}>
       {params.iconUrls && params.iconUrls[0] && <IconBox className="icon" url={params.iconUrls[0]} isTestnet={params.chainName.toLowerCase().endsWith('testnet')} />}
-      <span className="text">{params.chainName}</span>
+      <ChainName isTestnet={params.chainName.toLowerCase().endsWith('testnet')}>{params.chainName}</ChainName>
     </NetworkButton>
   ) : <></>
 
