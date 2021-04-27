@@ -7,9 +7,9 @@ export default styled.ul`
   li {
     padding: 5px 0;
     font-size: 13px;
+    display: block;
 
     span.text {
-      display: block;
       padding: 5px;
       font-size: 15px;
       color: #6C6B6C;
