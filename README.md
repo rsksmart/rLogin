@@ -9,8 +9,8 @@
     <a href="https://badge.fury.io/js/%40rsksmart%2Frlogin">
         <img src="https://badge.fury.io/js/%40rsksmart%2Frlogin.svg" alt="npm" />
     </a>
-    <a href="https://circleci.com/gh/rsksmart/rLogin">
-        <img src="https://img.shields.io/circleci/build/github/rsksmart/rLogin?label=CircleCI" alt="npm" />
+    <a href="https://github.com/rsksmart/rLogin/actions/workflows/ci.yml">
+        <img src="https://github.com/rsksmart/rLogin/actions/workflows/ci.yml/badge.svg" alt="npm" />
     </a>
     <a href="https://lgtm.com/projects/g/rsksmart/rLogin/alerts/">
       <img src="https://img.shields.io/lgtm/alerts/github/rsksmart/rLogin" alt="alerts">
