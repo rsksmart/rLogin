@@ -1,4 +1,4 @@
-import { EIP1193Provider } from './provider'
+import { EIP1193Provider, isMetamask } from './provider'
 import DataVaultWebClient, { AuthManager, AsymmetricEncryptionManager, SignerEncryptionManager } from '@rsksmart/ipfs-cpinner-client'
 
 export const createDataVault = async (provider: EIP1193Provider, did: string, address: string) => {
@@ -8,7 +8,7 @@ export const createDataVault = async (provider: EIP1193Provider, did: string, ad
   return new DataVaultWebClient({
     serviceUrl,
     authManager: new AuthManager({ did, serviceUrl, personalSign }),
-    encryptionManager: provider.isMetaMask && !provider.isNiftyWallet
+    encryptionManager: isMetamask(provider)
       ? await AsymmetricEncryptionManager.fromWeb3Provider(provider)
       : await SignerEncryptionManager.fromWeb3Provider(provider)
   })

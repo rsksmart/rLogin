@@ -9,8 +9,8 @@
     <a href="https://badge.fury.io/js/%40rsksmart%2Frlogin">
         <img src="https://badge.fury.io/js/%40rsksmart%2Frlogin.svg" alt="npm" />
     </a>
-    <a href="https://circleci.com/gh/rsksmart/rLogin">
-        <img src="https://img.shields.io/circleci/build/github/rsksmart/rLogin?label=CircleCI" alt="npm" />
+    <a href="https://github.com/rsksmart/rLogin/actions/workflows/ci.yml">
+        <img src="https://github.com/rsksmart/rLogin/actions/workflows/ci.yml/badge.svg" alt="npm" />
     </a>
     <a href="https://lgtm.com/projects/g/rsksmart/rLogin/alerts/">
       <img src="https://img.shields.io/lgtm/alerts/github/rsksmart/rLogin" alt="alerts">
@@ -18,8 +18,8 @@
     <a href="https://lgtm.com/projects/g/rsksmart/rLogin/context:javascript">
       <img src="https://img.shields.io/lgtm/grade/javascript/github/rsksmart/rLogin">
     </a>
-    <a href="https://codecov.io/gh/rsksmart/rLogin">
-      <img src="https://codecov.io/gh/rsksmart/rLogin/branch/master/graph/badge.svg?token=0Z3R6G9QFE"/>
+    <a href='https://coveralls.io/github/rsksmart/rLogin?branch=develop'>
+      <img src='https://coveralls.io/repos/github/rsksmart/rLogin/badge.svg?branch=develop' alt='Coverage Status' />
     </a>
     <a href="https://developers.rsk.co/rif/identity/rlogin/libraries/modal/">
         <img src="https://img.shields.io/badge/-docs-brightgreen" alt="docs" />
@@ -45,6 +45,8 @@ rLogin is a tool that allows the front end developer to connect their user with 
     - RSK Testnet
     - Ethereum Mainnet
     - Ganache (test network)
+- Add or Switch to Network if the user is on a different network.
+  - Supports RSK networks, but open to PRs for additional chains
 
 ## Quick start
 

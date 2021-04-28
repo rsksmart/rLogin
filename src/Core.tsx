@@ -6,17 +6,19 @@ import DataVault from '@rsksmart/ipfs-cpinner-client'
 import { WalletProviders } from './ux/step1'
 import { SelectiveDisclosure, SDR, SD } from './ux/step2'
 import { ConfirmSelectiveDisclosure } from './ux/step3'
+import WrongNetworkComponent from './ux/wrongNetwork/WrongNetworkComponent'
 
 import { Modal } from './ui/modal'
 import { ErrorMessage } from './ui/shared/ErrorMessage'
 
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
-import { getDID, getChainName, getChainId } from './adapters'
-import { ethAccounts, ethChainId } from './lib/provider'
+import { getDID, getChainId } from './adapters'
+import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -52,7 +54,7 @@ interface IModalProps {
   // dataVaultOptions?: DataVaultOptions
 }
 
-type Step = 'Step1' | 'Step2' | 'Step3' | 'error'
+type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork'
 
 interface ErrorDetails {
   title: string
@@ -86,15 +88,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     const { providerController, onError } = props
 
-    providerController.on(CONNECT_EVENT, (provider: any) => {
-      this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
-    })
+    providerController.on(CONNECT_EVENT, (provider: any) => this.continueSettingUp(provider))
 
     providerController.on(ERROR_EVENT, (error: any) => onError(error))
 
     this.did = this.did.bind(this)
     this.setLightboxRef = this.setLightboxRef.bind(this)
 
+    this.changeMetamaskNetwork = this.changeMetamaskNetwork.bind(this)
+    this.continueSettingUp = this.continueSettingUp.bind(this)
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
@@ -139,6 +141,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return this.validateCurrentChain()
   }
 
+  private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
+
   private validateCurrentChain () {
     const { supportedChains } = this.props
     const { chainId, provider } = this.state
@@ -146,16 +150,20 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
 
     if (!isCurrentChainSupported) {
-      provider.on(CHAIN_CHANGED, () => this.setState({ currentStep: 'Step1' }))
+      provider.on(CHAIN_CHANGED, () => this.continueSettingUp(provider))
 
-      // this message can be improved
-      this.setState({
-        currentStep: 'error',
-        errorReason: { title: 'Incorrect Network', description: `Please change your wallet's network to one of ${supportedChains!.map(getChainName).join()}` }
-      })
+      this.setState({ currentStep: 'wrongNetwork' })
     }
 
     return isCurrentChainSupported
+  }
+
+  private changeMetamaskNetwork (params: AddEthereumChainParameter) {
+    const { provider } = this.state
+    addEthereumChain(provider, params)
+      .then(() => this.continueSettingUp(provider))
+      // user cancelled the addition or switch, don't do anything:
+      .catch()
   }
 
   /** Step 1 confirmed - user picked a wallet provider */
@@ -276,7 +284,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider } = this.state
-    const { onClose, userProviders, backendUrl, providerController } = this.props
+    const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
     const did = this.did()
 
     /**
@@ -300,6 +308,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
+      {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
     </Modal>
   }
 }
