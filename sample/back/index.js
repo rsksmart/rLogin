@@ -19,9 +19,17 @@ app.use(bodyParser.json())
 
 const permissioned = process.argv.length > 2 && process.argv[2] === 'permissioned'
 
+const didAuthConfig = {
+  serviceDid,
+  serviceSigner,
+  serviceUrl,
+  challengeSecret,
+}
+
 const authMiddleware = !permissioned
-  ? didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret })(app)
-  : didAuth.default({ serviceDid, serviceSigner, serviceUrl, challengeSecret,
+  ? didAuth.default(didAuthConfig)(app)
+  : didAuth.default({
+    ...didAuthConfig,
     requiredCredentials: ['Email'],
     requiredClaims: ['Name'],
     signupBusinessLogic: (payload) => { console.log(payload); return true; }
