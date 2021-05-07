@@ -101,8 +101,11 @@
       const displayRefreshToken = (refreshToken) => setElementInnerText('refresh-token', refreshToken)
 
       function providerRPC (provider, args) {
-        return provider.request(args)
+        return provider.request
+          ? provider.request(args)
+          : provider.send(args.method, args.params)
       }
+
       // json rpc methods
       const getAccounts = (provider) => providerRPC(provider, { method: 'eth_accounts' })
       const getNetwork = (provider) => providerRPC(provider, { method: 'net_version' }).then(parseInt)
