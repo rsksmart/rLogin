@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { EIP1193Provider, personalSign } from './provider'
+import { GenericProvider, personalSign } from './provider'
 import { verifyDidJwt } from './jwt'
 import { SD } from './sdr'
 
@@ -30,7 +30,7 @@ const storeAuthData = ({ data }: { data: { refreshToken: string, accessToken: st
 }
 
 export const confirmAuth = (
-  provider: EIP1193Provider,
+  provider: GenericProvider,
   address: string,
   backendUrl: string,
   did: string,
