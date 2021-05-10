@@ -30,14 +30,14 @@ export const ethChainId = (provider: GenericProvider) =>
     ? provider.request<string>({ method: 'eth_chainId' })
     : provider.send('eth_chainId')
 
-export const personalSign = (provider: GenericProvider, address: string, data: string) => {
-  return (provider.isPortis)
+export const personalSign = (provider: GenericProvider, address: string, data: string) =>
+  (provider.isPortis)
     ? new Promise((resolve, reject) => provider.send(
       { method: 'personal_sign', params: [utf8ToHex(data), address] },
       (err: Error, res: { result: string }) => err ? reject(err) : resolve(res.result)
     ))
     : provider.request({ method: 'personal_sign', params: [data, address] })
-}
+
 
 export const addEthereumChain = (provider: EIP1193Provider, params: AddEthereumChainParameter) => provider.request({ method: 'wallet_addEthereumChain', params: [params] })
 
