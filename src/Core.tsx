@@ -268,6 +268,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
     // send disconnect method to wallet connect
     this.disconnectWC(provider)
 
+    // portis
+    if (provider.isPortis) {
+      provider._portis.logout()
+    }
+
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
     localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
