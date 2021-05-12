@@ -19,6 +19,7 @@ import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
+import { AxiosError } from 'axios'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -237,7 +238,18 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const did = this.did()
 
     const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
+
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+      .catch((error: Error | AxiosError) => {
+        // this error handling is added to help user when challenge expired. in that
+        // case we ask for a new challenge and ask again the user to sign
+        if ((error as AxiosError).response && (error as AxiosError).response?.data === 'INVALID_CHALLENGE_RESPONSE') {
+          return requestSignup(backendUrl!, this.did()).then(({ challenge }) =>
+            confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+          )
+        }
+        throw error
+      })
       .catch((error: Error) =>
         this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
       )
