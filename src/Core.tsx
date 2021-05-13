@@ -20,7 +20,7 @@ import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
-import { providerWrapper } from './lib/providerWrapper'
+import { portisWrapper } from './lib/portisWrapper'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -170,7 +170,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   /** Step 1 confirmed - user picked a wallet provider */
   private setupProvider (userProvider: any) {
-    const provider = userProvider.isPortis ? providerWrapper(userProvider) : userProvider
+    const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
     this.setState({ provider })
 
     console.log('the provider!', provider)
