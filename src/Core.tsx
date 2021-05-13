@@ -173,8 +173,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
     this.setState({ provider })
 
-    console.log('the provider!', provider)
-
     const { onAccountsChange } = this.props
 
     return Promise.all([
