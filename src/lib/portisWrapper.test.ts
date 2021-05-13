@@ -1,12 +1,11 @@
 import { portisWrapper } from './portisWrapper'
 
-describe('EIP1193 wrapper', () => {
+describe('Portis EIP1193 wrapper', () => {
   const legacyProvider = {
-    send: (response: any, callback?: any) => {
-      return callback
+    send: (response: any, callback?: any) =>
+      callback
         ? Promise.resolve(callback(null, { result: response }))
         : Promise.resolve(response)
-    }
   }
   const wrapper = portisWrapper(legacyProvider)
 
@@ -24,6 +23,11 @@ describe('EIP1193 wrapper', () => {
         .then((res: any) => expect(res).toEqual('eth_chainId'))
     })
 
+    it('net_version', () => {
+      return wrapper.request({ method: 'net_version' })
+        .then((res: any) => expect(res).toEqual('net_version'))
+    })
+
     it('eth_accounts', () => {
       return wrapper.request({ method: 'eth_accounts' })
         .then((res: any) => expect(res).toEqual('eth_accounts'))
@@ -37,6 +41,14 @@ describe('EIP1193 wrapper', () => {
       }
 
       return wrapper.request(request).then((res: any) => expect(res).toEqual(expected))
+    })
+
+    it('eth_sendTransaction', () => {
+      const params = [{ to: '0x123', from: '0x456', value: 100000 }]
+      const request = { method: 'eth_sendTransaction', params }
+      return wrapper.request(request).then((res: any) => {
+        expect(res).toEqual({ method: 'eth_sendTransaction', params })
+      })
     })
   })
 })

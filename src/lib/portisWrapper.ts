@@ -1,5 +1,12 @@
 import { utf8ToHex } from 'web3-utils'
 
+const formatParams = (args: any) => {
+  switch (args.method) {
+    case 'personal_sign': return [utf8ToHex(args.params[0]), args.params[1]]
+    default: return args.params
+  }
+}
+
 const handler = {
   get: function (target: any, prop: string) {
     if (target[prop]) {
@@ -8,17 +15,19 @@ const handler = {
 
     if (prop === 'request') {
       return function () {
-        // chainId and accounts return as a Promise
         const method = arguments[0].method
-        if (method === 'eth_chainId' || method === 'eth_accounts') {
+
+        // chainId and accounts return as a Promise
+        if (method === 'eth_chainId' || method === 'eth_accounts' || method === 'net_version') {
           return target.send(method)
         }
 
-        const params = [utf8ToHex(arguments[0].params[0]), arguments[0].params[1]]
+        const params = formatParams(arguments[0])
 
         return new Promise((resolve, reject) => target.send(
           { method, params },
-          (err: Error, res: { result: string }) => err ? reject(err) : resolve(res.result)
+          (err: string | null, res: { result?: string, error?: Error }) =>
+            err ? reject(res.error) : resolve(res.result)
         ))
       }
     }
