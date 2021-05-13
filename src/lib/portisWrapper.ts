@@ -1,11 +1,9 @@
 import { utf8ToHex } from 'web3-utils'
 
-const formatParams = (args: any) => {
-  switch (args.method) {
-    case 'personal_sign': return [utf8ToHex(args.params[0]), args.params[1]]
-    default: return args.params
-  }
-}
+const formatParams = (args: any) =>
+  args.method === 'personal_sign'
+    ? [utf8ToHex(args.params[0]), args.params[1]]
+    : args.params
 
 const handler = {
   get: function (target: any, prop: string) {
