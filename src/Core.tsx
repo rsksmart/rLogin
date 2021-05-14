@@ -21,6 +21,7 @@ import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './cons
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
+import Loading from './ui/shared/Loading'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -56,7 +57,7 @@ interface IModalProps {
   // dataVaultOptions?: DataVaultOptions
 }
 
-type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork'
+type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork' | 'loading'
 
 interface ErrorDetails {
   title: string
@@ -323,11 +324,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={() => this.setState({ currentStep: 'loading' })} />}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
       {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+      {currentStep === 'loading' && <Loading size={10} color="#008FF7" />}
     </Modal>
   }
 }
