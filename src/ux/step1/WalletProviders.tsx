@@ -8,7 +8,7 @@ import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CL
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
-  setLoading?: () => void
+  setLoading: () => void
 }
 
 const ProvidersWrapper = styled.div`
@@ -39,7 +39,7 @@ export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersP
           name={provider.name}
           logo={provider.logo}
           description={provider.description}
-          onClick={() => { provider.onClick(); setLoading && setLoading() }}
+          onClick={() => { provider.onClick(); setLoading() }}
         />
       ) : null
     )}
