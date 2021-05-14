@@ -1,10 +1,5 @@
 import { utf8ToHex } from 'web3-utils'
 
-const formatParams = (args: any) =>
-  args.method === 'personal_sign'
-    ? [utf8ToHex(args.params[0]), args.params[1]]
-    : args.params
-
 const handler = {
   get: function (target: any, prop: string) {
     if (target[prop]) {
@@ -20,7 +15,10 @@ const handler = {
           return target.send(method)
         }
 
-        const params = formatParams(arguments[0])
+        // format params if using personal_sign
+        const params = (method === 'personal_sign')
+          ? [utf8ToHex(arguments[0].params[0]), arguments[0].params[1]]
+          : arguments[0].params
 
         return new Promise((resolve, reject) => target.send(
           { method, params },
