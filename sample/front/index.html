@@ -31,7 +31,8 @@
       <button id="sign" disabled>sign</button>
       <p id="signature"></p>
       <p id="recovery"></p>
-      <button id="sign-typed-data" disabled>sign typed data</button>
+      <button id="sign-typed-data-v1" disabled>sign typed data (v1)</button>
+      <button id="sign-typed-data" disabled>sign typed data (v4)</button>
       <p id="typed-signature"></p>
       <p id="typed-recovery"></p>
       <hr />
@@ -110,7 +111,8 @@
       const sendTransaction = (provider, params) => providerRPC(provider, { method: 'eth_sendTransaction', params })
       const sign = (provider, params) => providerRPC(provider, { method: 'personal_sign', params })
       const ecRecover = (provider, params) => providerRPC(provider, { method: 'personal_ecRecover', params })
-      const signTypedData = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData_v4', params })
+      const signTypedDataV1 = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData', params })
+      const signTypedDataV4 = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData_v4', params })
 
       function handleProvider(rLoginResponse) {
         const provider = rLoginResponse.provider
@@ -164,8 +166,32 @@
             .catch(handleError)
         })
 
+        // eip-712 eth_signTypedData
+        let signTypedDataV1Button = document.getElementById('sign-typed-data-v1')
+        signTypedDataV1Button.removeAttribute('disabled')
+        signTypedDataV1Button.addEventListener('click', () => {
+          const msgParams = [
+            {
+                type: 'string',
+                name: 'Hello from rLogin',
+                value: 'This message will be signed by you'
+            },
+            {
+                type: 'uint32',
+                name: 'Here is a number',
+                value: '90210'
+            }
+          ]
 
-        // eip-721 eth_signTypedData
+          getAccounts(provider)
+            .then(accounts =>
+              signTypedDataV1(provider, [msgParams, accounts[0]])
+                .then(signature => setElementInnerText('typed-signature', signature))
+                .catch(handleError))
+        });
+
+
+        // eip-721 eth_signTypedData_v4
         let signTypedDataButton = document.getElementById('sign-typed-data')
 
         // ref: https://docs.metamask.io/guide/signing-data.html#sign-typed-data-v4
@@ -204,7 +230,7 @@
             getAccounts(provider).then(accounts => accounts[0]), getNetwork(provider)
           ]).then(([from, chainId]) => {
             const typedData = typedDataByChain(chainId)
-            signTypedData(provider, [from, typedData])
+            signTypedDataV4(provider, [from, typedData])
               .then(signature => {
                 setElementInnerText('typed-signature', signature)
                 return ecRecover(provider, [typedData, signature]) // THIS VERIFICATION IS ERRORED!!!
