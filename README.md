@@ -48,6 +48,10 @@ rLogin is a tool that allows the front end developer to connect their user with 
 - Add or Switch to Network if the user is on a different network.
   - Supports RSK networks, but open to PRs for additional chains
 
+### Portis Support
+
+[Portis](https://portis.io) is not [EIP1193](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1193.md) compatiable, however, rLogin creates a wrapper for it allowing `.request` methods to be called. The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net_version`, `personal_sign`, `eth_sendTransaction`.
+
 ## Quick start
 
 1. Install rLogin
