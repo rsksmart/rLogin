@@ -17,7 +17,7 @@ import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/pro
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -263,29 +263,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /**
-   * Disconnect from WalletConnect if it is the selected provider
-   * @param provider web3 Provider
-   */
-  private disconnectWC (provider: any): void {
-    if (provider.wc) {
-      provider.disconnect()
-      localStorage.removeItem(WALLETCONNECT)
-    }
-  }
-
-  /**
    * Handle disconnect and cleanup state
    */
-  public disconnect (): void {
+  public async disconnect (): Promise<void> {
     const { providerController } = this.props
     const { provider } = this.state
 
-    // send disconnect method to wallet connect
-    this.disconnectWC(provider)
-
-    // portis
-    if (provider.isPortis) {
-      provider._portis.logout()
+    // WalletConnect and Portis Wrapper:
+    if (provider.disconnect) {
+      await provider.disconnect()
     }
 
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
@@ -310,9 +296,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
      */
-    const handleClose = () => {
+    const handleClose = async () => {
       this.setState({ currentStep: 'Step1' })
-      this.disconnectWC(provider)
+
+      if (provider !== undefined && provider.disconnect) {
+        await provider.disconnect()
+      }
+
       providerController.clearCachedProvider()
       onClose()
     }
