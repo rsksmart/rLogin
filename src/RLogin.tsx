@@ -17,6 +17,7 @@ import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 import { Core, DataVaultOptions } from './Core'
 
 import DataVault from '@rsksmart/ipfs-cpinner-client'
+import { checkRLoginInjectedProviders } from './providers/injectedProviders'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -66,7 +67,7 @@ export class RLogin {
     this.backendUrl = opts && opts.backendUrl
 
     // setup modal
-    this.userProviders = this.providerController.getUserOptions()
+    this.userProviders = this.setupProviders()
     this.renderModal()
 
     // this.dataVaultOptions = opts && opts.dataVaultOptions
@@ -74,6 +75,24 @@ export class RLogin {
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
+  }
+
+  private setupProviders = () => {
+    const providers = this.providerController.getUserOptions()
+    /*
+    let firstItem = providers[0]
+    if (firstItem.name === 'MetaMask') {
+      if (verifyInjectedProvider('isJesseWallet')) {
+        firstItem = { ...firstItem, name: 'JesseWallet' }
+      }
+      firstItem = { ...firstItem, name: 'WORKS!' }
+    }
+    */
+
+    return [
+      checkRLoginInjectedProviders(providers[0]),
+      ...providers.slice(1)
+    ]
   }
 
   /** opens or closes modal */
