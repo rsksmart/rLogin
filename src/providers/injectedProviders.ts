@@ -9,23 +9,32 @@ import * as RWalletLogo from './logo.svg'
 const injectedProviders = [
   {
     name: 'RWallet',
-    check: 'isJesseWallet',
+    check: 'isRWallet',
     logo: RWalletLogo.default
   }
 ]
 
-export const checkRLoginInjectedProviders = (provider: IProviderUserOptions) => {
-  // if the first item is not Web3 return it
-  if (provider.name !== 'Web3') return provider
+/**
+ * Takes an array of Web3 Providers from web3modal and checks if the first item is
+ * Metamask or Web3. If true, add additional checks to see if it matches the providers
+ * above. If so, rewrite provider
+ * @param providers an array of providers from web3Modal
+ * @returns updated array of providers
+ */
+export const checkRLoginInjectedProviders = (providers: IProviderUserOptions[]) => {
+  // if the first item is not Web3 or Metamask return the array
+  if (providers[0].name !== 'Web3' && providers[0].name !== 'MetaMask') {
+    return providers
+  }
 
-  // see if the name and logo need to be updated:
-  let updatedItem = provider
+  let firstProvider = providers[0]
+
+  // loop through list above to see if one matches
   injectedProviders.map((item: any) => {
     if (verifyInjectedProvider(item.check)) {
-      updatedItem = { ...updatedItem, name: item.name, logo: item.logo }
+      firstProvider = { ...firstProvider, name: item.name, logo: item.logo }
     }
   })
 
-  console.log('updatedItem', updatedItem)
-  return updatedItem
+  return [firstProvider, ...providers.slice(1)]
 }

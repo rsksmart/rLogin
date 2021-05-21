@@ -67,7 +67,7 @@ export class RLogin {
     this.backendUrl = opts && opts.backendUrl
 
     // setup modal
-    this.userProviders = this.setupProviders()
+    this.userProviders = checkRLoginInjectedProviders(this.providerController.getUserOptions())
     this.renderModal()
 
     // this.dataVaultOptions = opts && opts.dataVaultOptions
@@ -75,24 +75,6 @@ export class RLogin {
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
-  }
-
-  private setupProviders = () => {
-    const providers = this.providerController.getUserOptions()
-    /*
-    let firstItem = providers[0]
-    if (firstItem.name === 'MetaMask') {
-      if (verifyInjectedProvider('isJesseWallet')) {
-        firstItem = { ...firstItem, name: 'JesseWallet' }
-      }
-      firstItem = { ...firstItem, name: 'WORKS!' }
-    }
-    */
-
-    return [
-      checkRLoginInjectedProviders(providers[0]),
-      ...providers.slice(1)
-    ]
   }
 
   /** opens or closes modal */
