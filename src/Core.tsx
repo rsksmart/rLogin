@@ -271,7 +271,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     // WalletConnect and Portis Wrapper:
     if (provider.disconnect) {
-      await provider.disconnect()
+      provider.disconnect().catch((err: Error) => console.log('Logout error', err.message))
     }
 
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)

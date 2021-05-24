@@ -45,7 +45,7 @@ const handler = {
         }
 
       // Mirrors WalletConnect's disconnect method
-      case 'disconnect': return target._portis.logout()
+      case 'disconnect': return () => target._portis.logout()
     }
   }
 }
