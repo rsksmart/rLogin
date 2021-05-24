@@ -1,7 +1,9 @@
 import { IProviderUserOptions, verifyInjectedProvider } from 'web3modal'
 
 // @ts-ignore
-import * as RWalletLogo from './logo.svg'
+import * as RWalletLogo from './logos/rWalletlogo.svg'
+// @ts-ignore
+import * as MathWalletLogo from './logos/mathWalletLogo.png'
 
 /**
  * A list of injected Providers that have not been implemented into Web3Modal yet
@@ -11,6 +13,11 @@ const injectedProviders = [
     name: 'RWallet',
     check: 'isRWallet',
     logo: RWalletLogo.default
+  },
+  {
+    name: 'Math Wallet',
+    check: 'isMathWallet',
+    logo: MathWalletLogo.default
   }
 ]
 
