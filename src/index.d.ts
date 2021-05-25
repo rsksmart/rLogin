@@ -1,3 +1,3 @@
 declare module '*.svg' {
-  export default "" as string
+  export default '' as string
 }
