@@ -24,11 +24,6 @@ const ProviderIcon = styled.div`
     width: 100%;
     height: 100%;
   }
-
-  @media screen and (max-width: 768px) {
-    width: 8.5vw;
-    height: 8.5vw;
-  }
 `
 
 const ProviderContainer = styled.div`
