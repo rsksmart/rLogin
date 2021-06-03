@@ -32,10 +32,10 @@ const handler = {
 
             // for sendTransaction, get the gasPrice from the last block if the developer did not
             // include it. Portis does not calculate it correctly, causing the transaction to fail
-            if ((method === 'eth_sendTransaction' || method === 'eth_sendRawTransaction') && !params[0].gasPrice) {
+            if (method === 'eth_sendTransaction' && !params[0].gasPrice) {
               return target.send({ method: 'eth_getBlockByNumber', params: ['latest', false] },
                 (err: string | null, res: any) =>
-                  err ? reject(res.err) : sendTransaction(method, [{ ...params[0], gasPrice: res.result.minimumGasPrice * 1.01 }])
+                  err ? reject(res.err) : sendTransaction(method, [{ ...params[0], gasPrice: res.result.minimumGasPrice }])
               )
             }
 
