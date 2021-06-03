@@ -2,10 +2,16 @@ import { portisWrapper } from './portisWrapper'
 
 describe('Portis EIP1193 wrapper', () => {
   const legacyProvider = {
-    send: (response: any, callback?: any) =>
-      callback
-        ? Promise.resolve(callback(null, { result: response }))
-        : Promise.resolve(response)
+    send: (response: any, callback?: any) => {
+      let customResponse
+      if (response.method === 'eth_getBlockByNumber') {
+        customResponse = { minimumGasPrice: '15' }
+      }
+
+      return callback
+        ? Promise.resolve(callback(null, { result: customResponse || response }))
+        : Promise.resolve(customResponse || response)
+    }
   }
   const wrapper = portisWrapper(legacyProvider)
 
@@ -43,8 +49,18 @@ describe('Portis EIP1193 wrapper', () => {
       return wrapper.request(request).then((res: any) => expect(res).toEqual(expected))
     })
 
-    it('eth_sendTransaction', () => {
+    it('eth_sendTransaction, adds gasPrice if not sent', () => {
       const params = [{ to: '0x123', from: '0x456', value: 100000 }]
+      const request = { method: 'eth_sendTransaction', params }
+      return wrapper.request(request).then((res: any) => {
+        expect(res).toEqual({
+          method: 'eth_sendTransaction', params: [{ to: '0x123', from: '0x456', value: 100000, gasPrice: '15' }]
+        })
+      })
+    })
+
+    it('eth_sendTransaction, with developer gasPrice', () => {
+      const params = [{ to: '0x123', from: '0x456', value: 100000, gasPrice: '20' }]
       const request = { method: 'eth_sendTransaction', params }
       return wrapper.request(request).then((res: any) => {
         expect(res).toEqual({ method: 'eth_sendTransaction', params })
