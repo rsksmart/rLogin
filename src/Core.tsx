@@ -264,7 +264,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * @param provider web3 Provider
    */
   private disconnectWC (provider: any): void {
-    if (provider.wc) {
+    if (provider && provider.wc) {
       provider.disconnect()
       localStorage.removeItem(WALLETCONNECT)
     }
