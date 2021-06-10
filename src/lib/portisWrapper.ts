@@ -22,11 +22,26 @@ const handler = {
             ? [utf8ToHex(arguments[0].params[0]), arguments[0].params[1]]
             : arguments[0].params
 
-          return new Promise((resolve, reject) => target.send(
-            { method, params },
-            (err: string | null, res: { result?: string, error?: Error }) =>
-              err ? reject(res.error) : resolve(res.result)
-          ))
+          // return a promise
+          return new Promise((resolve, reject) => {
+            // final step: send the transaction and resolve or reject the promise
+            const sendTransaction = (tMethod: string, tPrams: any) => target.send(
+              { method: tMethod, params: tPrams },
+              (err: string | null, res: { result?: string, error?: Error }) =>
+                err ? reject(res.error) : resolve(res.result))
+
+            // for sendTransaction, get the gasPrice from the last block if the developer did not
+            // include it. Portis does not calculate it correctly, causing the transaction to fail
+            if ((method === 'eth_sendTransaction' || method === 'eth_sendRawTransaction') && !params[0].gasPrice) {
+              return target.send({ method: 'eth_getBlockByNumber', params: ['latest', false] },
+                (err: string | null, res: any) =>
+                  err ? reject(res.err) : sendTransaction(method, [{ ...params[0], gasPrice: res.result.minimumGasPrice * 1.01 }])
+              )
+            }
+
+            // not sending transaction, or developer included gasPrice, no modifications needed
+            return sendTransaction(method, params)
+          })
         }
 
       // Mirrors WalletConnect's disconnect method
