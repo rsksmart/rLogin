@@ -309,22 +309,22 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
     const did = this.did()
 
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
      */
-    const handleClose = async () => {
-      this.setState({ currentStep: 'Step1' })
-
-      if (provider !== undefined && provider.disconnect) {
-        await provider.disconnect()
-      }
+    const handleClose = () => {
+      // disconnect WalletConnect and Portis
+      this.disconnectProvider()
 
       providerController.clearCachedProvider()
       onClose()
+
+      // reset state
+      this.setState(INITIAL_STATE)
     }
 
     return <Modal
