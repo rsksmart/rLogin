@@ -54,12 +54,12 @@ const BubbleSpin = styled.div`
 interface LoadingInterface {
   text?: string
   color?: string
-  size: number
+  size?: number
 }
 
 const LoadingComponent: React.FC<LoadingInterface> = ({ text, color, size }) =>
   <div className="loading">
-    <BubbleSpin color={color} size={size} />
+    <BubbleSpin color={color} size={size || 20} />
     {text && <p>{text}</p>}
   </div>
 

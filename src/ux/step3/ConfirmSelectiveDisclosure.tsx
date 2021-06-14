@@ -4,6 +4,7 @@ import { SD } from '../../lib/sdr'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import { credentialToText } from '../../vc-json-schema-adapter'
+import Loading from '../../ui/shared/Loading'
 
 interface ConfirmSelectiveDisclosureProps {
   did: string
@@ -20,13 +21,15 @@ export function ConfirmSelectiveDisclosure ({ did, sd, onConfirm }: ConfirmSelec
     onConfirm()
   }
 
-  return <>
-    <Header2>Use this Identity?</Header2>
-    <Paragraph>{did}</Paragraph>
-    {sd != null && <>
-      {Object.keys(sd.claims).map(key => <Paragraph key={key}>{key}: {data[key]}</Paragraph>)}
-      {Object.keys(sd.credentials).map(key => <Paragraph key={key}>{credentialToText(key, data[key])}</Paragraph>)}
-    </>}
-    <Button onClick={handleSubmit} disabled={isLoading}>Confirm Identity</Button>
-  </>
+  return !isLoading
+    ? <>
+      <Header2>Use this Identity?</Header2>
+      <Paragraph>{did}</Paragraph>
+      {sd != null && <>
+        {Object.keys(sd.claims).map(key => <Paragraph key={key}>{key}: {data[key]}</Paragraph>)}
+        {Object.keys(sd.credentials).map(key => <Paragraph key={key}>{credentialToText(key, data[key])}</Paragraph>)}
+      </>}
+      <Button onClick={handleSubmit} disabled={isLoading}>Confirm Identity</Button>
+    </>
+    : <Loading text="Confiming Identity" size={10} />
 }
