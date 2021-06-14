@@ -8,6 +8,7 @@ import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CL
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
+  setLoading: () => void
 }
 
 const ProvidersWrapper = styled.div`
@@ -28,7 +29,7 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-export const WalletProviders = ({ userProviders }: IWalletProvidersProps) => <>
+export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersProps) => <>
   <Header2>Connect your wallet</Header2>
   <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
     {userProviders.map(provider =>
@@ -38,7 +39,7 @@ export const WalletProviders = ({ userProviders }: IWalletProvidersProps) => <>
           name={provider.name}
           logo={provider.logo}
           description={provider.description}
-          onClick={provider.onClick}
+          onClick={() => { provider.onClick(); setLoading() }}
         />
       ) : null
     )}
