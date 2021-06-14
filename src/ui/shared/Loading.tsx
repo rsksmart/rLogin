@@ -1,4 +1,6 @@
 // adapted from: https://github.com/LucasBassetti/react-css-loaders/blob/master/lib/bubble-spin/BubbleSpin.jsx
+// eslint-disable-next-line no-use-before-define
+import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
 const loading = keyframes`
@@ -39,7 +41,7 @@ const animationMixin = css`${loading} 1s infinite linear;`
 const BubbleSpin = styled.div`
   animation: ${animationMixin};
   border-radius: 50%;
-  color: ${(props: BubbleSpinInterface) => props.color};
+  color: ${(props: BubbleSpinInterface) => props.color || '#008FF7'};
   font-size: ${(props: BubbleSpinInterface) => `${props.size}px`};
   height: 1em;
   margin: 100px auto;
@@ -49,4 +51,16 @@ const BubbleSpin = styled.div`
   width: 1em;
 `
 
-export default BubbleSpin
+interface LoadingInterface {
+  text?: string
+  color?: string
+  size: number
+}
+
+const LoadingComponent: React.FC<LoadingInterface> = ({ text, color, size }) =>
+  <div className="loading">
+    <BubbleSpin color={color} size={size} />
+    {text && <p>{text}</p>}
+  </div>
+
+export default LoadingComponent

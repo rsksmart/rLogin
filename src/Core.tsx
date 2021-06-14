@@ -17,7 +17,7 @@ import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/pro
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN } from './constants'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -76,12 +76,14 @@ interface IModalState {
   chainId?: number
   errorReason?: ErrorDetails
   dataVault?: DataVault
+  loadingReason?: string
 }
 
 const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
-  currentStep: 'Step1'
+  currentStep: 'Step1',
+  loadingReason: ''
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
@@ -104,6 +106,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
+    this.connectToWallet = this.connectToWallet.bind(this)
   }
 
   public state: IModalState = {
@@ -167,6 +170,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
       .then(() => this.continueSettingUp(provider))
       // user cancelled the addition or switch, don't do anything:
       .catch()
+  }
+
+  /** Pre-Step 1 - user picked a wallet and waiting to connect */
+  private connectToWallet () {
+    this.setState({
+      currentStep: 'loading',
+      loadingReason: 'Connecting to provider.'
+    })
   }
 
   /** Step 1 confirmed - user picked a wallet provider */
@@ -263,16 +274,25 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /**
+   * Disconnect from WalletConnect or Portis if it is the selected provider, and connected
+   * @param provider web3 Provider
+   */
+  private disconnectProvider (): void {
+    const { provider } = this.state
+    if (provider && provider.disconnect) {
+      provider.disconnect()
+      localStorage.removeItem(WALLETCONNECT)
+    }
+  }
+
+  /**
    * Handle disconnect and cleanup state
    */
   public async disconnect (): Promise<void> {
     const { providerController } = this.props
-    const { provider } = this.state
 
     // WalletConnect and Portis Wrapper:
-    if (provider.disconnect) {
-      provider.disconnect().catch((err: Error) => console.log('Logout error', err.message))
-    }
+    this.disconnectProvider()
 
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
@@ -314,12 +334,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={() => this.setState({ currentStep: 'loading' })} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} />}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
       {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-      {currentStep === 'loading' && <Loading size={10} color="#008FF7" />}
+      {currentStep === 'loading' && <Loading size={10} text={loadingReason} />}
     </Modal>
   }
 }
