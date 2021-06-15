@@ -37,7 +37,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
   }
 
   if (isLoading) {
-    return <Loading text="Connecting to DataVault" size={10} />
+    return <Loading text="Connecting to the DataVault" />
   }
 
   return <>

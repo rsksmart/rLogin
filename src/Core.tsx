@@ -176,7 +176,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private connectToWallet () {
     this.setState({
       currentStep: 'loading',
-      loadingReason: 'Connecting to provider.'
+      loadingReason: 'Connecting to provider'
     })
   }
 
@@ -213,6 +213,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     if (!backendUrl) {
       return onConnect(provider, this.disconnect, dataVault)
     } else {
+      this.setState({ loadingReason: 'Connecting to server' })
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
         this.setState({
@@ -339,7 +340,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
       {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-      {currentStep === 'loading' && <Loading size={10} text={loadingReason} />}
+      {currentStep === 'loading' && <Loading text={loadingReason} />}
     </Modal>
   }
 }

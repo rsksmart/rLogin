@@ -31,6 +31,10 @@ const loading = keyframes`
   }
 `
 
+const LoadingText = styled.p`
+  color: #999
+`
+
 type BubbleSpinInterface = {
   size: number
   color?: string,
@@ -41,7 +45,7 @@ const animationMixin = css`${loading} 1s infinite linear;`
 const BubbleSpin = styled.div`
   animation: ${animationMixin};
   border-radius: 50%;
-  color: ${(props: BubbleSpinInterface) => props.color || '#008FF7'};
+  color: ${(props: BubbleSpinInterface) => props.color};
   font-size: ${(props: BubbleSpinInterface) => `${props.size}px`};
   height: 1em;
   margin: 100px auto;
@@ -59,8 +63,8 @@ interface LoadingInterface {
 
 const LoadingComponent: React.FC<LoadingInterface> = ({ text, color, size }) =>
   <div className="loading">
-    <BubbleSpin color={color} size={size || 20} />
-    {text && <p>{text}</p>}
+    <BubbleSpin color={color || '#008FF7'} size={size || 10} />
+    {text && <LoadingText>{text}</LoadingText>}
   </div>
 
 export default LoadingComponent
