@@ -95,6 +95,10 @@ export class RLogin {
     }
   }
 
+  private showModal = () => {
+    this.updateState({ show: true })
+  }
+
   /** handles an event and closes modal if open */
   private handleOnAndTrigger = async (event: string, ...args: any) => this.closeModalIfOpen()
     .then(() => this.eventController.trigger(event, ...args))
@@ -132,6 +136,7 @@ export class RLogin {
       <Core
         userProviders={this.userProviders}
         onClose={this.onClose}
+        showModal={this.showModal}
         resetState={this.resetState}
         providerController={this.providerController}
         onConnect={this.onConnect}
