@@ -9,17 +9,25 @@ describe('sample:dapp testing, no backend', () => {
       win.ethereum = currentProvider({
         address,
         privateKey,
-        chainId: 31,
+        chainId: 2,
         debug: true
       })
     })
   })
 
-  it('test the data vault flow', () => {
-    cy.visit('http://localhost:3006/?backend=yes')
+  it('shows the Select Network modal when using connect', () => {
+    cy.visit('http://localhost:3006/')
     cy.get('#login').click()
     cy.contains('MetaMask').click()
-    
-    cy.get('h2').should('have.text', 'Welcome')
+
+    cy.get('h2.rlogin-header2').should('have.text', 'Select Network')
+  })
+
+  it('shows the Select Network modal when using connectTo', () => {
+    cy.visit('http://localhost:3006/')
+    cy.get('#loginMetamask').click()
+    cy.contains('MetaMask').click()
+
+    cy.get('h2.rlogin-header2').should('have.text', 'Select Network')
   })
 })

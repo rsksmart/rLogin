@@ -1,4 +1,4 @@
-describe('rLoign Popup interaction', () => {
+describe('rLoign modal interaction', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3006')
     cy.contains('login with rLogin').click()
