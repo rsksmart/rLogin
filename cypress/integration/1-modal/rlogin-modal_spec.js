@@ -1,6 +1,6 @@
 describe('rLoign modal interaction', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3006')
+    cy.visit('/')
     cy.contains('login with rLogin').click()
   })
 
@@ -12,7 +12,7 @@ describe('rLoign modal interaction', () => {
     cy.get('body').click()
     cy.get('.rlogin-modal-lightbox').should('be.not.visible')
   })
-  
+
   it('closes the popup when clicking the close X', () => {
     cy.get('.rlogin-modal-close-button').click()
     cy.get('.rlogin-modal-lightbox').should('be.not.visible')

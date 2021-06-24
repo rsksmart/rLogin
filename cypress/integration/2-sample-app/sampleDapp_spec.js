@@ -16,7 +16,7 @@ describe('sample:dapp testing, no backend', () => {
   })
 
   const loginWithModal = () => {
-    cy.visit('http://localhost:3006/')
+    cy.visit('/')
     cy.get('#login').click()
     cy.contains('MetaMask').click()
   }

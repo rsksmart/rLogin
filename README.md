@@ -180,18 +180,24 @@ npm run serve
 
 > Metamask cannot be accessed without `http` - see https://ethereum.stackexchange.com/a/62217/620
 
-## Cypress E2E Testing
+## Cypress end-to-end testing
 
-To run the cypress e2e testing scripts, start the app using the permissioned flavor:
+To run the cypress E2E testing scripts, start the app using the permissioned flavor:
 
 ```
 npm run sample:permissioned
 ```
 
-Then in a different terminal, run the Cypress app:
+Then in a new terminal, run start the Cypress app and interact with the tests:
 
 ```
-npm run cypress
+npm run cypress:open
+```
+
+The Cypress tests can also be run in a headless browser by running the command:
+
+```
+npm run cypress:run
 ```
 
 ## Sample apps

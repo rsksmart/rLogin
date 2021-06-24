@@ -16,7 +16,7 @@ describe('show Select Network modal when trying to connect with a unsupported ch
   })
 
   it('shows the Select Network modal when using connect', () => {
-    cy.visit('http://localhost:3006/')
+    cy.visit('/')
     cy.get('#login').click()
     cy.contains('MetaMask').click()
 
@@ -24,7 +24,7 @@ describe('show Select Network modal when trying to connect with a unsupported ch
   })
 
   it('shows the Select Network modal when using connectTo', () => {
-    cy.visit('http://localhost:3006/')
+    cy.visit('/')
     cy.get('#loginMetamask').click()
     cy.get('h2.rlogin-header2').should('have.text', 'Select Network')
   })
