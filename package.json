@@ -10,7 +10,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --coverage --ci",
-    "cypress": "./node_modules/.bin/cypress open",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "lint": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts",
     "lint:fix": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts --fix",
     "build": "webpack --env=production",
@@ -89,6 +90,7 @@
     "@types/styled-components": "^5.1.3",
     "axios": "^0.21.1",
     "cypress": "^7.6.0",
+    "eslint-plugin-cypress": "^2.11.3",
     "ethr-did-resolver": "^3.0.2",
     "web3-eth-personal": "^1.3.0",
     "web3modal": "^1.9.1"
