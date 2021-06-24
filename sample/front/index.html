@@ -89,7 +89,7 @@
       })
 
       // setup login button
-      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider));
+      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(err => console.log('Error: ', err)));
 
       // ui - display handlers
