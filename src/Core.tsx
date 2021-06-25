@@ -17,7 +17,7 @@ import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/pro
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN } from './constants'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -76,12 +76,14 @@ interface IModalState {
   chainId?: number
   errorReason?: ErrorDetails
   dataVault?: DataVault
+  loadingReason?: string
 }
 
 const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
-  currentStep: 'Step1'
+  currentStep: 'Step1',
+  loadingReason: ''
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
@@ -104,6 +106,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
+    this.connectToWallet = this.connectToWallet.bind(this)
   }
 
   public state: IModalState = {
@@ -169,6 +172,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
       .catch()
   }
 
+  /** Pre-Step 1 - user picked a wallet and waiting to connect */
+  private connectToWallet () {
+    this.setState({
+      currentStep: 'loading',
+      loadingReason: 'Connecting to provider'
+    })
+  }
+
   /** Step 1 confirmed - user picked a wallet provider */
   private setupProvider (userProvider: any) {
     const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
@@ -202,6 +213,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     if (!backendUrl) {
       return onConnect(provider, this.disconnect, dataVault)
     } else {
+      this.setState({ loadingReason: 'Connecting to server' })
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
         this.setState({
@@ -263,16 +275,25 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /**
+   * Disconnect from WalletConnect or Portis if it is the selected provider, and connected
+   * @param provider web3 Provider
+   */
+  private disconnectProvider (): void {
+    const { provider } = this.state
+    if (provider && provider.disconnect) {
+      provider.disconnect()
+      localStorage.removeItem(WALLETCONNECT)
+    }
+  }
+
+  /**
    * Handle disconnect and cleanup state
    */
   public async disconnect (): Promise<void> {
     const { providerController } = this.props
-    const { provider } = this.state
 
     // WalletConnect and Portis Wrapper:
-    if (provider.disconnect) {
-      provider.disconnect().catch((err: Error) => console.log('Logout error', err.message))
-    }
+    this.disconnectProvider()
 
     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
@@ -289,22 +310,22 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
     const did = this.did()
 
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
      */
-    const handleClose = async () => {
-      this.setState({ currentStep: 'Step1' })
-
-      if (provider !== undefined && provider.disconnect) {
-        await provider.disconnect()
-      }
+    const handleClose = () => {
+      // disconnect WalletConnect and Portis
+      this.disconnectProvider()
 
       providerController.clearCachedProvider()
       onClose()
+
+      // reset state
+      this.setState(INITIAL_STATE)
     }
 
     return <Modal
@@ -314,12 +335,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={() => this.setState({ currentStep: 'loading' })} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} />}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
       {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-      {currentStep === 'loading' && <Loading size={10} color="#008FF7" />}
+      {currentStep === 'loading' && <Loading text={loadingReason} />}
     </Modal>
   }
 }

@@ -4,6 +4,7 @@ import { SelectiveDisclosureRequest } from './SelectiveDisclosureRequest'
 import { SelectiveDisclosureResponse } from './SelectiveDisclosureResponse'
 import { SDR, SD, Data } from '../../lib/sdr'
 import { ErrorMessage } from '../../ui/shared/ErrorMessage'
+import Loading from '../../ui/shared/Loading'
 
 interface Step2Props {
   sdr: {
@@ -35,10 +36,15 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
       .finally(() => setIsLoading(false))
   }
 
+  if (isLoading) {
+    return <Loading text="Connecting to the DataVault" />
+  }
+
   return <>
     {!sdrConfirmed
-      ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} isLoading={isLoading} />
+      ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
       : <SelectiveDisclosureResponse data={data} backendUrl={backendUrl} onConfirm={onConfirm} />}
+
     {error && <ErrorMessage title="DavaVault Error" description={error} />}
   </>
 }
