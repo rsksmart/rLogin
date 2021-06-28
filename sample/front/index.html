@@ -52,6 +52,9 @@
       const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
       const backendUrl = withBackend && 'http://localhost:3007'
 
+      // hide modals
+      const keepModalHidden = new URLSearchParams(window.location.search).get('keepModalHidden') === 'yes'
+
       if (!withBackend) {
         const beOnly = document.getElementsByClassName('be-only')
         for (let i = 0; i < beOnly.length; ++i) {
@@ -85,12 +88,13 @@
           },
         },
         backendUrl,
+        keepModalHidden,
         supportedChains: [1, 30, 31]
       })
 
       // setup login button
-      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider));
-      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(err => console.log('Error: ', err)));
+      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
+      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
 
       // ui - display handlers
       const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }

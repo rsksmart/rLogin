@@ -28,6 +28,7 @@ describe('Component: Core', () => {
       <Core
         userProviders={[provider]}
         onClose={jest.fn()}
+        showModal={jest.fn()}
         resetState={jest.fn()}
         providerController={new ProviderController(providerControllerOptions)}
         onConnect={jest.fn()}

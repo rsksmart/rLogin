@@ -46,6 +46,7 @@ export interface DataVaultOptions {
 interface IModalProps {
   userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
+  showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
   onConnect: (provider: any, disconnect: () => void, dataVault?: DataVault) => Promise<void>
@@ -53,6 +54,7 @@ interface IModalProps {
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
   backendUrl?: string
+  keepModalHidden?: boolean
   supportedChains?: number[]
   // dataVaultOptions?: DataVaultOptions
 }
@@ -150,7 +152,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
   private validateCurrentChain () {
-    const { supportedChains } = this.props
+    const { supportedChains, showModal, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
 
     const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
@@ -158,6 +160,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
     if (!isCurrentChainSupported) {
       provider.on(CHAIN_CHANGED, () => this.continueSettingUp(provider))
 
+      if (keepModalHidden) {
+        onError(new Error('ChainId is not supported.'))
+        return false
+      }
+
+      showModal()
       this.setState({ currentStep: 'wrongNetwork' })
     }
 
