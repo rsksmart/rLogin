@@ -94,7 +94,7 @@
 
       // setup login button
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
-      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(err => console.log('Error: ', err)));
+      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
 
       // ui - display handlers
       const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
