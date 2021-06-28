@@ -54,6 +54,7 @@ interface IModalProps {
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
   backendUrl?: string
+  hideModal: boolean
   supportedChains?: number[]
   // dataVaultOptions?: DataVaultOptions
 }
@@ -151,13 +152,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
   private validateCurrentChain () {
-    const { supportedChains, showModal } = this.props
+    const { supportedChains, showModal, hideModal } = this.props
     const { chainId, provider } = this.state
 
     const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
 
     if (!isCurrentChainSupported) {
       provider.on(CHAIN_CHANGED, () => this.continueSettingUp(provider))
+
+      if (hideModal) {
+        throw new Error('ChainId is not supported.')
+      }
 
       showModal()
       this.setState({ currentStep: 'wrongNetwork' })
