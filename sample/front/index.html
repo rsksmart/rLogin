@@ -52,6 +52,9 @@
       const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
       const backendUrl = withBackend && 'http://localhost:3007'
 
+      // hide modals
+      const hideModal = new URLSearchParams(window.location.search).get('hideModal') === 'yes'
+
       if (!withBackend) {
         const beOnly = document.getElementsByClassName('be-only')
         for (let i = 0; i < beOnly.length; ++i) {
@@ -85,6 +88,7 @@
           },
         },
         backendUrl,
+        hideModal,
         supportedChains: [1, 30, 31]
       })
 

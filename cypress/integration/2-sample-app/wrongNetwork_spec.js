@@ -28,4 +28,16 @@ describe('show Select Network modal when trying to connect with a unsupported ch
     cy.get('#loginMetamask').click()
     cy.get('h2.rlogin-header2').should('have.text', 'Select Network')
   })
+
+  it('throws an error when using connectTo and hideModal: true', () => {
+    cy.visit('/?hide=yes')
+    cy.get('#loginMetamask').click()
+
+    cy.get('.rlogin-modal-body').should('not.be.visible')
+    // should throw error!
+    cy.on('uncaught:exception', (err, runnable) => {
+      expect(err.message).include('something about the error')
+      return false
+    })
+  })
 })
