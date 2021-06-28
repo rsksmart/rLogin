@@ -32,6 +32,7 @@ const defaultOpts: IProviderControllerOptions = {
 
 interface RLoginOptions {
   backendUrl?: string
+  keepModalHidden?: boolean
   supportedChains?: number[]
   dataVaultOptions: DataVaultOptions
 }
@@ -45,6 +46,7 @@ export class RLogin {
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
   private backendUrl?: string;
+  private keepModalHidden: boolean;
   // private dataVaultOptions?: DataVaultOptions
 
   constructor (opts?: Options) {
@@ -68,6 +70,7 @@ export class RLogin {
 
     // setup modal
     this.userProviders = checkRLoginInjectedProviders(this.providerController.getUserOptions())
+    this.keepModalHidden = (opts && opts.keepModalHidden) || false
     this.renderModal()
 
     // this.dataVaultOptions = opts && opts.dataVaultOptions
@@ -93,6 +96,10 @@ export class RLogin {
     if (this.show) {
       await this.toggleModal()
     }
+  }
+
+  private showModal = () => {
+    this.updateState({ show: true })
   }
 
   /** handles an event and closes modal if open */
@@ -132,6 +139,7 @@ export class RLogin {
       <Core
         userProviders={this.userProviders}
         onClose={this.onClose}
+        showModal={this.showModal}
         resetState={this.resetState}
         providerController={this.providerController}
         onConnect={this.onConnect}
@@ -140,6 +148,7 @@ export class RLogin {
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
         supportedChains={this.supportedChains}
+        keepModalHidden={this.keepModalHidden}
         // dataVaultOptions={this.dataVaultOptions}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
