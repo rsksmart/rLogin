@@ -30,7 +30,7 @@ describe('show Select Network modal when trying to connect with a unsupported ch
   })
 
   it('throws an error when using connectTo and hideModal: true', () => {
-    cy.visit('/?hideModal=yes')
+    cy.visit('/?keepModalHidden=yes')
     cy.get('#loginMetamask').click()
 
     cy.get('.rlogin-modal-body').should('not.be.visible')
