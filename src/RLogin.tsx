@@ -16,7 +16,7 @@ import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
 import { Core, DataVaultOptions } from './Core'
 
-import DataVault from '@rsksmart/ipfs-cpinner-client'
+// import DataVault from '@rsksmart/ipfs-cpinner-client'
 import { checkRLoginInjectedProviders } from './providers/injectedProviders'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
@@ -108,7 +108,7 @@ export class RLogin {
 
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
-  private onConnect = (provider: any, disconnect: () => void, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, dataVault })
+  private onConnect = (provider: any, disconnect: () => void, dataVault?: any) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, dataVault })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
