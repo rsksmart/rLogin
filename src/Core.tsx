@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
+import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEncryptionManager } from '@rsksmart/ipfs-cpinner-client-types'
 
 import { WalletProviders } from './ux/step1'
 import { SelectiveDisclosure, SDR, SD } from './ux/step2'
@@ -37,10 +37,13 @@ declare global {
 }
 
 export interface DataVaultOptions {
-  [id: number]: {
-    package: any
-    serviceUrl:string
-  }
+  DataVault:IDataVault;
+  AuthManager: IAuthManagerNewable;
+  AsymmetricEncryptionManager:IWeb3ProviderEncryptionManager;
+  SignerEncryptionManager:IWeb3ProviderEncryptionManager;
+  serviceUrl:{
+    [chain:number]: string
+  };
 }
 
 interface IModalProps {
@@ -49,7 +52,7 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, dataVault?: DataVault) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, dataVault?: IDataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -77,7 +80,7 @@ interface IModalState {
   address?: string
   chainId?: number
   errorReason?: ErrorDetails
-  dataVault?: DataVault
+  dataVault?: IDataVault
   loadingReason?: string
 }
 
@@ -239,10 +242,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private async fetchSelectiveDisclosureRequest () {
     const { provider, address, sdr, chainId } = this.state
     const { dataVaultOptions } = this.props
-    const dataVaultOptionsForChain = dataVaultOptions![chainId!]
     const did = this.did()
 
-    const dataVault = await createDataVault(dataVaultOptionsForChain.serviceUrl, dataVaultOptionsForChain.package)(provider, did, address!)
+    const dataVault = await createDataVault(chainId!, dataVaultOptions!, provider, did, address!)
 
     this.setState({ dataVault })
 
