@@ -1,4 +1,4 @@
-// import DataVault from '@rsksmart/ipfs-cpinner-client'
+import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { getContentsFromDataVault } from './data-vault'
 
 export interface SDR {
@@ -20,7 +20,7 @@ export interface SD {
   claims: SelectiveDisclosureField
 }
 
-const fillDataField = async (data: Data, sdr: SDR, dataVault: any, did: string, field: 'credentials' | 'claims', keyAdapter: (key: string) => string) => {
+const fillDataField = async (data: Data, sdr: SDR, dataVault: DataVault, did: string, field: 'credentials' | 'claims', keyAdapter: (key: string) => string) => {
   for (const credential of sdr![field]) {
     const key = keyAdapter(credential)
     // TODO: add get many on Data Vault
@@ -28,7 +28,7 @@ const fillDataField = async (data: Data, sdr: SDR, dataVault: any, did: string, 
   }
 }
 
-export const fetchSelectiveDisclosureRequest = async (sdr: SDR, dataVault: any, did: string) => {
+export const fetchSelectiveDisclosureRequest = async (sdr: SDR, dataVault: DataVault, did: string) => {
   const data: Data = {
     credentials: {},
     claims: {}

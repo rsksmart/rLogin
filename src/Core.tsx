@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-// import DataVault from '@rsksmart/ipfs-cpinner-client'
+import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 
 import { WalletProviders } from './ux/step1'
 import { SelectiveDisclosure, SDR, SD } from './ux/step2'
@@ -49,7 +49,7 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, dataVault?: any) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, dataVault?: DataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -77,7 +77,7 @@ interface IModalState {
   address?: string
   chainId?: number
   errorReason?: ErrorDetails
-  dataVault?: any
+  dataVault?: DataVault
   loadingReason?: string
 }
 
