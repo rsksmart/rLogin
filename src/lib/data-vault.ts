@@ -5,7 +5,6 @@ import { DataVaultOptions } from '../Core'
 export const createDataVault = async (chainId:number, dataVaultOptions: DataVaultOptions, provider: EIP1193Provider, did: string, address: string): Promise<DataVault> => {
   const personalSign = (data: string) => provider.request({ method: 'personal_sign', params: [data, address] })
   const serviceUrl = dataVaultOptions.serviceUrl[chainId]
-  // eslint-disable-next-line new-cap
   return new dataVaultOptions.DataVault({
     serviceUrl,
     authManager: new dataVaultOptions.AuthManager({ did, serviceUrl, personalSign }),

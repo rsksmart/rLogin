@@ -34,7 +34,7 @@ interface RLoginOptions {
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
-  dataVaultOptions: DataVaultOptions
+  dataVaultOptions?: DataVaultOptions
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -67,13 +67,11 @@ export class RLogin {
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
-
+    this.dataVaultOptions = opts && opts.dataVaultOptions
     // setup modal
     this.userProviders = checkRLoginInjectedProviders(this.providerController.getUserOptions())
     this.keepModalHidden = (opts && opts.keepModalHidden) || false
     this.renderModal()
-
-    this.dataVaultOptions = opts && opts.dataVaultOptions
   }
 
   get cachedProvider (): string {
