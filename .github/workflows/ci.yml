@@ -20,6 +20,7 @@ jobs:
     - run: npm i
     - run: npm run test:ci
     - run: npm run lint
+    - run: npm publish --dry-run
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
