@@ -158,7 +158,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
 - Permissioned apps: 
 ```typescript
   import RLogin from '@rsksmart/rlogin'
-  import IPFSCpinnerClient, { AuthManager, AsymmetricEncryptionManager, SignerEncryptionManager } from '@rsksmart/ipfs-cpinner-client'
+  import * as RIFDataVault from '@rsksmart/ipfs-cpinner-client'
 
   export const rLogin = new RLogin({
     cachedProvider: false,
@@ -169,10 +169,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
     backendUrl: 'http://url-to-backend',
      // add the modules that will handle the data vault connection and the service url for the supported networks
     dataVaultOptions: {
-      DataVault: IPFSCpinnerClient,
-      AuthManager: AuthManager,
-      AsymmetricEncryptionManager: AsymmetricEncryptionManager,
-      SignerEncryptionManager: SignerEncryptionManager,
+      package: RIFDataVault,
       serviceUrl: {
         30: 'https://data-vault.identity.rifos.org',
       }
