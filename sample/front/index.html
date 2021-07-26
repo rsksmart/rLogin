@@ -92,10 +92,7 @@
         keepModalHidden,
         supportedChains: [1, 30, 31],
         dataVaultOptions: {
-          DataVault:RIFDataVault.default,
-          AuthManager:RIFDataVault.AuthManager,
-          AsymmetricEncryptionManager:RIFDataVault.AsymmetricEncryptionManager,
-          SignerEncryptionManager:RIFDataVault.SignerEncryptionManager,
+          package:RIFDataVault,
           serviceUrl: {
             1: 'https://data-vault.identity.rifos.org',
             30: 'https://data-vault.identity.rifos.org',

@@ -36,11 +36,15 @@ declare global {
   }
 }
 
-export interface DataVaultOptions {
-  DataVault:IDataVault;
+export interface DataVaultPackage {
+  default: IDataVault;
   AuthManager: IAuthManagerNewable;
   AsymmetricEncryptionManager:IWeb3ProviderEncryptionManager;
   SignerEncryptionManager:IWeb3ProviderEncryptionManager;
+}
+
+export interface DataVaultOptions {
+  package: DataVaultPackage;
   serviceUrl:{
     [chain:number]: string
   };
