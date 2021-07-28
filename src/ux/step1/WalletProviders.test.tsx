@@ -33,4 +33,9 @@ describe('Component: WalletProviders', () => {
     expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).childAt(0).find('h3').text()).toEqual('test1')
     expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).childAt(1).find('h3').text()).toEqual('test2')
   })
+
+  it('shows message about no providers', () => {
+    const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
+    expect(wrapper.find('h2').text()).toBe('No wallets found')
+  })
 })

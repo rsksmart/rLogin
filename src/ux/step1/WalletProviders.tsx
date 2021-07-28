@@ -30,7 +30,9 @@ const NoWalletAnchor = styled.a`
 `
 
 export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersProps) => <>
-  <Header2>Connect your wallet</Header2>
+  <Header2>
+    {userProviders.length !== 0 ? 'Connect your wallet' : 'No wallets found'}
+  </Header2>
   <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
     {userProviders.map(provider =>
       provider ? (
