@@ -2,9 +2,9 @@ import { EIP1193Provider, isMetamask } from './provider'
 import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { DataVaultOptions } from '../Core'
 
-export const createDataVault = async (chainId:number, dataVaultOptions: DataVaultOptions, provider: EIP1193Provider, did: string, address: string): Promise<DataVault> => {
+export const createDataVault = async (dataVaultOptions: DataVaultOptions, provider: EIP1193Provider, did: string, address: string): Promise<DataVault> => {
   const personalSign = (data: string) => provider.request({ method: 'personal_sign', params: [data, address] })
-  const serviceUrl = dataVaultOptions.serviceUrl[chainId]
+  const serviceUrl = dataVaultOptions.serviceUrl
   // eslint-disable-next-line new-cap
   return new dataVaultOptions.package.default({
     serviceUrl,

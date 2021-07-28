@@ -170,9 +170,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
      // add the modules that will handle the data vault connection and the service url for the supported networks
     dataVaultOptions: {
       package: RIFDataVault,
-      serviceUrl: {
-        30: 'https://data-vault.identity.rifos.org',
-      }
+      serviceUrl: 'https://data-vault.identity.rifos.org'
     }
   }),
 ```

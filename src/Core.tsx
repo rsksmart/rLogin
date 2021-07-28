@@ -45,9 +45,7 @@ export interface DataVaultPackage {
 
 export interface DataVaultOptions {
   package: DataVaultPackage;
-  serviceUrl:{
-    [chain:number]: string
-  };
+  serviceUrl: string;
 }
 
 interface IModalProps {
@@ -244,12 +242,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   /** Step 2  */
   private async fetchSelectiveDisclosureRequest () {
-    const { provider, address, sdr, chainId } = this.state
+    const { provider, address, sdr } = this.state
     const { dataVaultOptions } = this.props
     const did = this.did()
 
     if (!dataVaultOptions) throw new Error('Invalid setup')
-    const dataVault = await createDataVault(chainId!, dataVaultOptions!, provider, did, address!)
+    const dataVault = await createDataVault(dataVaultOptions!, provider, did, address!)
 
     this.setState({ dataVault })
 
