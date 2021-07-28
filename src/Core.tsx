@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import * as React from 'react'
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
-import DataVault from '@rsksmart/ipfs-cpinner-client'
+import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEncryptionManager } from '@rsksmart/ipfs-cpinner-client-types'
 
 import { WalletProviders } from './ux/step1'
 import { SelectiveDisclosure, SDR, SD } from './ux/step2'
@@ -36,11 +36,16 @@ declare global {
   }
 }
 
+export interface DataVaultPackage {
+  default: IDataVault;
+  AuthManager: IAuthManagerNewable;
+  AsymmetricEncryptionManager:IWeb3ProviderEncryptionManager;
+  SignerEncryptionManager:IWeb3ProviderEncryptionManager;
+}
+
 export interface DataVaultOptions {
-  [id: string]: {
-    package: any
-    options?: any
-  }
+  package: DataVaultPackage;
+  serviceUrl: string;
 }
 
 interface IModalProps {
@@ -49,14 +54,14 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, dataVault?: DataVault) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, dataVault?: IDataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
-  // dataVaultOptions?: DataVaultOptions
+  dataVaultOptions?: DataVaultOptions
 }
 
 type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork' | 'loading'
@@ -77,7 +82,7 @@ interface IModalState {
   address?: string
   chainId?: number
   errorReason?: ErrorDetails
-  dataVault?: DataVault
+  dataVault?: IDataVault
   loadingReason?: string
 }
 
@@ -238,11 +243,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
   /** Step 2  */
   private async fetchSelectiveDisclosureRequest () {
     const { provider, address, sdr } = this.state
+    const { dataVaultOptions } = this.props
     const did = this.did()
 
-    // TODO: this dependency should be taken as parameter
-    // if (!dataVaultOptions) throw new Error('Invalid setup')
-    const dataVault = await createDataVault(provider, did, address!)
+    if (!dataVaultOptions) throw new Error('Invalid setup')
+    const dataVault = await createDataVault(dataVaultOptions!, provider, did, address!)
 
     this.setState({ dataVault })
 
