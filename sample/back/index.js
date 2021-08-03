@@ -23,7 +23,7 @@ const didAuthConfig = {
   serviceDid,
   serviceSigner,
   serviceUrl,
-  challengeSecret,
+  challengeSecret
 }
 
 const authMiddleware = !permissioned

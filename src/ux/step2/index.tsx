@@ -45,7 +45,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
       ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
       : <SelectiveDisclosureResponse data={data} backendUrl={backendUrl} onConfirm={onConfirm} />}
 
-    {error && <ErrorMessage title="DavaVault Error" description={error} />}
+    {error && <ErrorMessage title="DataVault Error" description={error} />}
   </>
 }
 

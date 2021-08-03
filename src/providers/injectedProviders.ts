@@ -36,8 +36,8 @@ const injectedProviders = [
  * @returns updated array of providers
  */
 export const checkRLoginInjectedProviders = (providers: IProviderUserOptions[]) => {
-  // if the first item is not Web3 or Metamask return the array
-  if (providers[0].name !== 'Web3' && providers[0].name !== 'MetaMask') {
+  // if zero items, or the first item is not Web3 or Metamask return the array
+  if (providers.length === 0 || (providers[0].name !== 'Web3' && providers[0].name !== 'MetaMask')) {
     return providers
   }
 

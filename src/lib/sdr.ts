@@ -1,4 +1,4 @@
-import DataVault from '@rsksmart/ipfs-cpinner-client'
+import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { getContentsFromDataVault } from './data-vault'
 
 export interface SDR {

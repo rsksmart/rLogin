@@ -42,6 +42,7 @@
     <script src="http://localhost:3005/main.js"></script>
     <script src="https://unpkg.com/@walletconnect/web3-provider@1.3.2/dist/umd/index.min.js"></script>
     <script src="https://unpkg.com/@portis/web3@4.0.0/umd/index.js"></script>
+    <script src="https://unpkg.com/@rsksmart/ipfs-cpinner-client@0.1.3/dist/bundle.js"></script>
 
     <script type="text/javascript">
       if (window.ethereum) {
@@ -89,7 +90,15 @@
         },
         backendUrl,
         keepModalHidden,
-        supportedChains: [1, 30, 31]
+        supportedChains: [1, 30, 31],
+        dataVaultOptions: {
+          package:RIFDataVault,
+          serviceUrl: {
+            1: 'https://data-vault.identity.rifos.org',
+            30: 'https://data-vault.identity.rifos.org',
+            31: 'https://data-vault.identity.rifos.org',
+          }
+        }
       })
 
       // setup login button

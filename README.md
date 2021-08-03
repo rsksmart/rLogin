@@ -124,9 +124,56 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
 
 - Open apps: this are apps that can be accessed by anyone controlling a wallet. This apps are usually decentralized applications where user relays some operations to a centralized service. This applications need a challenge-response authentication - use a seamless setup with `@rsksmart/express-did-auth`
 
-- Permissioned apps: for example, apps using Google OAuth to receive user's email are categorized in this flavor. This process of requestion credentials to grant user access is common and usually relies on centralized data silos. This dApp flavor will cover requesting user's Verifiable Credentials in a fully user-centric manner - this is setup in the backend activating _Selective disclosure requests_
+- Permissioned apps: for example, apps using Google OAuth to receive user's email are categorized in this flavor. This process of requesting credentials to grant user access is common and usually relies on centralized data silos. This dApp flavor will cover requesting user's Verifiable Credentials in a fully user-centric manner - this is setup in the backend activating _Selective disclosure requests_
 
 - Closed apps: for example, a back office. This are apps that only specific user's can access. This flavor is used to prove the user accessing an app holds or is delegated by a specific identity - perform this validations in your server's business logic
+
+### Set up for the different flavors
+- Fully-decentralized apps: 
+```typescript
+  import RLogin from '@rsksmart/rlogin'
+
+  export const rLogin = new RLogin({
+    cachedProvider: false,
+    providerOptions: {
+      // providers configurations
+    },
+    supportedChains: [1, 30, 31]
+  })
+```
+- Open apps:
+```typescript
+  import RLogin from '@rsksmart/rlogin'
+ 
+  export const rLogin = new RLogin({
+    cachedProvider: false,
+    providerOptions: {
+      // providers configurations
+    },
+    supportedChains: [1, 30, 31],
+    backendUrl: 'http://url-to-backend'  // just add the backend url
+  })
+```
+
+- Permissioned apps: 
+```typescript
+  import RLogin from '@rsksmart/rlogin'
+  import * as RIFDataVault from '@rsksmart/ipfs-cpinner-client'
+
+  export const rLogin = new RLogin({
+    cachedProvider: false,
+    providerOptions: {
+      // providers configurations
+    },
+    supportedChains: [1, 30, 31],
+    backendUrl: 'http://url-to-backend',
+     // add the modules that will handle the data vault connection and the service url for the supported networks
+    dataVaultOptions: {
+      package: RIFDataVault,
+      serviceUrl: 'https://data-vault.identity.rifos.org'
+    }
+  }),
+```
 
 ## The code
 
