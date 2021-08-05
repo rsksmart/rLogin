@@ -5,6 +5,7 @@ import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography
 import { WideBox } from '../../ui/shared/Box'
 import { credentialToText } from '../../vc-json-schema-adapter'
 import { Data, DataField, SD, SelectiveDisclosureField } from '../../lib/sdr'
+import { Trans } from 'react-i18next'
 
 interface SelectiveDisclosureProps {
   data: Data
@@ -49,8 +50,9 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
   const selectClaims = (key: string, value: string) => selectField(key, value, selectedClaims, setSelectedClaims)
 
   return <>
-    <Header2>Select information to share</Header2>
-    <Paragraph>Sharing your information is optional. It will only be shared with <span style={{ wordBreak: 'break-all' }}>{backendUrl}</span></Paragraph>
+    <Header2><Trans>Select information to share</Trans></Header2>
+    <Paragraph><Trans>Sharing your information is optional. It will only be shared with</Trans>:</Paragraph>
+    <Paragraph><span style={{ wordBreak: 'break-all' }}>{backendUrl}</span></Paragraph>
     <WideBox>
       <DataList dataField={claims} select={selectClaims} areCredentials={false} />
       <DataList dataField={credentials} select={selectCredentials} areCredentials={true} />
@@ -58,7 +60,7 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
     <Button onClick={() => onConfirm({
       credentials: selectedCredentials,
       claims: selectedClaims
-    })}>Confirm</Button>
+    })}><Trans>Confirm</Trans></Button>
   </>
 }
 

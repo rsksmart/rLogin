@@ -16,7 +16,13 @@ const resources = {
       'Get the information from your Data Vault that you want to share with the following service': 'Get the information from your Data Vault that you want to share with the following service T',
       'Access Data Vault': 'Access Data Vault T',
       'Connecting to the DataVault': 'Connecting to the DataVault T',
-      'DataVault Error': 'DataVault Error T'
+      'DataVault Error': 'DataVault Error T',
+      'Select information to share': 'Select information to share T',
+      'Sharing your information is optional. It will only be shared with': 'Sharing your information is optional. It will only be shared with T',
+      Confirm: 'Confirm T',
+      'Use this Identity?': 'Use this Identity? T',
+      'Confirm Identity': 'Confirm Identity T',
+      'Confirming Identity': 'Confirming Identity T'
     }
   },
   fr: {
