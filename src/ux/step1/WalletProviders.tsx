@@ -5,7 +5,6 @@ import { Provider } from './Provider'
 import { IProviderUserOptions } from 'web3modal'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
-import i18next from 'i18next'
 import { Trans } from 'react-i18next'
 
 interface IWalletProvidersProps {
