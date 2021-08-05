@@ -5,6 +5,7 @@ import { SelectiveDisclosureResponse } from './SelectiveDisclosureResponse'
 import { SDR, SD, Data } from '../../lib/sdr'
 import { ErrorMessage } from '../../ui/shared/ErrorMessage'
 import Loading from '../../ui/shared/Loading'
+import i18next from 'i18next'
 
 interface Step2Props {
   sdr: {
@@ -37,7 +38,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
   }
 
   if (isLoading) {
-    return <Loading text="Connecting to the DataVault" />
+    return <Loading text={i18next.t('Connecting to the DataVault')} />
   }
 
   return <>
@@ -45,7 +46,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
       ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
       : <SelectiveDisclosureResponse data={data} backendUrl={backendUrl} onConfirm={onConfirm} />}
 
-    {error && <ErrorMessage title="DataVault Error" description={error} />}
+    {error && <ErrorMessage title={i18next.t('DataVault Error')} description={error} />}
   </>
 }
 

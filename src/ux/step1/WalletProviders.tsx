@@ -6,6 +6,7 @@ import { IProviderUserOptions } from 'web3modal'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
 import i18next from 'i18next'
+import { Trans } from 'react-i18next'
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
@@ -48,10 +49,10 @@ export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersP
     )}
   </ProvidersWrapper>
   <Paragraph className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
-    No wallet?
-    {' '}
+
+    <Trans>No wallet?</Trans>
     <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
-      Get one here!
+      <Trans>Get one here!</Trans>
     </NoWalletAnchor>
   </Paragraph>
 </>

@@ -7,8 +7,16 @@ import { initReactI18next } from 'react-i18next'
 const resources = {
   en: {
     translation: {
-      'Connect your wallet': 'Connect your wallet ',
-      'No wallets found': 'No wallets found'
+      'Connecting to server': 'Connecting to server T',
+      'Connect your wallet': 'Connect your wallet T',
+      'No wallets found': 'No wallets found T',
+      'No wallet?': 'No wallet? T',
+      'Get one here!': 'Get one here! T',
+      'Would you like to give us access to info in your data vault?': 'Would you like to give us access to info in your data vault? T',
+      'Get the information from your Data Vault that you want to share with the following service': 'Get the information from your Data Vault that you want to share with the following service T',
+      'Access Data Vault': 'Access Data Vault T',
+      'Connecting to the DataVault': 'Connecting to the DataVault T',
+      'DataVault Error': 'DataVault Error T'
     }
   },
   fr: {
