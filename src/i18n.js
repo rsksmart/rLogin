@@ -7,22 +7,22 @@ import { initReactI18next } from 'react-i18next'
 const resources = {
   en: {
     translation: {
-      'Connecting to server': 'Connecting to server T',
-      'Connect your wallet': 'Connect your wallet T',
-      'No wallets found': 'No wallets found T',
-      'No wallet?': 'No wallet? T',
-      'Get one here!': 'Get one here! T',
-      'Would you like to give us access to info in your data vault?': 'Would you like to give us access to info in your data vault? T',
-      'Get the information from your Data Vault that you want to share with the following service': 'Get the information from your Data Vault that you want to share with the following service T',
-      'Access Data Vault': 'Access Data Vault T',
-      'Connecting to the DataVault': 'Connecting to the DataVault T',
-      'DataVault Error': 'DataVault Error T',
-      'Select information to share': 'Select information to share T',
-      'Sharing your information is optional. It will only be shared with': 'Sharing your information is optional. It will only be shared with T',
-      Confirm: 'Confirm T',
-      'Use this Identity?': 'Use this Identity? T',
-      'Confirm Identity': 'Confirm Identity T',
-      'Confirming Identity': 'Confirming Identity T'
+      'Connecting to server': 'Connecting to server',
+      'Connect your wallet': 'Connect your wallet',
+      'No wallets found': 'No wallets found',
+      'No wallet?': 'No wallet?',
+      'Get one here!': 'Get one here!',
+      'Would you like to give us access to info in your data vault?': 'Would you like to give us access to info in your data vault?',
+      'Get the information from your Data Vault that you want to share with the following service': 'Get the information from your Data Vault that you want to share with the following service',
+      'Access Data Vault': 'Access Data Vault',
+      'Connecting to the DataVault': 'Connecting to the DataVault',
+      'DataVault Error': 'DataVault Error',
+      'Select information to share': 'Select information to share',
+      'Sharing your information is optional. It will only be shared with': 'Sharing your information is optional. It will only be shared with',
+      Confirm: 'Confirm',
+      'Use this Identity?': 'Use this Identity?',
+      'Confirm Identity': 'Confirm Identity',
+      'Confirming Identity': 'Confirming Identity'
     }
   },
   fr: {
