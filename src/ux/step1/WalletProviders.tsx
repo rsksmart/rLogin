@@ -33,7 +33,7 @@ const NoWalletAnchor = styled.a`
 
 export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersProps) => <>
   <Header2>
-    {userProviders.length !== 0 ? i18next.t('Connect your wallet') : i18next.t('No wallets found')}
+    {userProviders.length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
   </Header2>
   <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
     {userProviders.map(provider =>
@@ -50,7 +50,7 @@ export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersP
   </ProvidersWrapper>
   <Paragraph className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
 
-    <Trans>No wallet?</Trans>
+    <Trans>No wallet? </Trans>
     <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
       <Trans>Get one here!</Trans>
     </NoWalletAnchor>
