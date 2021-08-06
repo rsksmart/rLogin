@@ -36,8 +36,6 @@ describe('Component: WalletProviders', () => {
 
   it('shows message about no providers', () => {
     const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
-    console.log('hola casa')
-    console.log(wrapper.find('h2'))
     expect(wrapper.find('h2').text()).toBe('No wallets found')
   })
 })
