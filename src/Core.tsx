@@ -125,7 +125,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
-      this.props.resetState()
+      this.disconnect()
     }
     if (this.lightboxRef) {
       const lightboxRect = this.lightboxRef.getBoundingClientRect()
