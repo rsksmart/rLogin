@@ -5,6 +5,7 @@ import { Provider } from './Provider'
 import { IProviderUserOptions } from 'web3modal'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
+import { Trans } from 'react-i18next'
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
@@ -31,7 +32,7 @@ const NoWalletAnchor = styled.a`
 
 export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersProps) => <>
   <Header2>
-    {userProviders.length !== 0 ? 'Connect your wallet' : 'No wallets found'}
+    {userProviders.length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
   </Header2>
   <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
     {userProviders.map(provider =>
@@ -47,10 +48,10 @@ export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersP
     )}
   </ProvidersWrapper>
   <Paragraph className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
-    No wallet?
-    {' '}
+
+    <Trans>No wallet? </Trans>
     <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
-      Get one here!
+      <Trans>Get one here!</Trans>
     </NoWalletAnchor>
   </Paragraph>
 </>

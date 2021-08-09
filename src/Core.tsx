@@ -22,7 +22,7 @@ import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
 import Loading from './ui/shared/Loading'
-
+import i18next from 'i18next'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
 
@@ -226,7 +226,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     if (!backendUrl) {
       return onConnect(provider, this.disconnect, dataVault)
     } else {
-      this.setState({ loadingReason: 'Connecting to server' })
+      const loadingReason = i18next.t('Connecting to server')
+      this.setState({ loadingReason })
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
         this.setState({
