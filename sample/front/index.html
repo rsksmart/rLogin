@@ -12,6 +12,8 @@
       <hr />
       <h2>Wallet provider info</h2>
       <p id="error" style="color: red;"></p>
+      <h3>Supported chains</h3>
+      <p id="supportedChains"></p>
       <h3>Connected</h3>
       <p id="connected">No</p>
       <h3>Accounts</h3>
@@ -56,6 +58,16 @@
       // hide modals
       const keepModalHidden = new URLSearchParams(window.location.search).get('keepModalHidden') === 'yes'
 
+      // hide modals
+      const defaultNetworks = [1,30,31]
+      const supportedChainsParam = new URLSearchParams(window.location.search).get('supportedChains')
+      const supportedChains = !supportedChainsParam ? 
+        defaultNetworks :
+        (supportedChainsParam == 'all'? null : supportedChainsParam.split(',').map(chain => parseInt(chain)))
+
+
+        console.log({supportedChains})
+
       if (!withBackend) {
         const beOnly = document.getElementsByClassName('be-only')
         for (let i = 0; i < beOnly.length; ++i) {
@@ -90,7 +102,7 @@
         },
         backendUrl,
         keepModalHidden,
-        supportedChains: [1, 30, 31],
+        supportedChains,
         dataVaultOptions: {
           package:RIFDataVault,
           serviceUrl: 'https://data-vault.identity.rifos.org',
@@ -123,7 +135,10 @@
       const signTypedDataV1 = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData', params })
       const signTypedDataV4 = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData_v4', params })
 
-      function handleProvider(rLoginResponse) {
+
+      setElementInnerText('supportedChains', supportedChainsParam || supportedChains.join(','))
+
+      const handleProvider = function (rLoginResponse) {
         const provider = rLoginResponse.provider
         setElementInnerText('connected', 'Yes')
 

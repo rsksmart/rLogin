@@ -36,4 +36,11 @@ describe('show Select Network modal when trying to connect with a unsupported ch
     cy.get('.rlogin-modal-body').should('not.be.visible')
     cy.get('#error').should('have.text', 'Error: ChainId is not supported.')
   })
+
+  it('it should connect with any network', () => {
+    cy.visit('/?supportedChains=all')
+    cy.get('#login').click()
+    cy.contains('MetaMask').click()
+    cy.get('#connected').should('have.text', 'Yes')
+  })
 })
