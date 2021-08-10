@@ -35,18 +35,18 @@ const resources = {
       'Connect your wallet': 'Conecte su billetera',
       'No wallets found': 'No se ha encontrado ninguna billetera',
       'No wallet?': 'No tiene billetera?',
-      'Get one here!': 'Descargue una aqui!',
-      'Would you like to give us access to info in your data vault?': 'Nos daria acceso a la información requerida de su Data Vault?',
-      'Get the information from your Data Vault that you want to share with the following service': 'Descargue la informacion que desea compartir con el servicio',
+      'Get one here!': 'Descargue una aquí!',
+      'Would you like to give us access to info in your data vault?': 'Nos daría acceso a la información requerida de su Data Vault?',
+      'Get the information from your Data Vault that you want to share with the following service': 'Descargue la información que desea compartir con el servicio',
       'Access Data Vault': 'Acceda al Data Vault',
-      'Connecting to the DataVault': 'Conectandose al Data Vault',
+      'Connecting to the DataVault': 'Conectándose al Data Vault',
       'DataVault Error': 'Error en el Data Vault',
       'Select information to share': 'Seleccione la información que desea compartir',
-      'Sharing your information is optional. It will only be shared with': 'Compartir su información es opcional. Solo se compartira con',
+      'Sharing your information is optional. It will only be shared with': 'Compartir su información es opcional. Sólo se compartira con',
       Confirm: 'Confirmar',
       'Use this Identity?': 'Usar esta identidad?',
-      'Confirm Identity': 'Confirmar Identity',
-      'Confirming Identity': 'Confirmando Identity'
+      'Confirm Identity': 'Confirmar identidad',
+      'Confirming Identity': 'Confirmando identidad'
     }
   }
 }
