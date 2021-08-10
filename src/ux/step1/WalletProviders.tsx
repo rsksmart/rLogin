@@ -22,6 +22,20 @@ const ProvidersWrapper = styled.div`
   padding: 8px;
 `
 
+const LanguageSelector = styled.select`
+  float: left;
+  
+`
+
+const NoWalletFooter = styled.span`
+  float: right;
+  padding: 2px;
+`
+const FooterWrapper = styled.div`
+  height: 35px;
+  padding: 8px;
+`
+
 const NoWalletAnchor = styled.a`
   color: #008FF7;
   text-decoration: none;
@@ -47,11 +61,22 @@ export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersP
       ) : null
     )}
   </ProvidersWrapper>
-  <Paragraph className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
+  <Paragraph>
+    <FooterWrapper>
+      <LanguageSelector name="cars" id="cars">
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+      </LanguageSelector>
 
-    <Trans>No wallet? </Trans>
-    <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
-      <Trans>Get one here!</Trans>
-    </NoWalletAnchor>
+      <NoWalletFooter>
+
+        <Trans>No wallet? </Trans>
+        <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
+          <Trans>Get one here!</Trans>
+        </NoWalletAnchor>
+      </NoWalletFooter>
+    </FooterWrapper>
   </Paragraph>
 </>
