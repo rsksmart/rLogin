@@ -30,10 +30,11 @@ const LanguageSelector = styled.select`
 const NoWalletFooter = styled.span`
   float: right;
   padding: 2px;
+  
 `
 const FooterWrapper = styled.div`
   height: 35px;
-  padding: 8px;
+  padding: 0 8px 0 8px;
 `
 
 const NoWalletAnchor = styled.a`
