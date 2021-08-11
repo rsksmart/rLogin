@@ -65,9 +65,6 @@
         defaultNetworks :
         (supportedChainsParam == 'all'? null : supportedChainsParam.split(',').map(chain => parseInt(chain)))
 
-
-        console.log({supportedChains})
-
       if (!withBackend) {
         const beOnly = document.getElementsByClassName('be-only')
         for (let i = 0; i < beOnly.length; ++i) {
