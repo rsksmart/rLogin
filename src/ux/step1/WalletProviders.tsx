@@ -10,6 +10,7 @@ import { Trans } from 'react-i18next'
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
   setLoading: () => void
+  change: (event: any) => void
 }
 
 const ProvidersWrapper = styled.div`
@@ -44,7 +45,7 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersProps) => <>
+export const WalletProviders = ({ userProviders, setLoading, change }: IWalletProvidersProps) => <>
   <Header2>
     {userProviders.length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
   </Header2>
@@ -61,22 +62,22 @@ export const WalletProviders = ({ userProviders, setLoading }: IWalletProvidersP
       ) : null
     )}
   </ProvidersWrapper>
-  <Paragraph>
-    <FooterWrapper>
-      <LanguageSelector name="cars" id="cars">
-        <option value="volvo">Volvo</option>
-        <option value="saab">Saab</option>
-        <option value="mercedes">Mercedes</option>
-        <option value="audi">Audi</option>
+
+  <FooterWrapper >
+    <Paragraph>
+      <LanguageSelector onChange={(val) => change(val.target.value)} name="Languages" id="languages">
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
       </LanguageSelector>
 
-      <NoWalletFooter>
+      <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
 
         <Trans>No wallet? </Trans>
         <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
           <Trans>Get one here!</Trans>
         </NoWalletAnchor>
       </NoWalletFooter>
-    </FooterWrapper>
-  </Paragraph>
+    </Paragraph>
+  </FooterWrapper>
+
 </>

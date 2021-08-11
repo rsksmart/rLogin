@@ -248,9 +248,9 @@ npm run cypress:run
 ```
 
 ## Multi-language
-Please take a look at the following file to change the default language:
+Please take a look at the following file to add more languages:
 ```
-/src/i18n.js
+/src/i18n.ts
 ```
 
 

@@ -23,6 +23,8 @@ import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
 import Loading from './ui/shared/Loading'
 import i18next from 'i18next'
+import i18n from './i18n'
+
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
 
@@ -96,6 +98,7 @@ const INITIAL_STATE: IModalState = {
 export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
+
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
     const { providerController, onError } = props
@@ -323,6 +326,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.setState(INITIAL_STATE)
   }
 
+  public change = (language: string) => {
+    console.log(language)
+
+    const { showModal } = this.props
+
+    i18n.changeLanguage(language)
+    showModal()
+  }
+
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
@@ -349,7 +361,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} change={this.change}/>}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
