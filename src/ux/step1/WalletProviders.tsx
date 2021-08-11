@@ -10,7 +10,7 @@ import { Trans } from 'react-i18next'
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
   setLoading: () => void
-  change: (event: any) => void
+  changeLanguage: (event: any) => void
 }
 
 const ProvidersWrapper = styled.div`
@@ -25,7 +25,6 @@ const ProvidersWrapper = styled.div`
 
 const LanguageSelector = styled.select`
   float: left;
-  
 `
 
 const NoWalletFooter = styled.span`
@@ -45,7 +44,7 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-export const WalletProviders = ({ userProviders, setLoading, change }: IWalletProvidersProps) => <>
+export const WalletProviders = ({ userProviders, setLoading, changeLanguage }: IWalletProvidersProps) => <>
   <Header2>
     {userProviders.length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
   </Header2>
@@ -65,7 +64,7 @@ export const WalletProviders = ({ userProviders, setLoading, change }: IWalletPr
 
   <FooterWrapper >
     <Paragraph>
-      <LanguageSelector onChange={(val) => change(val.target.value)} name="Languages" id="languages">
+      <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} name="Languages" id="languages">
         <option value="en">English</option>
         <option value="es">Spanish</option>
       </LanguageSelector>

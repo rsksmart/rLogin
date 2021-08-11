@@ -13,7 +13,7 @@ describe('Component: WalletProviders', () => {
   const props = {
     userProviders: providers,
     setLoading: jest.fn(),
-    change: jest.fn()
+    changeLanguage: jest.fn()
   }
 
   it('renders and is defined', () => {
