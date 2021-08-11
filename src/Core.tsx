@@ -160,7 +160,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { supportedChains, showModal, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
 
-    if(!Array.isArray(supportedChains) || supportedChains.length === 0) return true
+    if (!Array.isArray(supportedChains) || supportedChains.length === 0) return true
 
     const isCurrentChainSupported = supportedChains.includes(chainId!)
     if (!isCurrentChainSupported) {
