@@ -23,6 +23,9 @@ const resources = {
       'Select information to share': 'Select information to share',
       'Sharing your information is optional. It will only be shared with': 'Sharing your information is optional. It will only be shared with',
       Confirm: 'Confirm',
+      'There is no credentials associated with this account.': 'There is no credentials associated with this account.',
+      'Please configure your credentials in the identity manager.': 'Please configure your credentials in the identity manager.',
+      Retry: 'Retry',
       'Use this Identity?': 'Use this Identity?',
       'Confirm Identity': 'Confirm Identity',
       'Confirming Identity': 'Confirming Identity'

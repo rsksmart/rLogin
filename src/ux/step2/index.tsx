@@ -14,10 +14,11 @@ interface Step2Props {
   }
   fetchSelectiveDisclosureRequest: () => Promise<Data>
   backendUrl: string
+  vaultUrl: string
   onConfirm: (data: SD) => void
 }
 
-const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest, onConfirm }: Step2Props) => {
+const SelectiveDisclosure = ({ sdr, backendUrl, vaultUrl, fetchSelectiveDisclosureRequest, onConfirm }: Step2Props) => {
   const [sdrConfirmed, setSdrConfirmed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -44,7 +45,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
   return <>
     {!sdrConfirmed
       ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
-      : <SelectiveDisclosureResponse data={data} backendUrl={backendUrl} onConfirm={onConfirm} />}
+      : <SelectiveDisclosureResponse data={data} requestedCredentials={sdr.credentials} backendUrl={backendUrl} vaultUrl={vaultUrl} onConfirm={onConfirm} onRetry={onSdrConfirm}/>}
 
     {error && <ErrorMessage title={i18next.t('DataVault Error')} description={error} />}
   </>

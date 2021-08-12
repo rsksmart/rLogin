@@ -48,6 +48,7 @@ export interface DataVaultPackage {
 export interface DataVaultOptions {
   package: DataVaultPackage;
   serviceUrl: string;
+  appUrl: string;
 }
 
 interface IModalProps {
@@ -339,7 +340,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
+    const { onClose, userProviders, backendUrl, providerController, supportedChains, dataVaultOptions } = this.props
     const did = this.did()
 
     /**
@@ -365,7 +366,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={selectedLanguageCode}/>}
-      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest } onConfirm={this.onConfirmSelectiveDisclosure} />}
+      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} vaultUrl={dataVaultOptions!.appUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest } onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
       {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}

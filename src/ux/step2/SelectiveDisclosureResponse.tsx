@@ -9,8 +9,11 @@ import { Trans } from 'react-i18next'
 
 interface SelectiveDisclosureProps {
   data: Data
+  requestedCredentials: string[]
   backendUrl: string
+  vaultUrl: string
   onConfirm: (sd: SD) => void
+  onRetry: () => void
 }
 
 interface DataListProps {
@@ -36,7 +39,7 @@ const DataList = ({ dataField, areCredentials, select }: DataListProps) => Objec
   </React.Fragment>)}
 </div> : <></>
 
-const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl, onConfirm }: SelectiveDisclosureProps) => {
+const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedCredentials, backendUrl, vaultUrl, onConfirm, onRetry }: SelectiveDisclosureProps) => {
   const [selectedCredentials, setSelectedCredentials] = useState({})
   const [selectedClaims, setSelectedClaims] = useState({})
 
@@ -49,7 +52,7 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
   const selectCredentials = (key: string, value: string) => selectField(key, value, selectedCredentials, setSelectedCredentials)
   const selectClaims = (key: string, value: string) => selectField(key, value, selectedClaims, setSelectedClaims)
 
-  return <>
+  const confirmDialog = <>
     <Header2><Trans>Select information to share</Trans></Header2>
     <Paragraph><Trans>Sharing your information is optional. It will only be shared with</Trans>:</Paragraph>
     <Paragraph><span style={{ wordBreak: 'break-all' }}>{backendUrl}</span></Paragraph>
@@ -62,6 +65,15 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, backendUrl
       claims: selectedClaims
     })}><Trans>Confirm</Trans></Button>
   </>
+
+  const retryDialog = <>
+    <Header2><Trans>Select information to share</Trans></Header2>
+    <Paragraph><Trans>There is no credentials associated with this account.</Trans></Paragraph>
+    <Paragraph><a href={vaultUrl} target="_new"><Trans>Please configure your credentials in the identity manager.</Trans></a></Paragraph>
+    <Button onClick={() => onRetry()}><Trans>Retry</Trans></Button>
+  </>
+
+  return requestedCredentials.some((credentialName:string) => credentials[credentialName].length > 0) ? confirmDialog : retryDialog
 }
 
 export { DataList, SelectiveDisclosureResponse }
