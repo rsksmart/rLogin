@@ -27,6 +27,7 @@ const ProvidersWrapper = styled.div`
 
 const LanguageSelector = styled.select`
   float: left;
+  border: 0;
 `
 
 const NoWalletFooter = styled.span`
