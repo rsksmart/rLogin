@@ -6,6 +6,7 @@ import { initReactI18next } from 'react-i18next'
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const resources = {
   en: {
+    name: 'English',
     translation: {
       'Connecting to server': 'Connecting to server',
       'Connect your wallet': 'Connect your wallet',
@@ -25,11 +26,8 @@ const resources = {
       'Confirming Identity': 'Confirming Identity'
     }
   },
-  fr: {
-    translation: {
-    }
-  },
   es: {
+    name: 'Spanish',
     translation: {
       'Connecting to server': 'Conectandose al servidor',
       'Connect your wallet': 'Conecte su billetera',

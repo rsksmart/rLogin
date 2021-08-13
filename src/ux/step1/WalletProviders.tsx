@@ -11,6 +11,8 @@ interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
   setLoading: () => void
   changeLanguage: (event: any) => void
+  availableLanguages: { code:string, name:string } []
+  selectedLanguageCode: string
 }
 
 const ProvidersWrapper = styled.div`
@@ -45,7 +47,7 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-export const WalletProviders = ({ userProviders, setLoading, changeLanguage }: IWalletProvidersProps) => <>
+export const WalletProviders = ({ userProviders, setLoading, changeLanguage, availableLanguages, selectedLanguageCode }: IWalletProvidersProps) => <>
   <Header2>
     {userProviders.length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
   </Header2>
@@ -65,11 +67,12 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage }: I
 
   <FooterWrapper >
     <Paragraph>
-      <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} name="Languages" id="languages">
-        <option value="en">English</option>
-        <option value="es">Spanish</option>
-      </LanguageSelector>
+      <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="Languages" id="languages">
+        {availableLanguages.map(availableLanguage =>
+          <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
+        )}
 
+      </LanguageSelector>
       <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
 
         <Trans>No wallet? </Trans>
