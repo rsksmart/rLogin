@@ -67,7 +67,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, ava
 
   <FooterWrapper >
     <Paragraph>
-      <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="Languages" id="languages">
+      <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="languages" id="languages">
         {availableLanguages.map(availableLanguage =>
           <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
         )}
