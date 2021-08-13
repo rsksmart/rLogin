@@ -9,7 +9,7 @@ import { Trans } from 'react-i18next'
 
 interface SelectiveDisclosureProps {
   data: Data
-  requestedCredentials: string[]
+  requestedData: { credentials:string[], claims:string[] }
   backendUrl: string
   vaultUrl: string
   onConfirm: (sd: SD) => void
@@ -39,7 +39,7 @@ const DataList = ({ dataField, areCredentials, select }: DataListProps) => Objec
   </React.Fragment>)}
 </div> : <></>
 
-const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedCredentials, backendUrl, vaultUrl, onConfirm, onRetry }: SelectiveDisclosureProps) => {
+const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedData, backendUrl, vaultUrl, onConfirm, onRetry }: SelectiveDisclosureProps) => {
   const [selectedCredentials, setSelectedCredentials] = useState({})
   const [selectedClaims, setSelectedClaims] = useState({})
 
@@ -73,7 +73,10 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedC
     <Button onClick={() => onRetry()}><Trans>Retry</Trans></Button>
   </>
 
-  return requestedCredentials.some((credentialName:string) => credentials[credentialName].length > 0) ? confirmDialog : retryDialog
+  const hasCredentials = requestedData.credentials.length === 0 || requestedData.credentials.some((credentialName:string) => credentials[credentialName].length > 0)
+  const hasClaims = requestedData.claims.length === 0 || requestedData.claims.some((claimName:string) => claims[claimName].length > 0)
+
+  return hasCredentials && hasClaims ? confirmDialog : retryDialog
 }
 
 export { DataList, SelectiveDisclosureResponse }
