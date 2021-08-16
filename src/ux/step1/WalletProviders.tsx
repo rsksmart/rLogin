@@ -28,6 +28,11 @@ const ProvidersWrapper = styled.div`
 const LanguageSelector = styled.select`
   float: left;
   border: 0;
+  color: #B0AEB1;
+  size: 12px;
+  &:focus {
+    outline: none;
+  }
 `
 
 const NoWalletFooter = styled.span`
