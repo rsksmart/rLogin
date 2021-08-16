@@ -156,12 +156,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
-  private validateCurrentChain () {
+  private validateCurrentChain ():boolean {
     const { supportedChains, showModal, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
 
-    const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
+    if (!Array.isArray(supportedChains) || supportedChains.length === 0) return true
 
+    const isCurrentChainSupported = supportedChains.includes(chainId!)
     if (!isCurrentChainSupported) {
       provider.on(CHAIN_CHANGED, () => this.continueSettingUp(provider))
 
