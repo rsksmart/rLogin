@@ -12,7 +12,10 @@ describe('Component: WalletProviders', () => {
 
   const props = {
     userProviders: providers,
-    setLoading: jest.fn()
+    setLoading: jest.fn(),
+    changeLanguage: jest.fn(),
+    availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
+    selectedLanguageCode: 'en'
   }
 
   it('renders and is defined', () => {
@@ -23,7 +26,7 @@ describe('Component: WalletProviders', () => {
   it('shows header and footer', () => {
     const wrapper = mount(<WalletProviders {...props} />)
     expect(wrapper.find('h2').text()).toBe('Connect your wallet')
-    expect(wrapper.find(`p.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
+    expect(wrapper.find(`span.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
   })
 
   it('shows multiple providers', () => {
