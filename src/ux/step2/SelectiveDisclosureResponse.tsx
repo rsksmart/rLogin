@@ -68,8 +68,11 @@ const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedD
 
   const retryDialog = <>
     <Header2><Trans>Select information to share</Trans></Header2>
+
     <Paragraph><Trans>There is no credentials associated with this account.</Trans></Paragraph>
-    <Paragraph><a href={vaultUrl} target="_new"><Trans>Please configure your credentials in the identity manager.</Trans></a></Paragraph>
+    <Paragraph><Trans>Please configure your credentials in the RIF identity manager.</Trans></Paragraph>
+    <Paragraph><a href={vaultUrl} target="_new"><Trans>Go to RIF Identity Manager</Trans></a></Paragraph>
+    <br/>
     <Button onClick={() => onRetry()}><Trans>Retry</Trans></Button>
   </>
 
