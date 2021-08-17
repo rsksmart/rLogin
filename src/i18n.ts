@@ -49,7 +49,7 @@ const resources = {
       'Sharing your information is optional. It will only be shared with': 'Compartir su información es opcional. Sólo se compartira con',
       Confirm: 'Confirmar',
       'There is no credentials associated with this account.': 'No se encontraron credenciales asociadas a esta cuenta.',
-      'Please configure your credentials in the RIF identity manager.': 'Por favor configure sus credenciales en RIF Identity Manager',
+      'Please configure your credentials in the RIF identity manager.': 'Por favor, configure sus credenciales en RIF Identity Manager',
       'Go to RIF Identity Manager': 'Ir a RIF Identity Manager',
       Retry: 'Retry',
       'Use this Identity?': 'Usar esta identidad?',
