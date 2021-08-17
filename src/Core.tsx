@@ -157,6 +157,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return this.validateCurrentChain()
   }
 
+  // this fetches all available languages in this form [{en:english},...]
+  private availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
   private validateCurrentChain () {
@@ -351,8 +354,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       // reset state
       this.setState(INITIAL_STATE)
     }
-    // this fetches all available languages in this form [{en:english},...]
-    const availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+
     const selectedLanguageCode = i18n.language
     return <Modal
       lightboxOffset={lightboxOffset}
@@ -361,7 +363,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={availableLanguages} selectedLanguageCode={selectedLanguageCode}/>}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={selectedLanguageCode}/>}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest } onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
