@@ -5,7 +5,8 @@ module.exports = env => ({
     libraryTarget: "umd",
     library: "RLogin",
     umdNamedDefine: true,
-    globalObject: "this"
+    globalObject: "this",
+    filename: "index.js"
   },
   watch: env === 'development',
   resolve: {
