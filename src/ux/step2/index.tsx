@@ -14,11 +14,10 @@ interface Step2Props {
   }
   fetchSelectiveDisclosureRequest: () => Promise<Data>
   backendUrl: string
-  vaultUrl: string
   onConfirm: (data: SD) => void
 }
 
-const SelectiveDisclosure = ({ sdr, backendUrl, vaultUrl, fetchSelectiveDisclosureRequest, onConfirm }: Step2Props) => {
+const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest, onConfirm }: Step2Props) => {
   const [sdrConfirmed, setSdrConfirmed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -26,6 +25,8 @@ const SelectiveDisclosure = ({ sdr, backendUrl, vaultUrl, fetchSelectiveDisclosu
     credentials: {},
     claims: {}
   })
+
+  const vaultUrl = 'https://identity.rifos.org'
 
   const onSdrConfirm = () => {
     setError(null)
