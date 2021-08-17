@@ -44,7 +44,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
   return <>
     {!sdrConfirmed
       ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
-      : <SelectiveDisclosureResponse data={data} backendUrl={backendUrl} onConfirm={onConfirm} />}
+      : <SelectiveDisclosureResponse data={data} requestedData={sdr} backendUrl={backendUrl} onConfirm={onConfirm} onRetry={onSdrConfirm}/>}
 
     {error && <ErrorMessage title={i18next.t('DataVault Error')} description={error} />}
   </>

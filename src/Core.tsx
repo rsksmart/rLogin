@@ -365,7 +365,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       mainModalCard={this.mainModalCard}
     >
       {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={selectedLanguageCode}/>}
-      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest } onConfirm={this.onConfirmSelectiveDisclosure} />}
+      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
       {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}

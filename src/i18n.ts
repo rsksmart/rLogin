@@ -23,6 +23,10 @@ const resources = {
       'Select information to share': 'Select information to share',
       'Sharing your information is optional. It will only be shared with': 'Sharing your information is optional. It will only be shared with',
       Confirm: 'Confirm',
+      'There is no credentials associated with this account.': 'There is no credentials associated with this account.',
+      'Please configure your credentials in the RIF identity manager.': 'Please configure your credentials in the RIF identity manager.',
+      'Go to RIF Identity Manager': 'Go to RIF Identity Manager',
+      Retry: 'Retry',
       'Use this Identity?': 'Use this Identity?',
       'Confirm Identity': 'Confirm Identity',
       'Confirming Identity': 'Confirming Identity'
@@ -44,6 +48,10 @@ const resources = {
       'Select information to share': 'Seleccione la información que desea compartir',
       'Sharing your information is optional. It will only be shared with': 'Compartir su información es opcional. Sólo se compartira con',
       Confirm: 'Confirmar',
+      'There is no credentials associated with this account.': 'No se encontraron credenciales asociadas a esta cuenta.',
+      'Please configure your credentials in the RIF identity manager.': 'Por favor, configure sus credenciales en RIF Identity Manager',
+      'Go to RIF Identity Manager': 'Ir a RIF Identity Manager',
+      Retry: 'Retry',
       'Use this Identity?': 'Usar esta identidad?',
       'Confirm Identity': 'Confirmar identidad',
       'Confirming Identity': 'Confirmando identidad'
