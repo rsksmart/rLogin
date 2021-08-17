@@ -11,7 +11,6 @@ interface SelectiveDisclosureProps {
   data: Data
   requestedData: { credentials:string[], claims:string[] }
   backendUrl: string
-  vaultUrl: string
   onConfirm: (sd: SD) => void
   onRetry: () => void
 }
@@ -39,7 +38,8 @@ const DataList = ({ dataField, areCredentials, select }: DataListProps) => Objec
   </React.Fragment>)}
 </div> : <></>
 
-const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedData, backendUrl, vaultUrl, onConfirm, onRetry }: SelectiveDisclosureProps) => {
+const SelectiveDisclosureResponse = ({ data: { credentials, claims }, requestedData, backendUrl, onConfirm, onRetry }: SelectiveDisclosureProps) => {
+  const vaultUrl = 'https://identity.rifos.org'
   const [selectedCredentials, setSelectedCredentials] = useState({})
   const [selectedClaims, setSelectedClaims] = useState({})
 

@@ -26,8 +26,6 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
     claims: {}
   })
 
-  const vaultUrl = 'https://identity.rifos.org'
-
   const onSdrConfirm = () => {
     setError(null)
     setIsLoading(true)
@@ -46,7 +44,7 @@ const SelectiveDisclosure = ({ sdr, backendUrl, fetchSelectiveDisclosureRequest,
   return <>
     {!sdrConfirmed
       ? <SelectiveDisclosureRequest sdr={sdr} backendUrl={backendUrl} onConfirm={onSdrConfirm} />
-      : <SelectiveDisclosureResponse data={data} requestedData={sdr} backendUrl={backendUrl} vaultUrl={vaultUrl} onConfirm={onConfirm} onRetry={onSdrConfirm}/>}
+      : <SelectiveDisclosureResponse data={data} requestedData={sdr} backendUrl={backendUrl} onConfirm={onConfirm} onRetry={onSdrConfirm}/>}
 
     {error && <ErrorMessage title={i18next.t('DataVault Error')} description={error} />}
   </>
