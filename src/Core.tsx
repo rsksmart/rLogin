@@ -63,6 +63,7 @@ interface IModalProps {
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
+  supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
 }
 
@@ -117,6 +118,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
+    if (this.props.supportedLanguages) {
+      this.availableLanguages = this.availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
+    }
   }
 
   public state: IModalState = {
