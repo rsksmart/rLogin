@@ -339,7 +339,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains, dataVaultOptions } = this.props
+    const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
     const did = this.did()
 
     /**
