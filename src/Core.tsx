@@ -56,7 +56,7 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, dataVault?: IDataVault) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, dataVault?: IDataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -243,9 +243,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private detectFlavor () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault } = this.state
+    const selectedLanguageCode = i18n.language
 
     if (!backendUrl) {
-      return onConnect(provider, this.disconnect, dataVault)
+      return onConnect(provider, this.disconnect, selectedLanguageCode, dataVault)
     } else {
       const loadingReason = i18next.t('Connecting to server')
       this.setState({ loadingReason })
@@ -284,10 +285,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault, challenge, address, sd } = this.state
-
+    const selectedLanguageCode = i18n.language
     const did = this.did()
 
-    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, selectedLanguageCode, dataVault)
 
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
       .catch((error: Error | AxiosError) => {
