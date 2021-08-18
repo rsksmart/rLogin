@@ -270,10 +270,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault, challenge, address, sd } = this.state
-
+    const selectedLanguageCode = i18n.language
     const did = this.did()
 
-    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault, selectedLanguageCode)
 
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
       .catch((error: Error | AxiosError) => {
