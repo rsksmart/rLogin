@@ -174,8 +174,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return this.validateCurrentChain()
   }
 
-
-
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
   private validateCurrentChain ():boolean {
