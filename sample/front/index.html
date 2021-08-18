@@ -61,7 +61,7 @@
       // supportedChains parameter
       const defaultNetworks = [1,30,31]
       const supportedChainsParam = new URLSearchParams(window.location.search).get('supportedChains')
-      const supportedChains = !supportedChainsParam ? 
+      const supportedChains = !supportedChainsParam ?
         defaultNetworks :
         (supportedChainsParam == 'all'? null : supportedChainsParam.split(',').map(chain => parseInt(chain)))
 
@@ -100,6 +100,7 @@
         backendUrl,
         keepModalHidden,
         supportedChains,
+        supportedLanguages: ['es','en'],
         dataVaultOptions: {
           package:RIFDataVault,
           serviceUrl: 'https://data-vault.identity.rifos.org',

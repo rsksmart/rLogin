@@ -63,6 +63,7 @@ interface IModalProps {
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
+  supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
 }
 
@@ -71,6 +72,11 @@ type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork' | 'loading'
 interface ErrorDetails {
   title: string
   description?: string
+}
+
+interface IAvailableLanguage {
+  code: string
+  name: string
 }
 
 interface IModalState {
@@ -117,6 +123,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
+    this.availableLanguages = []
+    this.setupLanguages()
   }
 
   public state: IModalState = {
@@ -125,6 +133,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public lightboxRef?: HTMLDivElement | null;
   public mainModalCard?: HTMLDivElement | null;
+  private availableLanguages: IAvailableLanguage[];
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
@@ -143,6 +152,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private setupLanguages () {
+    // this fetches all available languages in this form [{en:english},...]
+    const availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+    if (this.props.supportedLanguages) {
+      this.availableLanguages = availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
+    }
+  }
+
   /** accounts related */
   private did () {
     return this.state.chainId && this.state.address ? getDID(this.state.chainId, this.state.address) : ''
@@ -156,9 +173,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.setState({ chainId })
     return this.validateCurrentChain()
   }
-
-  // this fetches all available languages in this form [{en:english},...]
-  private availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
 
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 

@@ -34,6 +34,7 @@ interface RLoginOptions {
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
+  supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
 }
 
@@ -45,6 +46,7 @@ export class RLogin {
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
+  private supportedLanguages?: string[];
   private backendUrl?: string;
   private keepModalHidden: boolean;
   private dataVaultOptions?: DataVaultOptions
@@ -64,6 +66,7 @@ export class RLogin {
     })
 
     this.supportedChains = opts && opts.supportedChains
+    this.supportedLanguages = opts && opts.supportedLanguages
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
@@ -146,6 +149,7 @@ export class RLogin {
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
         supportedChains={this.supportedChains}
+        supportedLanguages={this.supportedLanguages}
         keepModalHidden={this.keepModalHidden}
         dataVaultOptions={this.dataVaultOptions}
       />,
