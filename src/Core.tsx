@@ -74,6 +74,11 @@ interface ErrorDetails {
   description?: string
 }
 
+interface IAvailableLanguage {
+  code: string
+  name: string
+}
+
 interface IModalState {
   show: boolean
   currentStep: Step
@@ -118,9 +123,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
-    if (this.props.supportedLanguages) {
-      this.availableLanguages = this.availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
-    }
+    this.availableLanguages = []
+    this.setupLanguages()
   }
 
   public state: IModalState = {
@@ -129,6 +133,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public lightboxRef?: HTMLDivElement | null;
   public mainModalCard?: HTMLDivElement | null;
+  private availableLanguages: IAvailableLanguage[];
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
@@ -147,6 +152,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  private setupLanguages () {
+    // this fetches all available languages in this form [{en:english},...]
+    const availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+    if (this.props.supportedLanguages) {
+      this.availableLanguages = availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
+    }
+  }
+
   /** accounts related */
   private did () {
     return this.state.chainId && this.state.address ? getDID(this.state.chainId, this.state.address) : ''
@@ -161,8 +174,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return this.validateCurrentChain()
   }
 
-  // this fetches all available languages in this form [{en:english},...]
-  private availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+
 
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
