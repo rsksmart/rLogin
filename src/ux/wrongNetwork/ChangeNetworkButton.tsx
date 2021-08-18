@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import React from 'react'
 import styled from 'styled-components'
+import { ThemeType } from '../../theme'
 import { AddEthereumChainParameter } from './changeNetwork'
 
 interface ChangeNetworkButtonInterface {
@@ -13,15 +14,15 @@ const NetworkButton = styled.button`
   width: 100%;
   cursor: pointer;
   border: none;
-  background-color: #F2F2F2;
+  background-color: ${props => props.theme.secondaryBackground};
   border-radius: 12px;
   padding: 12px;
   font-size: 15px;
-  color: #6C6B6C;
+  color:  ${props => props.theme.secondaryText};
   font-weight: 500 !important;
 
   :hover {
-    background-color: #E4E4E4;
+    background-color:  ${props => props.theme.secondaryHoverBackground};
   }
 
   :focus {
@@ -46,7 +47,7 @@ const IconBox = styled.span`
 
 const ChainName = styled.span`
   display: inline-block;
-  ${(props: { isTestnet: boolean }) => props.isTestnet && 'color: #AAAAAA;'}
+  ${(props: { isTestnet: boolean, theme:ThemeType }) => props.isTestnet && ('color:' + props.theme.testnetText)}
 `
 
 const ChangeNetworkButton: React.FC<ChangeNetworkButtonInterface> = ({ params, changeNetwork }) =>

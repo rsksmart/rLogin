@@ -24,6 +24,8 @@ import { portisWrapper } from './lib/portisWrapper'
 import Loading from './ui/shared/Loading'
 import i18next from 'i18next'
 import i18n from './i18n'
+import { ThemeProvider } from 'styled-components'
+import { ThemeType, themesOptions } from './theme'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -56,7 +58,7 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, dataVault?: IDataVault) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: IDataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -66,6 +68,9 @@ interface IModalProps {
   supportedChains?: number[]
   supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
+  // eslint-disable-next-line no-unused-vars
+  themes: { [K in themesOptions]: ThemeType }
+  defaultTheme: themesOptions
 }
 
 type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork' | 'loading'
@@ -93,6 +98,7 @@ interface IModalState {
   errorReason?: ErrorDetails
   dataVault?: IDataVault
   loadingReason?: string
+  currentTheme?: themesOptions
 }
 
 const INITIAL_STATE: IModalState = {
@@ -134,6 +140,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public lightboxRef?: HTMLDivElement | null;
   public mainModalCard?: HTMLDivElement | null;
   private availableLanguages: IAvailableLanguage[];
+
+  get selectedTheme ():themesOptions {
+    return this.state.currentTheme || this.props.defaultTheme
+  }
+
+  get selectedLanguageCode () {
+    return i18n.language
+  }
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
@@ -243,10 +257,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private detectFlavor () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault } = this.state
-    const selectedLanguageCode = i18n.language
 
     if (!backendUrl) {
-      return onConnect(provider, this.disconnect, selectedLanguageCode, dataVault)
+      return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
     } else {
       const loadingReason = i18next.t('Connecting to server')
       this.setState({ loadingReason })
@@ -285,10 +298,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault, challenge, address, sd } = this.state
-    const selectedLanguageCode = i18n.language
     const did = this.did()
 
-    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, selectedLanguageCode, dataVault)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
 
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
       .catch((error: Error | AxiosError) => {
@@ -355,7 +367,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
+    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes } = this.props
     const did = this.did()
 
     /**
@@ -372,20 +384,21 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState(INITIAL_STATE)
     }
 
-    const selectedLanguageCode = i18n.language
-    return <Modal
-      lightboxOffset={lightboxOffset}
-      show={show}
-      onClose={handleClose}
-      setLightboxRef={this.setLightboxRef}
-      mainModalCard={this.mainModalCard}
-    >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={selectedLanguageCode}/>}
-      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
-      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
-      {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
-      {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-      {currentStep === 'loading' && <Loading text={loadingReason} />}
-    </Modal>
+    return <ThemeProvider theme={ themes[this.selectedTheme] }>
+      <Modal
+        lightboxOffset={lightboxOffset}
+        show={show}
+        onClose={handleClose}
+        setLightboxRef={this.setLightboxRef}
+        mainModalCard={this.mainModalCard}
+      >
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
+        {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
+        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
+        {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+        {currentStep === 'loading' && <Loading text={loadingReason} />}
+      </Modal>
+    </ThemeProvider>
   }
 }

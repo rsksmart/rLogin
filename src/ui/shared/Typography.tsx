@@ -15,7 +15,7 @@ const Header2Wrapper = styled.h2`
   ${typeShared}
   font-weight: 500 !important;
   font-size: 20px;
-  color: #008FF7;
+  color: ${props => props.theme.h2};
 `
 
 export const Header2: React.FC<TypographyInterface> = ({ children, className }) => (
@@ -28,7 +28,7 @@ const Header3Wrapper = styled.h3`
   ${typeShared}
   font-weight: 500 !important;
   font-size: 18px;
-  color: #6C6B6C;
+  color: ${props => props.theme.h3};
   margin: 18px 0;
 `
 
@@ -42,7 +42,7 @@ const ParagraphWrapper = styled.p`
   ${typeShared}
   font-weight: 400 !important;
   font-size: 12px;
-  color: #B0AEB1;
+  color: ${props => props.theme.p};
   margin: 12px 0;
 `
 export const Paragraph: React.FC<TypographyInterface> = ({ children, className }) => (

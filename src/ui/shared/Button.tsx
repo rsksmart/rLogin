@@ -15,12 +15,12 @@ const ButtonWrapper = styled.button`
   border-radius: 5px;
   padding: 10px 20px;
   border: none;
-  background: #008FF7;
-  color: #ffffff;
+  background: ${props => props.theme.primaryBackground};
+  color: ${props => props.theme.primaryText};
   font-size: 14px;
   cursor: pointer;
   :hover:enabled {
-    background: #0066CC;
+    background: ${props => props.theme.primaryHoverBackground};
   };
   :disabled {
     opacity: 0.4;

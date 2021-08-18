@@ -18,6 +18,7 @@ import { Core, DataVaultOptions } from './Core'
 
 import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { checkRLoginInjectedProviders } from './providers/injectedProviders'
+import { defaultTheme as defaultThemeConfig, themes as themesConfig, themesOptions } from './theme'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -36,6 +37,8 @@ interface RLoginOptions {
   supportedChains?: number[]
   supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
+  customThemes?: any
+  defaultTheme?: themesOptions
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -50,6 +53,8 @@ export class RLogin {
   private backendUrl?: string;
   private keepModalHidden: boolean;
   private dataVaultOptions?: DataVaultOptions
+  private themes = { ...themesConfig }
+  private defaultTheme: themesOptions
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -74,6 +79,15 @@ export class RLogin {
     // setup modal
     this.userProviders = checkRLoginInjectedProviders(this.providerController.getUserOptions())
     this.keepModalHidden = (opts && opts.keepModalHidden) || false
+    this.themes = themesConfig
+    if (opts && opts.customThemes && opts.customThemes.light) {
+      this.themes.light = { ...this.themes.light, ...opts.customThemes.light }
+    }
+    if (opts && opts.customThemes && opts.customThemes.dark) {
+      this.themes.light = { ...this.themes.light, ...opts.customThemes.dark }
+    }
+    console.log({ c: opts!.customThemes, themesConfig, t: this.themes })
+    this.defaultTheme = (opts && opts.defaultTheme) ? opts.defaultTheme : defaultThemeConfig
     this.renderModal()
   }
 
@@ -111,7 +125,7 @@ export class RLogin {
 
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
-  private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, dataVault })
+  private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, selectedTheme, dataVault })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
@@ -155,6 +169,8 @@ export class RLogin {
         supportedLanguages={this.supportedLanguages}
         keepModalHidden={this.keepModalHidden}
         dataVaultOptions={this.dataVaultOptions}
+        themes = {this.themes}
+        defaultTheme = {this.defaultTheme}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

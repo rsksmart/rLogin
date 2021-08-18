@@ -6,7 +6,7 @@ import { MODAL_CARD_CLASSNAME } from '../../constants/cssSelectors'
 const ModalCardWrapper = styled.div`
   position: relative;
   width: 100%;
-  background-color: #ffffff;
+  background-color: ${props => props.theme.modalBackground};
   border-radius: 12px;
   margin: 10px;
   padding: 0;

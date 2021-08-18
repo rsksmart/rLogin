@@ -17,7 +17,7 @@ top: ${({ offset }) => (offset ? `-${offset}px` : 0)};
 left: 50%;
 z-index: 2;
 will-change: opacity;
-background-color: rgba(0, 0, 0, 0.4);
+background-color: ${props => props.theme.overlay};
 opacity: 1;
 visibility: ${({ show }) => (show ? 'visible' : 'hidden')};
 pointer-events: ${({ show }) => (show ? 'auto' : 'none')};

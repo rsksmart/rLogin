@@ -3,6 +3,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import { Core } from './Core'
 import { IProviderUserOptions, ProviderController, IProviderControllerOptions, IProviderOptions } from 'web3modal'
+import { defaultTheme, themes } from './theme'
 
 describe('Component: Core', () => {
   it('should render and be described', () => {
@@ -36,6 +37,8 @@ describe('Component: Core', () => {
         onError={jest.fn()}
         onAccountsChange={jest.fn()}
         onChainChange={jest.fn()}
+        themes={themes}
+        defaultTheme={defaultTheme}
       />
     )
     expect(wrapper).toBeDefined()
