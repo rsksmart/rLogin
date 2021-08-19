@@ -1,6 +1,5 @@
 // eslint-disable-next-line
 import * as React from 'react'
-
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEncryptionManager } from '@rsksmart/ipfs-cpinner-client-types'
 
