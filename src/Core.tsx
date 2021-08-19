@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 import * as React from 'react'
+
 import { SimpleFunction, IProviderUserOptions } from 'web3modal'
 import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEncryptionManager } from '@rsksmart/ipfs-cpinner-client-types'
 
@@ -24,7 +25,7 @@ import { portisWrapper } from './lib/portisWrapper'
 import Loading from './ui/shared/Loading'
 import i18next from 'i18next'
 import i18n from './i18n'
-
+const { EventEmitter } = require('events')
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
 
@@ -100,7 +101,7 @@ const INITIAL_STATE: IModalState = {
   currentStep: 'Step1',
   loadingReason: ''
 }
-
+class MyEmitter extends EventEmitter {}
 export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
@@ -125,8 +126,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.connectToWallet = this.connectToWallet.bind(this)
     this.availableLanguages = []
     this.setupLanguages()
+    this.myEmitter.on('languageChanged', (language:string) => console.log('Selected Language: ', language))
   }
 
+  private myEmitter = new MyEmitter()
   public state: IModalState = {
     ...INITIAL_STATE
   };
@@ -349,6 +352,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { showModal } = this.props
 
     i18n.changeLanguage(language)
+    this.myEmitter.emit('languageChanged', language)
     showModal()
   }
 
