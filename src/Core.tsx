@@ -60,6 +60,7 @@ interface IModalProps {
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
+  onLanguageChanged: (language: string) => void
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
@@ -115,7 +116,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     this.did = this.did.bind(this)
     this.setLightboxRef = this.setLightboxRef.bind(this)
-
     this.changeMetamaskNetwork = this.changeMetamaskNetwork.bind(this)
     this.continueSettingUp = this.continueSettingUp.bind(this)
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
@@ -346,9 +346,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public changeLanguage = (language: string) => {
-    const { showModal } = this.props
+    const { showModal, onLanguageChanged } = this.props
 
     i18n.changeLanguage(language)
+    onLanguageChanged(language)
     showModal()
   }
 

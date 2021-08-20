@@ -18,6 +18,7 @@ import { Core, DataVaultOptions } from './Core'
 
 import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { checkRLoginInjectedProviders } from './providers/injectedProviders'
+import * as fs from 'fs'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -76,6 +77,8 @@ export class RLogin {
     this.keepModalHidden = (opts && opts.keepModalHidden) || false
     this.renderModal()
   }
+
+  private onLanguageChanged = (language:string) => this.eventController.trigger('languageChanged', language)
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
@@ -138,6 +141,7 @@ export class RLogin {
 
     ReactDOM.render(
       <Core
+        onLanguageChanged={this.onLanguageChanged}
         userProviders={this.userProviders}
         onClose={this.onClose}
         showModal={this.showModal}
