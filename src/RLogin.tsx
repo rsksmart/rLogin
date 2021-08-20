@@ -18,7 +18,6 @@ import { Core, DataVaultOptions } from './Core'
 
 import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { checkRLoginInjectedProviders } from './providers/injectedProviders'
-import * as fs from 'fs'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
