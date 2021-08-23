@@ -34,6 +34,7 @@ describe('Component: Core', () => {
         providerController={new ProviderController(providerControllerOptions)}
         onConnect={jest.fn()}
         onLanguageChanged={jest.fn()}
+        onThemeChanged={jest.fn()}
         onError={jest.fn()}
         onAccountsChange={jest.fn()}
         onChainChange={jest.fn()}

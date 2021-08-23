@@ -86,12 +86,12 @@ export class RLogin {
     if (opts && opts.customThemes && opts.customThemes.dark) {
       this.themes.light = { ...this.themes.light, ...opts.customThemes.dark }
     }
-    console.log({ c: opts!.customThemes, themesConfig, t: this.themes })
     this.defaultTheme = (opts && opts.defaultTheme) ? opts.defaultTheme : defaultThemeConfig
     this.renderModal()
   }
 
   private onLanguageChanged = (language:string) => this.eventController.trigger('languageChanged', language)
+  private onThemeChanged = (theme:themesOptions) => this.eventController.trigger('themeChanged', theme)
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
@@ -155,6 +155,7 @@ export class RLogin {
     ReactDOM.render(
       <Core
         onLanguageChanged={this.onLanguageChanged}
+        onThemeChanged={this.onThemeChanged}
         userProviders={this.userProviders}
         onClose={this.onClose}
         showModal={this.showModal}

@@ -63,6 +63,7 @@ interface IModalProps {
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
   onLanguageChanged: (language: string) => void
+  onThemeChanged: (theme: themesOptions) => void
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
@@ -365,6 +366,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
     showModal()
   }
 
+  public changeTheme = (theme: themesOptions) => {
+    const { showModal, onThemeChanged } = this.props
+    this.setState({ currentTheme: theme })
+    onThemeChanged(theme)
+    showModal()
+  }
+
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains, themes } = this.props
@@ -392,7 +400,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         setLightboxRef={this.setLightboxRef}
         mainModalCard={this.mainModalCard}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}

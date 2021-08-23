@@ -13,6 +13,7 @@ interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
   setLoading: () => void
   changeLanguage: (event: any) => void
+  changeTheme: (theme: themesOptions) => void
   availableLanguages: { code:string, name:string } []
   selectedLanguageCode: string
   selectedTheme: themesOptions
@@ -56,7 +57,7 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-export const WalletProviders = ({ userProviders, setLoading, changeLanguage, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => <>
+export const WalletProviders = ({ userProviders, setLoading, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => <>
   <Header2>
     {userProviders.length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
   </Header2>
@@ -81,7 +82,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, ava
         )}
 
       </LanguageSelector>
-      <ThemeSwitcher theme={selectedTheme}></ThemeSwitcher>
+      <ThemeSwitcher theme={selectedTheme} onChange={changeTheme}></ThemeSwitcher>
       <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
 
         <Trans>No wallet? </Trans>

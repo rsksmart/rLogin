@@ -17,7 +17,8 @@ describe('Component: WalletProviders', () => {
     changeLanguage: jest.fn(),
     availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
     selectedLanguageCode: 'en',
-    selectedTheme: 'light' as themesOptions
+    selectedTheme: 'light' as themesOptions,
+    changeTheme: jest.fn()
   }
 
   it('renders and is defined', () => {
