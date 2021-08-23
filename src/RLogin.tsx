@@ -77,6 +77,8 @@ export class RLogin {
     this.renderModal()
   }
 
+  private onLanguageChanged = (language:string) => this.eventController.trigger('languageChanged', language)
+
   get cachedProvider (): string {
     return this.providerController.cachedProvider
   }
@@ -138,6 +140,7 @@ export class RLogin {
 
     ReactDOM.render(
       <Core
+        onLanguageChanged={this.onLanguageChanged}
         userProviders={this.userProviders}
         onClose={this.onClose}
         showModal={this.showModal}
