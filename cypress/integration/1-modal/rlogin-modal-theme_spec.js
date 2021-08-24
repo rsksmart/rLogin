@@ -8,7 +8,7 @@ describe('rLoign modal interaction', () => {
     cy.get('.rlogin-modal-card').should('have.css', 'background-color', 'rgb(255, 255, 255)')
   })
 
-  it('change to dark theme, change color', () => {
+  it('change to dark theme should change color and event', () => {
     cy.get('.rlogin-modal-card').should('have.css', 'background-color', 'rgb(255, 255, 255)')
     cy.window().then((win) => {
       win.rLogin.on('themeChanged', (theme) => {
@@ -21,9 +21,8 @@ describe('rLoign modal interaction', () => {
     })
   })
 
-  it('change to dark theme, check', () => {
+  it('change to dark theme and go back to light', () => {
+    cy.get('#theme-switcher').click().click()
     cy.get('.rlogin-modal-card').should('have.css', 'background-color', 'rgb(255, 255, 255)')
-    cy.get('#theme-switcher').click()
-    cy.get('.rlogin-modal-card').should('have.css', 'background-color', 'rgb(0, 0, 0)')
   })
 })
