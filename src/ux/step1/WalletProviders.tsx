@@ -46,7 +46,7 @@ const NoWalletFooter = styled.span`
   
 `
 const FooterWrapper = styled.div`
-  padding: 0 8px 25px 8px;
+  padding: 0 8px;
 `
 
 const NoWalletAnchor = styled.a`
