@@ -10,7 +10,7 @@ import {
   ProviderController
 } from 'web3modal'
 
-import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED } from './constants/events'
+import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED, THEME_CHANGED } from './constants/events'
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
@@ -129,6 +129,7 @@ export class RLogin {
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
+  private onThemeChange = (theme:themesOptions) => this.eventController.trigger(THEME_CHANGED, theme)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
     this.on(CONNECT_EVENT, response => resolve(response))
