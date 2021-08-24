@@ -10,7 +10,7 @@ import {
   ProviderController
 } from 'web3modal'
 
-import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED, THEME_CHANGED } from './constants/events'
+import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED, THEME_CHANGED, LANGUAGE_CHANGED } from './constants/events'
 
 import { WEB3_CONNECT_MODAL_ID } from './constants/cssSelectors'
 
@@ -19,6 +19,7 @@ import { Core, DataVaultOptions } from './Core'
 import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-types'
 import { checkRLoginInjectedProviders } from './providers/injectedProviders'
 import { defaultTheme as defaultThemeConfig, themes as themesConfig, themesOptions } from './theme'
+import { RLoginStorage } from './lib/storage'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -46,6 +47,7 @@ type Options = Partial<IProviderControllerOptions> & RLoginOptions
 export class RLogin {
   private show: boolean = INITIAL_STATE.show;
   private eventController: EventController = new EventController();
+  private rLoginStorage: RLoginStorage = new RLoginStorage();
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
@@ -90,9 +92,6 @@ export class RLogin {
     this.renderModal()
   }
 
-  private onLanguageChanged = (language:string) => this.eventController.trigger('languageChanged', language)
-  private onThemeChanged = (theme:themesOptions) => this.eventController.trigger('themeChanged', theme)
-
   get cachedProvider (): string {
     return this.providerController.cachedProvider
   }
@@ -129,7 +128,12 @@ export class RLogin {
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
-  private onThemeChange = (theme:themesOptions) => this.eventController.trigger(THEME_CHANGED, theme)
+  private onThemeChanged = (theme:themesOptions) => {
+    this.rLoginStorage.setItem(THEME_CHANGED, theme)
+    this.eventController.trigger(THEME_CHANGED, theme)
+  }
+
+  private onLanguageChanged = (language:string) => this.eventController.trigger(LANGUAGE_CHANGED, language)
 
   private setupHandlers = (resolve: ((result: any) => void), reject: ((error: any) => void)) => {
     this.on(CONNECT_EVENT, response => resolve(response))
@@ -143,7 +147,7 @@ export class RLogin {
       (this as any)[key] = state[key]
     })
     await window.updateWeb3Modal(state)
-  };
+  }
 
   private resetState = () => this.updateState({ ...INITIAL_STATE });
 
