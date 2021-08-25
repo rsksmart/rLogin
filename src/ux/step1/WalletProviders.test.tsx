@@ -18,6 +18,9 @@ describe('Component: WalletProviders', () => {
     selectedLanguageCode: 'en'
   }
 
+  const propsWithOneLanguage = { ...props }
+  propsWithOneLanguage.availableLanguages = [{ code: 'en', name: 'English' }]
+
   it('renders and is defined', () => {
     const wrapper = mount(<WalletProviders {...props} />)
     expect(wrapper).toBeDefined()
@@ -40,5 +43,15 @@ describe('Component: WalletProviders', () => {
   it('shows message about no providers', () => {
     const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
     expect(wrapper.find('h2').text()).toBe('No wallets found')
+  })
+
+  it('show language selector with two options when two language available', () => {
+    const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
+    expect(wrapper.find('select').children()).toHaveLength(2)
+  })
+
+  it('does not show language selector when only one language available', () => {
+    const wrapper = mount(<WalletProviders {...propsWithOneLanguage} userProviders={[]} />)
+    expect(wrapper.find('select').children()).toHaveLength(0)
   })
 })
