@@ -154,9 +154,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private setupLanguages () {
     // this fetches all available languages in this form [{en:english},...]
-    const availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
-    if (this.props.supportedLanguages) {
-      this.availableLanguages = availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
+    this.availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+    if (this.props.supportedLanguages && this.props.supportedLanguages.length > 0) {
+      this.availableLanguages = this.availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
     }
   }
 
