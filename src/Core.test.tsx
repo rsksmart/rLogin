@@ -32,6 +32,7 @@ describe('Component: Core', () => {
         resetState={jest.fn()}
         providerController={new ProviderController(providerControllerOptions)}
         onConnect={jest.fn()}
+        onLanguageChanged={jest.fn()}
         onError={jest.fn()}
         onAccountsChange={jest.fn()}
         onChainChange={jest.fn()}

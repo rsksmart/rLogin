@@ -34,6 +34,7 @@ interface RLoginOptions {
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
+  supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
 }
 
@@ -45,6 +46,7 @@ export class RLogin {
   private providerController: ProviderController;
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
+  private supportedLanguages?: string[];
   private backendUrl?: string;
   private keepModalHidden: boolean;
   private dataVaultOptions?: DataVaultOptions
@@ -64,6 +66,7 @@ export class RLogin {
     })
 
     this.supportedChains = opts && opts.supportedChains
+    this.supportedLanguages = opts && opts.supportedLanguages
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
@@ -73,6 +76,8 @@ export class RLogin {
     this.keepModalHidden = (opts && opts.keepModalHidden) || false
     this.renderModal()
   }
+
+  private onLanguageChanged = (language:string) => this.eventController.trigger('languageChanged', language)
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
@@ -106,7 +111,7 @@ export class RLogin {
 
   /** event handlers */
   private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
-  private onConnect = (provider: any, disconnect: () => void, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, dataVault })
+  private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, dataVault })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
@@ -135,6 +140,7 @@ export class RLogin {
 
     ReactDOM.render(
       <Core
+        onLanguageChanged={this.onLanguageChanged}
         userProviders={this.userProviders}
         onClose={this.onClose}
         showModal={this.showModal}
@@ -146,6 +152,7 @@ export class RLogin {
         onChainChange={this.onChainChange}
         backendUrl={this.backendUrl}
         supportedChains={this.supportedChains}
+        supportedLanguages={this.supportedLanguages}
         keepModalHidden={this.keepModalHidden}
         dataVaultOptions={this.dataVaultOptions}
       />,

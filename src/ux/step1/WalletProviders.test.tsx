@@ -12,8 +12,14 @@ describe('Component: WalletProviders', () => {
 
   const props = {
     userProviders: providers,
-    setLoading: jest.fn()
+    setLoading: jest.fn(),
+    changeLanguage: jest.fn(),
+    availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
+    selectedLanguageCode: 'en'
   }
+
+  const propsWithOneLanguage = { ...props }
+  propsWithOneLanguage.availableLanguages = [{ code: 'en', name: 'English' }]
 
   it('renders and is defined', () => {
     const wrapper = mount(<WalletProviders {...props} />)
@@ -23,7 +29,7 @@ describe('Component: WalletProviders', () => {
   it('shows header and footer', () => {
     const wrapper = mount(<WalletProviders {...props} />)
     expect(wrapper.find('h2').text()).toBe('Connect your wallet')
-    expect(wrapper.find(`p.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
+    expect(wrapper.find(`span.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
   })
 
   it('shows multiple providers', () => {
@@ -37,5 +43,15 @@ describe('Component: WalletProviders', () => {
   it('shows message about no providers', () => {
     const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
     expect(wrapper.find('h2').text()).toBe('No wallets found')
+  })
+
+  it('show language selector with two options when two language available', () => {
+    const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
+    expect(wrapper.find('select').children()).toHaveLength(2)
+  })
+
+  it('does not show language selector when only one language available', () => {
+    const wrapper = mount(<WalletProviders {...propsWithOneLanguage} userProviders={[]} />)
+    expect(wrapper.find('select').children()).toHaveLength(0)
   })
 })

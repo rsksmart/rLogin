@@ -22,6 +22,8 @@ import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
 import Loading from './ui/shared/Loading'
+import i18next from 'i18next'
+import i18n from './i18n'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -54,13 +56,15 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, dataVault?: IDataVault) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, dataVault?: IDataVault) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
+  onLanguageChanged: (language: string) => void
   backendUrl?: string
   keepModalHidden?: boolean
   supportedChains?: number[]
+  supportedLanguages?: string[]
   dataVaultOptions?: DataVaultOptions
 }
 
@@ -69,6 +73,11 @@ type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork' | 'loading'
 interface ErrorDetails {
   title: string
   description?: string
+}
+
+interface IAvailableLanguage {
+  code: string
+  name: string
 }
 
 interface IModalState {
@@ -96,6 +105,7 @@ const INITIAL_STATE: IModalState = {
 export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
+
     window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
 
     const { providerController, onError } = props
@@ -106,7 +116,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     this.did = this.did.bind(this)
     this.setLightboxRef = this.setLightboxRef.bind(this)
-
     this.changeMetamaskNetwork = this.changeMetamaskNetwork.bind(this)
     this.continueSettingUp = this.continueSettingUp.bind(this)
     this.fetchSelectiveDisclosureRequest = this.fetchSelectiveDisclosureRequest.bind(this)
@@ -114,6 +123,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
+    this.availableLanguages = []
+    this.setupLanguages()
   }
 
   public state: IModalState = {
@@ -122,10 +133,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public lightboxRef?: HTMLDivElement | null;
   public mainModalCard?: HTMLDivElement | null;
+  private availableLanguages: IAvailableLanguage[];
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
     if (prevState.show && !this.state.show) {
-      this.props.resetState()
+      this.disconnect()
     }
     if (this.lightboxRef) {
       const lightboxRect = this.lightboxRef.getBoundingClientRect()
@@ -137,6 +149,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
       ) {
         this.setState({ lightboxOffset })
       }
+    }
+  }
+
+  private setupLanguages () {
+    // this fetches all available languages in this form [{en:english},...]
+    this.availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
+    if (this.props.supportedLanguages && this.props.supportedLanguages.length > 0) {
+      this.availableLanguages = this.availableLanguages.filter(availableLanguage => this.props.supportedLanguages?.includes(availableLanguage.code))
     }
   }
 
@@ -156,12 +176,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
 
-  private validateCurrentChain () {
+  private validateCurrentChain ():boolean {
     const { supportedChains, showModal, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
 
-    const isCurrentChainSupported = supportedChains && supportedChains.includes(chainId!)
+    if (!Array.isArray(supportedChains) || supportedChains.length === 0) return true
 
+    const isCurrentChainSupported = supportedChains.includes(chainId!)
     if (!isCurrentChainSupported) {
       provider.on(CHAIN_CHANGED, () => this.continueSettingUp(provider))
 
@@ -222,11 +243,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private detectFlavor () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault } = this.state
+    const selectedLanguageCode = i18n.language
 
     if (!backendUrl) {
-      return onConnect(provider, this.disconnect, dataVault)
+      return onConnect(provider, this.disconnect, selectedLanguageCode, dataVault)
     } else {
-      this.setState({ loadingReason: 'Connecting to server' })
+      const loadingReason = i18next.t('Connecting to server')
+      this.setState({ loadingReason })
       // request schema to back end
       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
         this.setState({
@@ -262,10 +285,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private onConfirmAuth () {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault, challenge, address, sd } = this.state
-
+    const selectedLanguageCode = i18n.language
     const did = this.did()
 
-    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, dataVault)
+    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, selectedLanguageCode, dataVault)
 
     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
       .catch((error: Error | AxiosError) => {
@@ -322,6 +345,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.setState(INITIAL_STATE)
   }
 
+  public changeLanguage = (language: string) => {
+    const { showModal, onLanguageChanged } = this.props
+
+    i18n.changeLanguage(language)
+    onLanguageChanged(language)
+    showModal()
+  }
+
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains } = this.props
@@ -341,6 +372,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState(INITIAL_STATE)
     }
 
+    const selectedLanguageCode = i18n.language
     return <Modal
       lightboxOffset={lightboxOffset}
       show={show}
@@ -348,7 +380,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       setLightboxRef={this.setLightboxRef}
       mainModalCard={this.mainModalCard}
     >
-      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={selectedLanguageCode}/>}
       {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
       {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
       {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}

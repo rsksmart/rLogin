@@ -247,6 +247,13 @@ The Cypress tests can also be run in a headless browser by running the command:
 npm run cypress:run
 ```
 
+## Multi-language
+Please take a look at the following file to add more languages:
+```
+/src/i18n.ts
+```
+
+
 ## Sample apps
 
 Please first build for production.
