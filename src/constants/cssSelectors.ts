@@ -17,6 +17,7 @@ export const MODAL_BODY_CLASSNAME = 'rlogin-modal-body'
 // Choosing a provider, step 1
 export const PROVIDERS_WRAPPER_CLASSNAME = 'rlogin-providers-wrapper'
 export const PROVIDER_CONTAINER_CLASSNAME = 'rlogin-provider-container'
+export const PROVIDER_CONTAINER_DISABLED_CLASSNAME = 'rlogin-provider-disabled-container'
 export const PROVIDER_ICON_CLASSNAME = 'rlogin-provider-icon'
 export const PROVIDERS_FOOTER_TEXT_CLASSNAME = 'rlogin-footer-text'
 

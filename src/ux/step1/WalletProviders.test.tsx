@@ -4,6 +4,7 @@ import { mount } from 'enzyme'
 import { WalletProviders } from './WalletProviders'
 import { PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_WRAPPER_CLASSNAME } from '../../constants/cssSelectors'
 import { themesOptions } from '../../theme'
+import { userProvidersByName } from '../../Core'
 
 describe('Component: WalletProviders', () => {
   const providers = [
@@ -12,7 +13,7 @@ describe('Component: WalletProviders', () => {
   ]
 
   const props = {
-    userProviders: providers,
+    userProviders: userProvidersByName(providers),
     setLoading: jest.fn(),
     changeLanguage: jest.fn(),
     availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
@@ -44,17 +45,17 @@ describe('Component: WalletProviders', () => {
   })
 
   it('shows message about no providers', () => {
-    const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
+    const wrapper = mount(<WalletProviders {...props} userProviders={{}} />)
     expect(wrapper.find('h2').text()).toBe('No wallets found')
   })
 
   it('show language selector with two options when two language available', () => {
-    const wrapper = mount(<WalletProviders {...props} userProviders={[]} />)
+    const wrapper = mount(<WalletProviders {...props} userProviders={{}} />)
     expect(wrapper.find('select').children()).toHaveLength(2)
   })
 
   it('does not show language selector when only one language available', () => {
-    const wrapper = mount(<WalletProviders {...propsWithOneLanguage} userProviders={[]} />)
+    const wrapper = mount(<WalletProviders {...propsWithOneLanguage} userProviders={{}} />)
     expect(wrapper.find('select').children()).toHaveLength(0)
   })
 })

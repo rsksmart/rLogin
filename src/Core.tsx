@@ -109,6 +109,13 @@ const INITIAL_STATE: IModalState = {
   loadingReason: ''
 }
 
+export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
+  const providersByName: { [name: string]: IProviderUserOptions } = {}
+  for (let userProvider of userProviders)
+    providersByName[userProvider.name] = userProvider
+  return providersByName
+}
+
 export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
@@ -405,12 +412,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
         setLightboxRef={this.setLightboxRef}
         mainModalCard={this.mainModalCard}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
-        {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
-        {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
-        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
-        {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'loading' && <Loading text={loadingReason} />}
+      {currentStep === 'Step1' && <WalletProviders userProviders={userProvidersByName(userProviders)} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+      {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
+      {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
+      {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
+      {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+      {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
   }

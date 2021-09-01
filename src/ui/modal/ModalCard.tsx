@@ -10,7 +10,7 @@ const ModalCardWrapper = styled.div`
   border-radius: 12px;
   margin: 10px;
   padding: 0;
-  max-width: 440px;
+  max-width: 840px;
   min-width: fit-content;
   max-height: 100%;
   overflow: auto;
