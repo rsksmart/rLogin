@@ -76,11 +76,11 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
   </ProvidersWrapper>
   <FooterWrapper >
     <Paragraph>
+      { availableLanguages?.length > 1 &&
       <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="languages" id="languages">
         {availableLanguages.map(availableLanguage =>
           <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
         )}
-
       </LanguageSelector>
       <ThemeSwitcher theme={selectedTheme} onChange={changeTheme}></ThemeSwitcher>
       <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
