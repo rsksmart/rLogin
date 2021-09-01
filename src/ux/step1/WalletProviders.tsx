@@ -81,7 +81,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
         {availableLanguages.map(availableLanguage =>
           <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
         )}
-      </LanguageSelector>
+      </LanguageSelector>}
       <ThemeSwitcher theme={selectedTheme} onChange={changeTheme}></ThemeSwitcher>
       <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
 
