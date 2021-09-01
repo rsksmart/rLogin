@@ -14,7 +14,7 @@ interface ErrorMessageInterface {
 const ErrorHeading = styled.h2`
   font-weight: 400 !important;
   font-size: 16px;
-  color: #EDB21C;
+  color: ${props => props.theme.error};
 `
 
 export const ErrorMessage: React.FC<ErrorMessageInterface> = ({ className, title, description }) => (

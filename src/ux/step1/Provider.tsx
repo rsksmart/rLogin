@@ -33,12 +33,12 @@ const ProviderContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #F2F2F2;
+  background-color: ${props => props.theme.containerBackground};;
   border-radius: 12px;
   margin-bottom: 15px;
   padding: 5px 0;
   :hover {
-    background-color: #E4E4E4;
+    background-color: ${props => props.theme.containerBackgroundHover};;
   }
   @media screen and (max-width: 768px) {
     padding: 1vw;

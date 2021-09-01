@@ -104,13 +104,18 @@
         dataVaultOptions: {
           package:RIFDataVault,
           serviceUrl: 'https://data-vault.identity.rifos.org',
-        }
+        },
+        // customThemes: {light:{modalBackground:'#ff0000'}},
+        // defaultTheme: 'dark'
       })
+
       window.rLogin=rLogin;
+
       // setup login button
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
       rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
+      rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
       // ui - display handlers
       const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
       const displayAccounts = (accounts) => setElementInnerText('accounts', accounts.join(', '))

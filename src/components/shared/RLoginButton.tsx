@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-use-before-define
 import React, { ReactNode } from 'react'
+import styled from 'styled-components'
 interface RLoginButtonInterface {
   children: ReactNode
   onClick?: () => void
@@ -7,33 +8,24 @@ interface RLoginButtonInterface {
 }
 
 export const RLoginButton: React.FC<RLoginButtonInterface> = ({ children, disabled, onClick }) => {
-  const styles = {
-    display: 'inline-block',
-    margin: '10px',
-    padding: '10px 50px',
-    border: 'none',
-    borderRadius: '5px',
-    backgroundColor: '#008FF7',
-    boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',
-    cursor: 'pointer',
-    color: '#FFFFFF',
-    fontSize: '18px',
-    lineHeight: '100%'
-  }
-
-  const stylesDisabled = {
-    ...styles,
-    backgroundColor: '#EFEFEF',
-    cursor: 'auto',
-    color: '#CCCCCC'
-  }
-
+  const ButtonWrapper = styled.button`
+    display: 'inline-block';
+    margin: '10px';
+    padding: '10px 50px';
+    border: 'none';
+    border-radius: '5px';
+    box-shadow: '0px 4px 10px rgba(0,0,0,0.1)';
+    font-size: '18px';
+    line-height: '100%';
+    cursor: ${() => disabled ? 'auto' : 'pointer'};
+    background-color: ${props => disabled ? props.theme.disabledBackground : props.theme.primaryBackground};
+    color: ${props => disabled ? props.theme.disabledText : props.theme.primaryText};
+  `
   return (
-    <button
+    <ButtonWrapper
       onClick={onClick}
       className="rlogin-button"
-      style={disabled ? stylesDisabled : styles}
       disabled={disabled || false}
-    >{children}</button>
+    >{children}</ButtonWrapper>
   )
 }

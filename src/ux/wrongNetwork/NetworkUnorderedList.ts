@@ -12,7 +12,7 @@ export default styled.ul`
     span.text {
       padding: 5px;
       font-size: 15px;
-      color: #6C6B6C;
+      color: ${props => props.theme.secondaryText};
       font-weight: 400 !important;
     }
   }
