@@ -154,7 +154,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     // this is making the Ledger disconnect when the popup is closed after connecting
     // for now, we can comment it out. let's understand how to make a 'cancel' button
     // or simmilar
-    if (prevState.show && !this.state.show && (!!this.state.provider && this.state.provider.isLedger)) {
+    if (prevState.show && !this.state.show && !!this.state.provider && !this.state.provider.isLedger) {
       this.disconnect()
     }
     if (this.lightboxRef) {
