@@ -97,6 +97,13 @@
                 chainId: 30,
               }
             }
+          },
+          'custom-ledger': {
+            ...window.rLoginLedgerProvider.ledgerProviderOptions,
+            options: {
+              rpcUrl: 'https://public-node.testnet.rsk.co',
+              chainId: 31
+            }
           }
         },
         backendUrl,
