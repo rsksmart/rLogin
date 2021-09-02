@@ -3,6 +3,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { WalletProviders } from './WalletProviders'
 import { PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_WRAPPER_CLASSNAME } from '../../constants/cssSelectors'
+import { themesOptions } from '../../theme'
 
 describe('Component: WalletProviders', () => {
   const providers = [
@@ -15,7 +16,9 @@ describe('Component: WalletProviders', () => {
     setLoading: jest.fn(),
     changeLanguage: jest.fn(),
     availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
-    selectedLanguageCode: 'en'
+    selectedLanguageCode: 'en',
+    selectedTheme: 'light' as themesOptions,
+    changeTheme: jest.fn()
   }
 
   const propsWithOneLanguage = { ...props }
