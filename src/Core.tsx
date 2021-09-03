@@ -151,14 +151,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
-    // this is making the Ledger disconnect when the popup is closed after connecting
-    // for now, we can comment it out. let's understand how to make a 'cancel' button
-    // or simmilar
-    if (
-      prevState.show && !this.state.show &&
-      (!this.state.provider || !this.state.provider.isLedger)
+    // this resets the state if an unhandled error closed the modal
+
+    if (this.state.currentStep === 'loading' &&
+      !prevState.show && this.state.show
     ) {
-      this.disconnect()
+      this.disconnectProvider()
+      this.setState({ currentStep: 'Step1' })
     }
     if (this.lightboxRef) {
       const lightboxRect = this.lightboxRef.getBoundingClientRect()
