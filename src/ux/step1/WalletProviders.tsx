@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Provider } from './Provider'
 import { IProviderInfo, IProviderUserOptions, providers } from 'web3modal'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
@@ -31,11 +31,18 @@ const ProvidersWrapper = styled.div`
   padding: 8px;
 `
 
-const ProviderRow = styled.div`
+const ProviderRow = styled.div<{ hideMobile?: boolean }>`
   width: 100%;
   display: flex;
   flex-direction: row;
   gap: 1em;
+
+  @media screen and (max-width: 500px) {
+    flex-direction: column;
+    ${({ hideMobile }) => hideMobile && css`
+      display: none
+    `}
+  }
 `
 
 const LanguageSelector = styled.select`
@@ -80,18 +87,18 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
   </Header2>
   <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
     <ProviderRow>
-      <UserProvider provider={providers.WALLETCONNECT} userProvider={userProviders[providers.WALLETCONNECT.name]} setLoading={setLoading} />
-    </ProviderRow>
-    <ProviderRow>
       <UserProvider provider={providers.METAMASK} userProvider={userProviders[providers.METAMASK.name]} setLoading={setLoading} />
       <UserProvider provider={providers.NIFTY} userProvider={userProviders[providers.NIFTY.name]} setLoading={setLoading} />
       <UserProvider provider={providers.LIQUALITY} userProvider={userProviders[providers.LIQUALITY.name]} setLoading={setLoading} />
+    </ProviderRow>
+    <ProviderRow hideMobile={true}>
+      <UserProvider provider={providers.WALLETCONNECT} userProvider={userProviders[providers.WALLETCONNECT.name]} setLoading={setLoading} />
     </ProviderRow>
     <ProviderRow>
       <UserProvider provider={providers.PORTIS} userProvider={userProviders[providers.PORTIS.name]} setLoading={setLoading} />
       <UserProvider provider={EDGE} userProvider={userProviders[EDGE.name]} setLoading={setLoading} />
     </ProviderRow>
-    <ProviderRow>
+    <ProviderRow hideMobile={true}>
       <UserProvider provider={LEDGER} userProvider={userProviders[LEDGER.name]} setLoading={setLoading} />
       <UserProvider provider={TREZOR} userProvider={userProviders[TREZOR.name]} setLoading={setLoading} />
       <UserProvider provider={DCENT} userProvider={userProviders[DCENT.name]} setLoading={setLoading} />

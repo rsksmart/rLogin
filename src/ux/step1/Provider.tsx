@@ -31,6 +31,12 @@ const ProviderContainer = styled.div<{ disabled: boolean }>`
   flex: 1;
   align-items: center;
   border-radius: 12px;
+
+  @media screen and (max-width: 500px) {
+    ${({ disabled }) => disabled && css`
+      display: none;
+    `}
+  }
 `
 
 const ProviderBox = styled.div<{ disabled: boolean }>`
