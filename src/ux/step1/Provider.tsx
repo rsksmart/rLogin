@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import * as React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { Header3, Paragraph } from '../../ui/shared/Typography'
 import {
@@ -16,7 +16,7 @@ const ProviderIcon = styled.div`
   width: 45px;
   height: 45px;
   display: flex;
-  margin: 0 15px;
+  margin: 5px 15px 0 15px;
   overflow: visible;
   box-shadow: none;
   justify-content: center;
@@ -35,23 +35,20 @@ const ProviderContainer = styled.div<{ disabled: boolean }>`
 
 const ProviderBox = styled.div<{ disabled: boolean }>`
   transition: background-color 0.2s ease-in-out;
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: ${props => props.theme.containerBackground};
   opacity: ${({ disabled }) => (disabled ? '50%' : '100%')};
   border-radius: 12px;
-  margin-bottom: 15px;
-  padding: 5px 0;
-  ${({ disabled }) => !disabled && `
-  :hover {
-    background-color: ${(props: any) => props.theme.containerBackgroundHover};;
-  }`}
-  @media screen and (max-width: 768px) {
-    padding: 1vw;
-  }
+  padding: 10px 0;
+  cursor: inherit;
+
+  ${({ disabled }) => !disabled && css`
+    cursor: pointer;
+    :hover {
+      background-color: ${(props: any) => props.theme.containerBackgroundHover};
+    }
+  `}
 `
 
 const HeaderRow = styled.div`

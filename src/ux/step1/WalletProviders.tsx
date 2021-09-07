@@ -27,7 +27,7 @@ const ProvidersWrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  cursor: pointer;
+  gap: 1em;
   padding: 8px;
 `
 
@@ -35,6 +35,7 @@ const ProviderRow = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
+  gap: 1em;
 `
 
 const LanguageSelector = styled.select`
