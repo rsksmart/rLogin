@@ -33,7 +33,6 @@ export const Modal: React.FC<ModalProps> = ({
     show={show}
   >
     <ModalContainer show={show}>
-      {/* TODO: test this component hitting outside the modal */}
       <ModalHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
       <ModalCard mainModalCard={mainModalCard}>
         <ModalHeader className={MODAL_HEADER_CLASSNAME}>
