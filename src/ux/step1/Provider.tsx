@@ -27,9 +27,8 @@ const ProviderIcon = styled.div`
   }
 `
 
-const ProviderContainer = styled.div<{ width: string, disabled: boolean }>`
-  width: ${({ width }) => width};
-  float: left;
+const ProviderContainer = styled.div<{ disabled: boolean }>`
+  flex: 1;
   align-items: center;
   border-radius: 12px;
 `
@@ -68,7 +67,6 @@ interface IProviderProps {
   description: string;
   onClick: () => void;
   disabled?: boolean;
-  width: string
 }
 
 export function Provider (props: IProviderProps) {
@@ -78,11 +76,10 @@ export function Provider (props: IProviderProps) {
     description,
     onClick,
     disabled = true,
-    width,
     ...otherProps
   } = props
   return (
-    <ProviderContainer disabled={disabled} width={width}>
+    <ProviderContainer disabled={disabled}>
       <ProviderBox disabled={disabled} className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`} onClick={onClick} {...otherProps}>
         <HeaderRow>
           <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
