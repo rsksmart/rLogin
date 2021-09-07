@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { HEADER2_CLASS, HEADER3_CLASS, PARAGRAPH_CLASS, BIG_PARAGRAPH_CLASS } from '../../constants/cssSelectors'
+import { HEADER2_CLASS, HEADER3_CLASS, PARAGRAPH_CLASS, BIG_PARAGRAPH_CLASS, SPAN, SPAN2, SMALL_SPAN } from '../../constants/cssSelectors'
 
 interface TypographyInterface {
   className?: string;
@@ -51,6 +51,20 @@ export const Paragraph: React.FC<TypographyInterface> = ({ children, className }
   </ParagraphWrapper>
 )
 
+const SmallSpanWrapper = styled.span`
+  ${typeShared}
+  font-weight: 400 !important;
+  font-size: 12px;
+  color: ${props => props.theme.p};
+  margin: 12px 0;
+  margin-left: 8px;
+`
+export const SmallSpan: React.FC<TypographyInterface> = ({ children, className }) => (
+  <SmallSpanWrapper className={className ? `${SMALL_SPAN} ${className}` : SMALL_SPAN}>
+    {children}
+  </SmallSpanWrapper>
+)
+
 const LeftBigParagraphWrapper = styled(ParagraphWrapper)`
   font-size: 14px;
   text-align: left;
@@ -59,4 +73,40 @@ export const LeftBigParagraph: React.FC<TypographyInterface> = ({ children, clas
   <LeftBigParagraphWrapper className={className ? `${BIG_PARAGRAPH_CLASS} ${className}` : BIG_PARAGRAPH_CLASS}>
     {children}
   </LeftBigParagraphWrapper>
+)
+
+const SpanWrapper = styled.span`
+  ${typeShared}
+  font-weight: 500 !important;
+  font-size: 16px;
+  color: ${props => props.theme.p};
+  margin: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  text-align: left;
+`
+export const Span: React.FC<TypographyInterface> = ({ children, className }) => (
+  <SpanWrapper className={className ? `${SPAN} ${className}` : SPAN}>
+    {children}
+  </SpanWrapper>
+)
+
+const Span2Wrapper = styled.span`
+  ${typeShared}
+  font-weight: 400 !important;
+  font-size: 16px;
+  color: ${props => props.theme.secondaryText};
+  margin: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  text-align: left;
+`
+export const Span2: React.FC<TypographyInterface> = ({ children, className }) => (
+  <Span2Wrapper className={className ? `${SPAN2} ${className}` : SPAN2}>
+    {children}
+  </Span2Wrapper>
 )
