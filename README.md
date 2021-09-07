@@ -70,7 +70,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
     import WalletConnectProvider from '@walletconnect/web3-provider'
 
     export const rLogin = new RLogin({
-      cachedProvider: false,
+      cacheProvider: false,
       providerOptions: {
         walletconnect: {
           package: WalletConnectProvider,
@@ -134,7 +134,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
   import RLogin from '@rsksmart/rlogin'
 
   export const rLogin = new RLogin({
-    cachedProvider: false,
+    cacheProvider: false,
     providerOptions: {
       // providers configurations
     },
@@ -146,7 +146,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
   import RLogin from '@rsksmart/rlogin'
  
   export const rLogin = new RLogin({
-    cachedProvider: false,
+    cacheProvider: false,
     providerOptions: {
       // providers configurations
     },
@@ -161,7 +161,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
   import * as RIFDataVault from '@rsksmart/ipfs-cpinner-client'
 
   export const rLogin = new RLogin({
-    cachedProvider: false,
+    cacheProvider: false,
     providerOptions: {
       // providers configurations
     },
