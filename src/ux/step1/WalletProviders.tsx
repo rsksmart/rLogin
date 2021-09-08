@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Provider } from './Provider'
 import { IProviderUserOptions, providers } from 'web3modal'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
-import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
+import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../../constants/cssSelectors'
 import { Trans } from 'react-i18next'
 import { ThemeSwitcher } from '../../ui/shared/ThemeSwitch'
 import { themesOptions } from '../../theme'
@@ -127,7 +127,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
         <UserProvider userProvider={providersByName[DCENT.name] || DCENT} setLoading={setLoading} />
       </ProviderRow>
       {developerProviders.length !== 0 && (
-        <ProviderRow>
+        <ProviderRow className={PROVIDERS_DEVELOPER_CLASSNAME}>
           {developerProviders.map((providerName: string) =>
             <UserProvider
               key={providerName}

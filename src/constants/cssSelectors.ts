@@ -20,6 +20,7 @@ export const PROVIDER_CONTAINER_CLASSNAME = 'rlogin-provider-container'
 export const PROVIDER_CONTAINER_DISABLED_CLASSNAME = 'rlogin-provider-disabled-container'
 export const PROVIDER_ICON_CLASSNAME = 'rlogin-provider-icon'
 export const PROVIDERS_FOOTER_TEXT_CLASSNAME = 'rlogin-footer-text'
+export const PROVIDERS_DEVELOPER_CLASSNAME = 'rlogin-developer-providers'
 
 // Typography
 export const HEADER2_CLASS = 'rlogin-header2'
