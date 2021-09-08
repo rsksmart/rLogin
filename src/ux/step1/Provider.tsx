@@ -1,10 +1,11 @@
 // eslint-disable-next-line
 import * as React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { Header3, Paragraph } from '../../ui/shared/Typography'
 import {
   PROVIDER_CONTAINER_CLASSNAME,
+  PROVIDER_CONTAINER_DISABLED_CLASSNAME,
   PROVIDER_ICON_CLASSNAME
 } from '../../constants/cssSelectors'
 
@@ -15,7 +16,7 @@ const ProviderIcon = styled.div`
   width: 45px;
   height: 45px;
   display: flex;
-  margin: 0 15px;
+  margin: 5px 15px 0 15px;
   overflow: visible;
   box-shadow: none;
   justify-content: center;
@@ -26,27 +27,37 @@ const ProviderIcon = styled.div`
   }
 `
 
-const ProviderContainer = styled.div`
-  transition: background-color 0.2s ease-in-out;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+const ProviderContainer = styled.div<{ disabled: boolean }>`
+  flex: 1;
   align-items: center;
-  background-color: ${props => props.theme.containerBackground};;
   border-radius: 12px;
-  margin-bottom: 15px;
-  padding: 5px 0;
-  :hover {
-    background-color: ${props => props.theme.containerBackgroundHover};;
-  }
-  @media screen and (max-width: 768px) {
-    padding: 1vw;
+
+  @media screen and (max-width: 500px) {
+    ${({ disabled }) => disabled && css`
+      display: none;
+    `}
   }
 `
 
+const ProviderBox = styled.div<{ disabled: boolean }>`
+  transition: background-color 0.2s ease-in-out;
+  justify-content: center;
+  align-items: center;
+  background-color: ${props => props.theme.containerBackground};
+  opacity: ${({ disabled }) => (disabled ? '50%' : '100%')};
+  border-radius: 12px;
+  padding: 10px 0;
+  cursor: inherit;
+
+  ${({ disabled }) => !disabled && css`
+    cursor: pointer;
+    :hover {
+      background-color: ${(props: any) => props.theme.containerBackgroundHover};
+    }
+  `}
+`
+
 const HeaderRow = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -58,6 +69,7 @@ interface IProviderProps {
   logo: string;
   description: string;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 export function Provider (props: IProviderProps) {
@@ -66,18 +78,20 @@ export function Provider (props: IProviderProps) {
     logo,
     description,
     onClick,
+    disabled = true,
     ...otherProps
   } = props
   return (
-    <ProviderContainer className={PROVIDER_CONTAINER_CLASSNAME} onClick={onClick} {...otherProps}>
-      <HeaderRow>
-        <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
-          <img src={logo} alt={name} />
-        </ProviderIcon>
-        <Header3>{name}</Header3>
-      </HeaderRow>
-
-      <Paragraph>{description}</Paragraph>
+    <ProviderContainer disabled={disabled}>
+      <ProviderBox disabled={disabled} className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`} onClick={onClick} {...otherProps}>
+        <HeaderRow>
+          <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
+            <img src={logo} alt={name} />
+          </ProviderIcon>
+          <Header3>{name}</Header3>
+        </HeaderRow>
+        <Paragraph>{description}</Paragraph>
+      </ProviderBox>
     </ProviderContainer>
   )
 }

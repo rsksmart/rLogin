@@ -404,6 +404,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         onClose={handleClose}
         setLightboxRef={this.setLightboxRef}
         mainModalCard={this.mainModalCard}
+        big={currentStep === 'Step1'}
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
