@@ -72,14 +72,14 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-const UserProvider = ({ userProvider, setLoading }: { userProvider: IProviderUserOptions, setLoading: () => void }) =>
+const UserProvider = ({ userProvider, handleConnect }: { userProvider: IProviderUserOptions, handleConnect: (provider: any) => void }) =>
   <Provider
     key={userProvider.name}
     name={userProvider.name}
     logo={userProvider.logo}
     description=""
     disabled={!userProvider.onClick}
-    onClick={!userProvider.onClick ? () => { userProvider.onClick(); setLoading() } : () => {}}
+    onClick={() => handleConnect(userProvider)}
   />
 
 export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
@@ -104,27 +104,33 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
   const developerProviders = Object.keys(providersByName).filter((providerName: string) =>
     !hardCodedProviderNames.includes(providerName) ? providerName : null)
 
+  // handle connect
+  const handleConnect = (provider: IProviderUserOptions) => {
+    setLoading()
+    provider.onClick()
+  }
+
   return <>
     <Header2>
       {Object.keys(userProviders).length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
     </Header2>
     <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
       <ProviderRow>
-        <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} setLoading={setLoading} />
-        <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} setLoading={setLoading} />
-        <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
-        <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow>
-        <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} setLoading={setLoading} />
-        <UserProvider userProvider={providersByName[EDGE.name] || EDGE} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[EDGE.name] || EDGE} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
-        <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} setLoading={setLoading} />
-        <UserProvider userProvider={providersByName[TREZOR.name] || TREZOR} setLoading={setLoading} />
-        <UserProvider userProvider={providersByName[DCENT.name] || DCENT} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[TREZOR.name] || TREZOR} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[DCENT.name] || DCENT} handleConnect={handleConnect} />
       </ProviderRow>
       {developerProviders.length !== 0 && (
         <ProviderRow className={PROVIDERS_DEVELOPER_CLASSNAME}>
@@ -132,7 +138,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
             <UserProvider
               key={providerName}
               userProvider={providersByName[providerName]}
-              setLoading={setLoading} />
+              handleConnect={handleConnect} />
           )}
         </ProviderRow>
       )}
