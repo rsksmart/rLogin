@@ -16,6 +16,7 @@ interface ModalProps {
   onClose: () => void
   setLightboxRef: (c: HTMLDivElement | null) => void
   mainModalCard: HTMLDivElement | null | undefined
+  big: boolean
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -24,7 +25,8 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   setLightboxRef,
   mainModalCard,
-  children
+  children,
+  big
 }) => (
   <ModalLightbox
     className={MODAL_LIGHTBOX_CLASSNAME}
@@ -34,12 +36,12 @@ export const Modal: React.FC<ModalProps> = ({
   >
     <ModalContainer show={show}>
       <ModalHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-      <ModalCard mainModalCard={mainModalCard}>
+      <ModalCard mainModalCard={mainModalCard} big={big}>
         <ModalHeader className={MODAL_HEADER_CLASSNAME}>
           <ModalCloseButton className={MODAL_CLOSE_BUTTON_CLASSNAME} onClick={onClose} />
           <PoweredByRif />
         </ModalHeader>
-        <ModalBody className={MODAL_BODY_CLASSNAME}>
+        <ModalBody className={MODAL_BODY_CLASSNAME} big={big}>
           {children}
         </ModalBody>
       </ModalCard>

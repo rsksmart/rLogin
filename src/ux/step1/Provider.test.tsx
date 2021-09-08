@@ -9,7 +9,8 @@ describe('Component: Provider', () => {
     name: 'Test Provider',
     logo: 'image.jpg',
     description: 'A provider',
-    onClick: jest.fn()
+    onClick: jest.fn(),
+    width: '100%'
   }
 
   it('renders and is defined', () => {

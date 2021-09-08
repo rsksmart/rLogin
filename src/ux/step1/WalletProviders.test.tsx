@@ -2,7 +2,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { WalletProviders } from './WalletProviders'
-import { PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_WRAPPER_CLASSNAME } from '../../constants/cssSelectors'
+import { PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../../constants/cssSelectors'
 import { themesOptions } from '../../theme'
 
 describe('Component: WalletProviders', () => {
@@ -35,12 +35,12 @@ describe('Component: WalletProviders', () => {
     expect(wrapper.find(`span.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
   })
 
-  it('shows multiple providers', () => {
+  it('shows custom providers', () => {
     const wrapper = mount(<WalletProviders {...props} />)
-    expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).children()).toHaveLength(2)
+    expect(wrapper.find(`div.${PROVIDERS_DEVELOPER_CLASSNAME}`).children()).toHaveLength(2)
 
-    expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).childAt(0).find('h3').text()).toEqual('test1')
-    expect(wrapper.find(`div.${PROVIDERS_WRAPPER_CLASSNAME}`).childAt(1).find('h3').text()).toEqual('test2')
+    expect(wrapper.find(`div.${PROVIDERS_DEVELOPER_CLASSNAME}`).childAt(0).find('h3').text()).toEqual('test1')
+    expect(wrapper.find(`div.${PROVIDERS_DEVELOPER_CLASSNAME}`).childAt(1).find('h3').text()).toEqual('test2')
   })
 
   it('shows message about no providers', () => {
