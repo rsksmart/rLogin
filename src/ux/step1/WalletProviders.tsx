@@ -2,7 +2,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { Provider } from './Provider'
-import { IProviderInfo, IProviderUserOptions, providers } from 'web3modal'
+import { IProviderUserOptions, providers } from 'web3modal'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME } from '../../constants/cssSelectors'
 import { Trans } from 'react-i18next'
@@ -12,7 +12,7 @@ import { themesOptions } from '../../theme'
 import { EDGE, TREZOR, LEDGER, DCENT } from './extraProviders'
 
 interface IWalletProvidersProps {
-  userProviders: { [name: string]: IProviderUserOptions }
+  userProviders: IProviderUserOptions[]
   setLoading: () => void
   changeLanguage: (event: any) => void
   changeTheme: (theme: themesOptions) => void
@@ -72,54 +72,88 @@ const NoWalletAnchor = styled.a`
   }
 `
 
-const UserProvider = ({ provider, userProvider, setLoading }: { provider: IProviderInfo, userProvider: IProviderUserOptions, setLoading: () => void }) => <Provider
-  key={provider.name}
-  name={provider.name}
-  logo={provider.logo}
-  description=""
-  disabled={!userProvider}
-  onClick={userProvider ? () => { userProvider.onClick(); setLoading() } : () => {}}
-/>
+const UserProvider = ({ userProvider, setLoading }: { userProvider: IProviderUserOptions, setLoading: () => void }) =>
+  <Provider
+    key={userProvider.name}
+    name={userProvider.name}
+    logo={userProvider.logo}
+    description=""
+    disabled={!userProvider.onClick}
+    onClick={!userProvider.onClick ? () => { userProvider.onClick(); setLoading() } : () => {}}
+  />
 
-export const WalletProviders = ({ userProviders, setLoading, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => <>
-  <Header2>
-    {Object.keys(userProviders).length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
-  </Header2>
-  <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
-    <ProviderRow>
-      <UserProvider provider={providers.METAMASK} userProvider={userProviders[providers.METAMASK.name]} setLoading={setLoading} />
-      <UserProvider provider={providers.NIFTY} userProvider={userProviders[providers.NIFTY.name]} setLoading={setLoading} />
-      <UserProvider provider={providers.LIQUALITY} userProvider={userProviders[providers.LIQUALITY.name]} setLoading={setLoading} />
-    </ProviderRow>
-    <ProviderRow hideMobile={true}>
-      <UserProvider provider={providers.WALLETCONNECT} userProvider={userProviders[providers.WALLETCONNECT.name]} setLoading={setLoading} />
-    </ProviderRow>
-    <ProviderRow>
-      <UserProvider provider={providers.PORTIS} userProvider={userProviders[providers.PORTIS.name]} setLoading={setLoading} />
-      <UserProvider provider={EDGE} userProvider={userProviders[EDGE.name]} setLoading={setLoading} />
-    </ProviderRow>
-    <ProviderRow hideMobile={true}>
-      <UserProvider provider={LEDGER} userProvider={userProviders[LEDGER.name]} setLoading={setLoading} />
-      <UserProvider provider={TREZOR} userProvider={userProviders[TREZOR.name]} setLoading={setLoading} />
-      <UserProvider provider={DCENT} userProvider={userProviders[DCENT.name]} setLoading={setLoading} />
-    </ProviderRow>
-  </ProvidersWrapper>
-  <FooterWrapper >
-    <Paragraph>
-      { availableLanguages?.length > 1 &&
-      <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="languages" id="languages">
-        {availableLanguages.map(availableLanguage =>
-          <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
-        )}
-      </LanguageSelector>}
-      <ThemeSwitcher theme={selectedTheme} onChange={changeTheme}></ThemeSwitcher>
-      <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
+export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
+  const providersByName: { [name: string]: IProviderUserOptions } = {}
+  for (const userProvider of userProviders) {
+    providersByName[userProvider.name] = userProvider
+  }
+  return providersByName
+}
 
-        <Trans>No wallet? </Trans>
-        <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
-          <Trans>Get one here!</Trans>
-        </NoWalletAnchor>
-      </NoWalletFooter>
-    </Paragraph>
-  </FooterWrapper>
-</>
+export const WalletProviders = ({ userProviders, setLoading, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => {
+  // the providers that are hardcoded into the layout below
+  const hardCodedProviderNames = [
+    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name,
+    providers.WALLETCONNECT.name, providers.PORTIS.name, EDGE.name,
+    LEDGER.name, TREZOR.name, DCENT.name
+  ]
+
+  const providersByName = userProvidersByName(userProviders)
+
+  // additional providers that the developer wants to use
+  const developerProviders = Object.keys(providersByName).filter((providerName: string) =>
+    !hardCodedProviderNames.includes(providerName) ? providerName : null)
+
+  return <>
+    <Header2>
+      {Object.keys(userProviders).length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
+    </Header2>
+    <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
+      <ProviderRow>
+        <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} setLoading={setLoading} />
+      </ProviderRow>
+      <ProviderRow hideMobile={true}>
+        <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} setLoading={setLoading} />
+      </ProviderRow>
+      <ProviderRow>
+        <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[EDGE.name] || EDGE} setLoading={setLoading} />
+      </ProviderRow>
+      <ProviderRow hideMobile={true}>
+        <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[TREZOR.name] || TREZOR} setLoading={setLoading} />
+        <UserProvider userProvider={providersByName[DCENT.name] || DCENT} setLoading={setLoading} />
+      </ProviderRow>
+      {developerProviders.length !== 0 && (
+        <ProviderRow>
+          {developerProviders.map((providerName: string) =>
+            <UserProvider
+              key={providerName}
+              userProvider={providersByName[providerName]}
+              setLoading={setLoading} />
+          )}
+        </ProviderRow>
+      )}
+    </ProvidersWrapper>
+    <FooterWrapper >
+      <Paragraph>
+        { availableLanguages?.length > 1 &&
+        <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="languages" id="languages">
+          {availableLanguages.map(availableLanguage =>
+            <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
+          )}
+        </LanguageSelector>}
+        <ThemeSwitcher theme={selectedTheme} onChange={changeTheme}></ThemeSwitcher>
+        <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
+
+          <Trans>No wallet? </Trans>
+          <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
+            <Trans>Get one here!</Trans>
+          </NoWalletAnchor>
+        </NoWalletFooter>
+      </Paragraph>
+    </FooterWrapper>
+  </>
+}
