@@ -72,6 +72,21 @@ describe('sample:dapp testing, no backend', () => {
     cy.clearLocalStorage('RLogin:DontShowAgain')
   })
 
+  it('should show confirm information again if don`t show again is not checked', () => {
+    loginWithModal()
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+    cy.get('#reset').click()
+
+    cy.get('#connected').should('have.text', '')
+
+    loginWithModal()
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+  })
+
   it('signs data', () => {
     loginWithModal()
     confirmInformationStep()

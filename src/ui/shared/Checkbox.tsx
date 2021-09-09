@@ -69,6 +69,8 @@ const Checkbox: React.FC<CheckboxInterface> = ({ className, checked, onChange })
 export default Checkbox
 
 function shadeColor (color: string, percent: number) {
+  if (!color) { return color }
+
   let R = parseInt(color.substring(1, 3), 16)
   let G = parseInt(color.substring(3, 5), 16)
   let B = parseInt(color.substring(5, 7), 16)
