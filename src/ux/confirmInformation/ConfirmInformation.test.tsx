@@ -2,7 +2,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { ConfirmInformation } from './ConfirmInformation'
-import { BUTTON_CLASSNAME, BUTTON_SECONDARY_CLASSNAME, CHECKBOX_CLASSNAME, SPAN, SPAN2 } from '../../constants/cssSelectors'
+import { BUTTON_CLASSNAME, BUTTON_SECONDARY_CLASSNAME, CHECKBOX_CLASSNAME, LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 
 interface IStore {
   [key: string]: any
@@ -61,11 +61,11 @@ describe('Component: ConfirmInformation', () => {
     const wrapper = mount(<ConfirmInformation {...props} />)
     expect(wrapper.find('h2').text()).toBe('Information')
 
-    expect(wrapper.find(`span.${SPAN}`).at(0).text()).toBe('Wallet address:')
-    expect(wrapper.find(`span.${SPAN}`).at(1).text()).toBe('Network:')
+    expect(wrapper.find(`dt.${LIST_TITLE}`).at(0).text()).toBe('Wallet address:')
+    expect(wrapper.find(`dt.${LIST_TITLE}`).at(1).text()).toBe('Network:')
 
-    expect(wrapper.find(`span.${SPAN2}`).at(0).text()).toBe('0xA167...CD17')
-    expect(wrapper.find(`span.${SPAN2}`).at(1).text()).toBe('RSK Testnet')
+    expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(0).text()).toBe('0xA167...CD17')
+    expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(1).text()).toBe('RSK Testnet')
 
     expect(wrapper.find('img').prop('src')).toBe(providerUserOption.logo)
   })

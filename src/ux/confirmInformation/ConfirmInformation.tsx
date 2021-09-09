@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { SD } from '../../lib/sdr'
-import { Header2, SmallSpan, Span, Span2 } from '../../ui/shared/Typography'
+import { Header2, SmallSpan, typeShared } from '../../ui/shared/Typography'
 import { Button, ButtonSecondary } from '../../ui/shared/Button'
 import { credentialValueToText } from '../../vc-json-schema-adapter'
 import Loading from '../../ui/shared/Loading'
@@ -11,6 +11,7 @@ import i18next from 'i18next'
 import { getChainName } from '../../adapters'
 import { IProviderUserOptions } from 'web3modal'
 import Checkbox from '../../ui/shared/Checkbox'
+import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 
 const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
 
@@ -51,20 +52,20 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
         </ProviderLogo>
       </CenterContent>
 
-      <MainContent>
+      <List>
         <Column>
-          <Span><Trans>Wallet address</Trans>:</Span>
-          <Span><Trans>Network</Trans>:</Span>
-          {sd && Object.keys(sd.claims).map(key => <Span key={`claim-key-${key}`}>{key}:</Span>)}
-          {sd && Object.keys(sd.credentials).map(key => <Span key={`credential-key-${key}`}>{key}:</Span>)}
+          <Title><Trans>Wallet address</Trans>:</Title>
+          <Title><Trans>Network</Trans>:</Title>
+          {sd && Object.keys(sd.claims).map(key => <Title key={`claim-key-${key}`}>{key}:</Title>)}
+          {sd && Object.keys(sd.credentials).map(key => <Title key={`credential-key-${key}`}>{key}:</Title>)}
         </Column>
         <Column>
-          <Span2>{shortAddress(address)}</Span2>
-          <Span2>{chainId && getChainName(chainId)}</Span2>
-          {sd && Object.keys(sd.claims).map(key => <Span2 key={`claim-value-${key}`}>{data[key]}</Span2>)}
-          {sd && Object.keys(sd.credentials).map(key => <Span2 key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Span2>)}
+          <Description>{shortAddress(address)}</Description>
+          <Description>{chainId && getChainName(chainId)}</Description>
+          {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{data[key]}</Description>)}
+          {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
         </Column>
-      </MainContent>
+      </List>
       <CenterContent>
         <ButtonSecondary onClick={onCancel} disabled={isLoading}><Trans>Cancel</Trans></ButtonSecondary>
         <Button onClick={handleSubmit} disabled={isLoading}><Trans>Confirm</Trans></Button>
@@ -88,12 +89,48 @@ const Column = styled.div`
   align-items: flex-start;
 `
 
-const MainContent = styled.div`
+const List = styled.dl`
   display: flex;
   padding: 50px 0;
   justify-content: center;
   gap: 30px;
 `
+
+const TitleWrapper = styled.dt`
+  ${typeShared}
+  font-weight: 500 !important;
+  font-size: 16px;
+  color: ${props => props.theme.p};
+  margin: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  text-align: left;
+`
+export const Title: React.FC<{ className?: string; }> = ({ children, className }) => (
+  <TitleWrapper className={className ? `${LIST_TITLE} ${className}` : LIST_TITLE}>
+    {children}
+  </TitleWrapper>
+)
+
+const DescriptionWrapper = styled.dd`
+  ${typeShared}
+  font-weight: 400 !important;
+  font-size: 16px;
+  color: ${props => props.theme.secondaryText};
+  margin: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  text-align: left;
+`
+export const Description: React.FC<{ className?: string; }> = ({ children, className }) => (
+  <DescriptionWrapper className={className ? `${LIST_DESCRIPTION} ${className}` : LIST_DESCRIPTION}>
+    {children}
+  </DescriptionWrapper>
+)
 
 const CenterContent = styled.div`
   display: flex; 

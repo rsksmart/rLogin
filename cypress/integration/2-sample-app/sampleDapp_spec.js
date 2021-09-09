@@ -23,8 +23,8 @@ describe('sample:dapp testing, no backend', () => {
 
   const confirmInformationStep = () => {
     cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('.rlogin-span2').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-    cy.get('.rlogin-span2').eq(1).should('have.text', 'RSK Testnet')
+    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
+    cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
     cy.get('.rlogin-button').click()
   }
@@ -41,8 +41,8 @@ describe('sample:dapp testing, no backend', () => {
   it('should not be connected after cancel info step', () => {
     loginWithModal()
     cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('.rlogin-span2').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-    cy.get('.rlogin-span2').eq(1).should('have.text', 'RSK Testnet')
+    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
+    cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
     cy.get('.rlogin-button-secondary').click() // cancel button
 
@@ -54,8 +54,8 @@ describe('sample:dapp testing, no backend', () => {
 
     loginWithModal()
     cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('.rlogin-span2').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-    cy.get('.rlogin-span2').eq(1).should('have.text', 'RSK Testnet')
+    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
+    cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
     cy.get('.rlogin-checkbox').check({ force: true }) // don't show again
     cy.get('.rlogin-button').click() // confirm
