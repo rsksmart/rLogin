@@ -51,20 +51,20 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
         </ProviderLogo>
       </CenterContent>
 
-      <div style={{ display: 'flex', padding: '50px 0', justifyContent: 'center', gap: '30px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <MainContent>
+        <Column>
           <Span><Trans>Wallet address</Trans>:</Span>
           <Span><Trans>Network</Trans>:</Span>
           {sd && Object.keys(sd.claims).map(key => <Span key={`claim-key-${key}`}>{key}:</Span>)}
           {sd && Object.keys(sd.credentials).map(key => <Span key={`credential-key-${key}`}>{key}:</Span>)}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        </Column>
+        <Column>
           <Span2>{shortAddress(address)}</Span2>
           <Span2>{chainId && getChainName(chainId)}</Span2>
           {sd && Object.keys(sd.claims).map(key => <Span2 key={`claim-value-${key}`}>{data[key]}</Span2>)}
           {sd && Object.keys(sd.credentials).map(key => <Span2 key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Span2>)}
-        </div>
-      </div>
+        </Column>
+      </MainContent>
       <CenterContent>
         <ButtonSecondary onClick={onCancel} disabled={isLoading}><Trans>Cancel</Trans></ButtonSecondary>
         <Button onClick={handleSubmit} disabled={isLoading}><Trans>Confirm</Trans></Button>
@@ -81,6 +81,19 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
     </>
     : <Loading text={i18next.t('Confirming Identity')} size={10} />
 }
+
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`
+
+const MainContent = styled.div`
+  display: flex;
+  padding: 50px 0;
+  justify-content: center;
+  gap: 30px;
+`
 
 const CenterContent = styled.div`
   display: flex; 
