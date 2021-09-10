@@ -6,9 +6,10 @@ import {
   IProviderControllerOptions,
   IProviderUserOptions,
   SimpleFunction,
-  EventController,
-  ProviderController
+  EventController
 } from 'web3modal'
+
+import { RLoginProviderController } from './controllers/providers'
 
 import { CONNECT_EVENT, ERROR_EVENT, CLOSE_EVENT, ACCOUNTS_CHANGED, CHAIN_CHANGED, THEME_CHANGED, LANGUAGE_CHANGED } from './constants/events'
 
@@ -48,7 +49,7 @@ export class RLogin {
   private show: boolean = INITIAL_STATE.show;
   private eventController: EventController = new EventController();
   private rLoginStorage: RLoginStorage = new RLoginStorage();
-  private providerController: ProviderController;
+  private providerController: RLoginProviderController;
   private userProviders: IProviderUserOptions[];
   private supportedChains?: number[];
   private supportedLanguages?: string[];
@@ -65,7 +66,7 @@ export class RLogin {
     }
 
     // setup provider controller
-    this.providerController = new ProviderController({
+    this.providerController = new RLoginProviderController({
       disableInjectedProvider: options.disableInjectedProvider,
       cacheProvider: options.cacheProvider,
       providerOptions: options.providerOptions,
