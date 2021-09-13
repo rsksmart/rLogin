@@ -41,6 +41,7 @@ interface RLoginOptions {
   dataVaultOptions?: DataVaultOptions
   customThemes?: any
   defaultTheme?: themesOptions
+  rpcUrls?: {[key: string]: string}
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -58,6 +59,7 @@ export class RLogin {
   private dataVaultOptions?: DataVaultOptions
   private themes = { ...themesConfig }
   private defaultTheme: themesOptions
+  private rpcUrls?: {[key: string]: string}
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -75,6 +77,7 @@ export class RLogin {
 
     this.supportedChains = opts && opts.supportedChains
     this.supportedLanguages = opts && opts.supportedLanguages
+    this.rpcUrls = opts && opts.rpcUrls
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
@@ -178,6 +181,7 @@ export class RLogin {
         dataVaultOptions={this.dataVaultOptions}
         themes = {this.themes}
         defaultTheme = {this.defaultTheme}
+        rpcUrls={this.rpcUrls}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

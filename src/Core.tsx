@@ -26,6 +26,7 @@ import i18n from './i18n'
 import { ThemeProvider } from 'styled-components'
 import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
+import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -72,9 +73,10 @@ interface IModalProps {
   // eslint-disable-next-line no-unused-vars
   themes: { [K in themesOptions]: ThemeType }
   defaultTheme: themesOptions
+  rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'loading'
+type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading'
 
 interface ErrorDetails {
   title: string
@@ -393,7 +395,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes } = this.props
+    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes, rpcUrls } = this.props
 
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
@@ -418,11 +420,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={(chainId: number, url: string) => console.log(chainId, url)} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>

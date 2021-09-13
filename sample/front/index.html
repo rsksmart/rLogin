@@ -100,10 +100,6 @@
           },
           'custom-ledger': {
             ...window.rLoginLedgerProvider.ledgerProviderOptions,
-            options: {
-              rpcUrl: 'https://public-node.testnet.rsk.co',
-              chainId: 31
-            }
           }
         },
         backendUrl,
@@ -114,6 +110,11 @@
           package:RIFDataVault,
           serviceUrl: 'https://data-vault.identity.rifos.org',
         },
+        rpcUrls: {
+          1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+          30: 'https://public-node.rsk.co',
+          31: 'https://public-node.testnet.rsk.co'
+        }
         // customThemes: {light:{modalBackground:'#ff0000'}},
         // defaultTheme: 'dark'
       })
