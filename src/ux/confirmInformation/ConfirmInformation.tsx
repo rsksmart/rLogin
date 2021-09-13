@@ -12,6 +12,7 @@ import { getChainName } from '../../adapters'
 import { IProviderUserOptions } from 'web3modal'
 import Checkbox from '../../ui/shared/Checkbox'
 import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
+import { getPeerInfo } from './getPeerLogo'
 
 const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
 
@@ -20,11 +21,12 @@ interface ConfirmInformationProps {
   address: string | undefined
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
+  provider: any
   onConfirm: () => void
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ chainId, address, providerUserOption, sd, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ chainId, address, providerUserOption, sd, provider, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -43,24 +45,31 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
     }
   }, [])
 
+  const peerWallet = getPeerInfo(provider?.wc?.peerMeta)
+
   return !isLoading
     ? <>
       <Header2><Trans>Information</Trans></Header2>
       <CenterContent>
-        <ProviderLogo>
+        <LogoWrapper>
           <img src={providerUserOption.logo} alt={providerUserOption.name} />
-        </ProviderLogo>
+        </LogoWrapper>
+        {peerWallet && <LogoWrapper>
+          <img src={peerWallet.logo} alt={peerWallet.name} />
+        </LogoWrapper>}
       </CenterContent>
 
       <List>
         <Column>
           <Title><Trans>Wallet address</Trans>:</Title>
+          {peerWallet && <Title><Trans>Connected wallet</Trans>:</Title>}
           <Title><Trans>Network</Trans>:</Title>
           {sd && Object.keys(sd.claims).map(key => <Title key={`claim-key-${key}`}>{key}:</Title>)}
           {sd && Object.keys(sd.credentials).map(key => <Title key={`credential-key-${key}`}>{key}:</Title>)}
         </Column>
         <Column>
           <Description>{shortAddress(address)}</Description>
+          {peerWallet && <Description>{peerWallet.name}</Description>}
           <Description>{chainId && getChainName(chainId)}</Description>
           {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{data[key]}</Description>)}
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
@@ -138,7 +147,7 @@ const CenterContent = styled.div`
   justify-content: center;
 `
 
-const ProviderLogo = styled.div`
+const LogoWrapper = styled.div`
   margin-top: 30px;
   width: 85px;
   height: 85px;
@@ -146,6 +155,7 @@ const ProviderLogo = styled.div`
   justify-content: center;
   align-items: center;
   & img {
+    border-radius: 10px;
     width: 100%;
     height: 100%;
   }

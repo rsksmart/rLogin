@@ -42,6 +42,7 @@ describe('Component: ConfirmInformation', () => {
     address: '0xA1673f6ec41cE19814B412bC633D59e4119eCD17',
     providerUserOption,
     sd: undefined,
+    provider: undefined,
     onConfirm: jest.fn(),
     onCancel: jest.fn()
   }
@@ -68,6 +69,34 @@ describe('Component: ConfirmInformation', () => {
     expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(1).text()).toBe('RSK Testnet')
 
     expect(wrapper.find('img').prop('src')).toBe(providerUserOption.logo)
+  })
+
+  it('shows the peer logo and name', () => {
+    const peerProps = {
+      ...props,
+      provider: {
+        wc: {
+          peerMeta: {
+            name: 'Wallet Test 1',
+            icons: ['logo.jpg']
+          }
+        }
+      }
+    }
+
+    const wrapper = mount(<ConfirmInformation {...peerProps} />)
+    expect(wrapper.find('h2').text()).toBe('Information')
+
+    expect(wrapper.find(`dt.${LIST_TITLE}`).at(0).text()).toBe('Wallet address:')
+    expect(wrapper.find(`dt.${LIST_TITLE}`).at(1).text()).toBe('Connected wallet:')
+    expect(wrapper.find(`dt.${LIST_TITLE}`).at(2).text()).toBe('Network:')
+
+    expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(0).text()).toBe('0xA167...CD17')
+    expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(1).text()).toBe('Wallet Test 1')
+    expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(2).text()).toBe('RSK Testnet')
+
+    expect(wrapper.find('img').at(0).prop('src')).toBe(providerUserOption.logo)
+    expect(wrapper.find('img').at(1).prop('src')).toBe('logo.jpg')
   })
 
   it('checkbox should work properly', () => {
