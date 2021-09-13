@@ -22,7 +22,7 @@ describe('Component: ChooseNetworkComponent', () => {
     const wrapper = mount(<ChooseNetworkComponent {...sharedProps} />)
     expect(wrapper.find('select').children()).toHaveLength(3)
     expect(wrapper.find('option').at(0).props().value).toBe('1')
-    expect(wrapper.find('option').at(0).text()).toBe('Network 1')
+    expect(wrapper.find('option').at(0).text()).toBe('Ethereum Mainnet')
   })
 
   it('handles the click method', () => {

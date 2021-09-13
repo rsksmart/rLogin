@@ -1,8 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react'
+import { Trans } from 'react-i18next'
+
 import { Header2 } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
+import { getChainName } from '../../adapters'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
@@ -23,11 +26,11 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
 
   return (
     <div>
-      <Header2>Choose Network</Header2>
+      <Header2><Trans>Choose Network</Trans></Header2>
       <p>
         <Select value={selectedChainId} onChange={evt => setSelectedChainId(evt.target.value)}>
           {Object.keys(rpcUrls).map((chainId: string) =>
-            <option key={chainId} value={chainId}>{`Network ${chainId}`}</option>
+            <option key={chainId} value={chainId}>{getChainName(parseInt(chainId))}</option>
           )}
         </Select>
       </p>
