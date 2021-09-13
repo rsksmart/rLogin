@@ -247,10 +247,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * @param provider The provider selected by the user to use
    */
   private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
+    // temporarly set the provider to be used when the choose network component returns
+    this.setState({ provider })
+
     // choose the network first:
-    if (['Ledger', 'Trezor', 'Dcent'].includes(provider.name)) {
-      // temporarly set the provider to be used when the choose network component returns
-      this.setState({ provider })
+    const { rpcUrls } = this.props
+    if (['Ledger', 'Trezor', 'Dcent'].includes(provider.name) && rpcUrls) {
       return this.setState({ currentStep: 'chooseNetwork' })
     }
 
