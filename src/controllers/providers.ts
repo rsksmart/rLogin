@@ -143,7 +143,7 @@ export class RLoginProviderController {
           name,
           logo,
           description: getProviderDescription(provider),
-          onClick: () => this.connectTo(id, connector)
+          onClick: (opts?: { chainId: number, rpcUrl: string }) => this.connectTo(id, connector, opts)
         })
       }
     })
@@ -179,11 +179,16 @@ export class RLoginProviderController {
 
   public connectTo = async (
     id: string,
-    connector: (providerPackage: any, opts: any) => Promise<any>
+    connector: (providerPackage: any, opts: any) => Promise<any>,
+    optionalOpts?: { chainId?: number, rpcUrl?: string }
   ) => {
     try {
       const providerPackage = this.getProviderOption(id, 'package')
-      const providerOptions = this.getProviderOption(id, 'options')
+      const providerOptions = {
+        ...this.getProviderOption(id, 'options'),
+        ...optionalOpts
+      }
+
       const opts = { network: this.network || undefined, ...providerOptions }
       const provider = await connector(providerPackage, opts)
       this.eventController.trigger(CONNECT_EVENT, provider)

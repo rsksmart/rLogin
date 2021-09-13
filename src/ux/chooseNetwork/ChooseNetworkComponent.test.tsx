@@ -33,6 +33,6 @@ describe('Component: ChooseNetworkComponent', () => {
     const wrapper = mount(<ChooseNetworkComponent {...localProps} />)
 
     wrapper.find('button').simulate('click')
-    expect(localProps.chooseNetwork).toBeCalledWith(1, 'http://1')
+    expect(localProps.chooseNetwork).toBeCalledWith({ chainId: 1, rpcUrl: 'http://1' })
   })
 })

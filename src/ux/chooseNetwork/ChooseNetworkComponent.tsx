@@ -6,7 +6,7 @@ import Select from '../../ui/shared/SelectDropdown'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
-  chooseNetwork: (chainId: number, url: string) => void
+  chooseNetwork: (network: { chainId: number, rpcUrl: string }) => void
 }
 
 const ChooseNetworkComponent: React.FC<Interface> = ({
@@ -19,7 +19,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
 
   const handleSelect = () =>
-    chooseNetwork(parseInt(selectedChainId), rpcUrls[selectedChainId])
+    chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId] })
 
   return (
     <div>

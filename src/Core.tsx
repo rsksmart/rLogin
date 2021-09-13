@@ -112,6 +112,16 @@ const INITIAL_STATE: IModalState = {
   loadingReason: ''
 }
 
+/**
+ * IProviderUserOptions with added onClick variable
+ */
+interface RLoginIProviderUserOptions {
+  name: string;
+  logo: string;
+  description: string;
+  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<void>; // adds optional options
+}
+
 export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
@@ -133,6 +143,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
+    this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.availableLanguages = []
     this.setupLanguages()
   }
@@ -229,8 +240,26 @@ export class Core extends React.Component<IModalProps, IModalState> {
       .catch()
   }
 
-  /** Pre-Step 1 - user picked a wallet and waiting to connect */
-  private connectToWallet (providerUserOption: IProviderUserOptions) {
+  /**
+   * Before connecting to the provider, go through a checklist of items
+   * Check if the provider supports multiple networks and if the user
+   * should choose a network first.
+   * @param provider The provider selected by the user to use
+   */
+  private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
+    // choose the network first:
+    if (['Ledger', 'Trezor', 'Dcent'].includes(provider.name)) {
+      // temporarly set the provider to be used when the choose network component returns
+      this.setState({ provider })
+      return this.setState({ currentStep: 'chooseNetwork' })
+    }
+
+    this.connectToWallet(provider)
+  }
+
+  /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
+  private connectToWallet (provider: RLoginIProviderUserOptions, networkoptions?: { chainId: number, rpcUrl: string }) {
+    provider.onClick(networkoptions)
     this.setState({
       currentStep: 'loading',
       loadingReason: 'Connecting to provider',
@@ -238,7 +267,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
     })
   }
 
-  /** Step 1 confirmed - user picked a wallet provider */
+  /** Step 1 Provider Answered
+   * The provider has answered and is ready to go to the next step
+   * or access the data vault.
+   */
   private setupProvider (userProvider: any) {
     const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
     this.setState({ provider })
@@ -420,12 +452,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={(chainId: number, url: string) => console.log(chainId, url)} />}
+        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.connectToWallet(provider, { rpcUrl, chainId })} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
