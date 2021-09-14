@@ -319,9 +319,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
         }
         throw error
       })
-      .catch((error: Error) =>
+      .catch((error: Error | AxiosError) => {
+        const description = (error as AxiosError).response && (error as AxiosError).response?.data
+        if (description) {
+          this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: decodeURI(description) } })
+          return
+        }
+
         this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
-      )
+      })
   }
 
   private setLightboxRef (c: HTMLDivElement | null) {
