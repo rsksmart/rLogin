@@ -41,12 +41,13 @@ describe('permissioned e2e testing', () => {
     cy.get('label').eq(1).should('have.text', 'Email address: jesse@iovlabs.org (Verifiable Credential)').click()
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
-    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
-    cy.get('.rlogin-paragraph').eq(1).should('have.text', 'Name: CI Testing')
-    cy.get('.rlogin-paragraph').eq(2).should('have.text', 'Email address: jesse@iovlabs.org')
+    cy.get('.rlogin-header2').should('have.text', 'Information')
+    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
+    cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    cy.get('.rlogin-list-description').eq(2).should('have.text', 'CI Testing')
+    cy.get('.rlogin-list-description').eq(3).should('have.text', 'jesse@iovlabs.org')
 
-    cy.contains('Confirm Identity').click()
+    cy.get('.rlogin-button').click()
     cy.get('#connected').should('have.text', 'Yes')
   })
 

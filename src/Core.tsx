@@ -5,7 +5,6 @@ import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEnc
 
 import { WalletProviders } from './ux/step1'
 import { SelectiveDisclosure, SDR, SD } from './ux/step2'
-import { ConfirmSelectiveDisclosure } from './ux/step3'
 import WrongNetworkComponent from './ux/wrongNetwork/WrongNetworkComponent'
 
 import { Modal } from './ui/modal'
@@ -26,6 +25,7 @@ import i18next from 'i18next'
 import i18n from './i18n'
 import { ThemeProvider } from 'styled-components'
 import { ThemeType, themesOptions } from './theme'
+import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -74,7 +74,7 @@ interface IModalProps {
   defaultTheme: themesOptions
 }
 
-type Step = 'Step1' | 'Step2' | 'Step3' | 'error' | 'wrongNetwork' | 'loading'
+type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'loading'
 
 interface ErrorDetails {
   title: string
@@ -100,6 +100,7 @@ interface IModalState {
   dataVault?: IDataVault
   loadingReason?: string
   currentTheme?: themesOptions
+  selectedProviderUserOption?: IProviderUserOptions
 }
 
 const INITIAL_STATE: IModalState = {
@@ -227,10 +228,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /** Pre-Step 1 - user picked a wallet and waiting to connect */
-  private connectToWallet () {
+  private connectToWallet (providerUserOption: IProviderUserOptions) {
     this.setState({
       currentStep: 'loading',
-      loadingReason: 'Connecting to provider'
+      loadingReason: 'Connecting to provider',
+      selectedProviderUserOption: providerUserOption
     })
   }
 
@@ -261,11 +263,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   private detectFlavor () {
-    const { backendUrl, onConnect } = this.props
-    const { provider, dataVault } = this.state
+    const { backendUrl } = this.props
 
     if (!backendUrl) {
-      return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
+      this.setState({
+        currentStep: 'ConfirmInformation'
+      })
     } else {
       const loadingReason = i18next.t('Connecting to server')
       this.setState({ loadingReason })
@@ -275,7 +278,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
           challenge,
           sdr,
           sd: undefined,
-          currentStep: sdr ? 'Step2' : 'Step3'
+          currentStep: sdr ? 'Step2' : 'ConfirmInformation'
           // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
         })
       })
@@ -297,7 +300,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   private onConfirmSelectiveDisclosure (sd: SD) {
-    this.setState({ sd, currentStep: 'Step3' })
+    this.setState({ sd, currentStep: 'ConfirmInformation' })
   }
 
   /** Step 3 */
@@ -305,6 +308,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { backendUrl, onConnect } = this.props
     const { provider, dataVault, challenge, address, sd } = this.state
     const did = this.did()
+
+    if (!backendUrl) {
+      return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
+    }
 
     const handleConnect = (provider: any) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
 
@@ -379,9 +386,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, loadingReason } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains, themes } = this.props
-    const did = this.did()
 
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
@@ -408,7 +414,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
-        {currentStep === 'Step3' && <ConfirmSelectiveDisclosure did={(chainId && address) ? did : ''} sd={sd!} onConfirm={this.onConfirmAuth} />}
+        {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}

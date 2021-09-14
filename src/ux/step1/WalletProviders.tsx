@@ -13,7 +13,7 @@ import { EDGE, TREZOR, LEDGER, DCENT } from './extraProviders'
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
-  setLoading: () => void
+  setLoading: (providerUserOption: IProviderUserOptions) => void
   changeLanguage: (event: any) => void
   changeTheme: (theme: themesOptions) => void
   availableLanguages: { code:string, name:string } []
@@ -106,7 +106,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
 
   // handle connect
   const handleConnect = (provider: IProviderUserOptions) => {
-    setLoading()
+    setLoading(provider)
     provider.onClick()
   }
 
