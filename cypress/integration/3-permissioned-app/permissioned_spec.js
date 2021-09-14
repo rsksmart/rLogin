@@ -13,7 +13,9 @@ describe('permissioned e2e testing', () => {
         debug: true
       })
     })
+  })
 
+  const requestAuth = () => {
     cy.visit('/?backend=yes')
     cy.get('#login').click()
     cy.contains('MetaMask').click()
@@ -29,11 +31,13 @@ describe('permissioned e2e testing', () => {
     // mock response exchange to and from the Data Vault
     cy.intercept('GET', 'http(.+)request-auth(.+)', { fixture: 'request-auth.json' }).as('requestAuth')
     cy.intercept('GET', '**auth', { fixture: 'auth.json' }).as('auth')
-  })
+  }
 
   it('Login into the datavault', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
 
     // continue with the content
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
@@ -53,6 +57,8 @@ describe('permissioned e2e testing', () => {
   it('Login into the datavault without Name (required by backend)', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
 
     // continue with the content
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
@@ -75,6 +81,8 @@ describe('permissioned e2e testing', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
 
+    requestAuth()
+
     // continue with the content
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
     cy.get('label').eq(0).should('have.text', 'CI Testing').click()
@@ -96,6 +104,8 @@ describe('permissioned e2e testing', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
 
+    requestAuth()
+
     // continue with the content
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
 
@@ -115,6 +125,8 @@ describe('permissioned e2e testing', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-no-response.json' }).as('name')
 
+    requestAuth()
+
     // continue with the content
     cy.get('.rlogin-button').should('have.text', 'Retry')
   })
@@ -122,6 +134,8 @@ describe('permissioned e2e testing', () => {
   it('No claims', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-no-response.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-no-response.json' }).as('name')
+
+    requestAuth()
 
     // continue with the content
     cy.get('.rlogin-button').should('have.text', 'Retry')
