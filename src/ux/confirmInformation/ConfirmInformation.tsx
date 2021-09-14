@@ -85,7 +85,7 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
             localStorage.setItem(DONT_SHOW_AGAIN_KEY, JSON.stringify(!prev))
             return !prev
           })} />
-          <SmallSpan><Trans>Don’t show again</Trans></SmallSpan>
+          <SmallSpan><Trans>Do not show again</Trans></SmallSpan>
         </label>
       </CenterContent>
     </>

@@ -403,8 +403,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
       this.setState(INITIAL_STATE)
     }
 
-    console.log('selectedProviderUserOption', provider, provider?.wc?._clientMeta, provider?.wc)
-
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
       <Modal
         lightboxOffset={lightboxOffset}

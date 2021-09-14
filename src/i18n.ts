@@ -34,7 +34,7 @@ const resources = {
       Cancel: 'Cancel',
       'Wallet address': 'Wallet address',
       Network: 'Network',
-      'Don’t show again': 'Don’t show again',
+      'Do not show again': 'Don\'t show again',
       'Connected wallet': 'Connected wallet'
     }
   },
@@ -65,7 +65,7 @@ const resources = {
       Cancel: 'Cancelar',
       'Wallet address': 'Billetera',
       Network: 'Red',
-      'Don’t show again': 'No mostrar de nuevo',
+      'Do not show again': 'No mostrar de nuevo',
       'Connected wallet': 'Billetera conectada'
     }
   },
@@ -96,7 +96,7 @@ const resources = {
       Cancel: 'キャンセル',
       'Wallet address': 'ウォレットアドレス',
       Network: '通信網',
-      'Don’t show again': '二度と表示しない',
+      'Do not show again': '二度と表示しない',
       'Connected wallet': '接続されたウォレット'
     }
   },
@@ -127,7 +127,7 @@ const resources = {
       Cancel: '취소',
       'Wallet address': '지갑 주소',
       Network: '회로망',
-      'Don’t show again': '다시 표시하지 않음',
+      'Do not show again': '다시 표시하지 않음',
       'Connected wallet': '연결된 지갑'
     }
   },
@@ -158,7 +158,7 @@ const resources = {
       Cancel: 'Cancelar',
       'Wallet address': 'Endereço da carteira',
       Network: 'Rede',
-      'Don’t show again': 'Não mostra de novo',
+      'Do not show again': 'Não mostra de novo',
       'Connected wallet': 'Carteira conectada'
     }
   },
@@ -189,7 +189,7 @@ const resources = {
       Cancel: 'Отмена',
       'Wallet address': 'Адрес кошелька',
       Network: 'Сеть',
-      'Don’t show again': 'Больше не показывать',
+      'Do not show again': 'Больше не показывать',
       'Connected wallet': 'Подключенный кошелек'
     }
   },
@@ -220,7 +220,7 @@ const resources = {
       Cancel: '取消',
       'Wallet address': '钱包地址',
       Network: '网络',
-      'Don’t show again': '不再显示',
+      'Do not show again': '不再显示',
       'Connected wallet': '连接钱包'
     }
   }

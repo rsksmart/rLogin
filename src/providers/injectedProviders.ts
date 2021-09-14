@@ -45,14 +45,10 @@ export const checkRLoginInjectedProviders = (providers: IProviderUserOptions[]) 
 
   // loop through list above to see if one matches
   injectedProviders.map((item: any) => {
-    console.log('injectedProviders', item)
-
     if (verifyInjectedProvider(item.check)) {
       firstProvider = { ...firstProvider, name: item.name, logo: item.logo }
     }
   })
-
-  console.log('injectedProviders 2', providers)
 
   // return the new provider's array
   return providers.length === 1 ? [firstProvider] : [firstProvider, ...providers.slice(1)]
