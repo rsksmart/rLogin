@@ -26,6 +26,7 @@ import { ThemeProvider } from 'styled-components'
 import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
+import TutorialComponent from './ux/tutorial/TutorialComponent'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -75,7 +76,7 @@ interface IModalProps {
   rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading'
+type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -261,6 +262,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
   private connectToWallet (providerUserOption: RLoginIProviderUserOptions, networkoptions?: { chainId: number, rpcUrl: string }) {
     providerUserOption.onClick(networkoptions)
+
     this.setState({
       currentStep: 'loading',
       loadingReason: `Connecting to ${providerUserOption.name}`,
@@ -459,6 +461,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.connectToWallet(provider, { rpcUrl, chainId })} />}
+        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={() => this.preConnectChecklist(provider)} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
