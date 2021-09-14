@@ -26,6 +26,7 @@ import i18n from './i18n'
 import { ThemeProvider } from 'styled-components'
 import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
+import TutorialComponent from './ux/tutorial/TutorialComponent'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -74,7 +75,7 @@ interface IModalProps {
   defaultTheme: themesOptions
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'loading'
+type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -131,6 +132,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
+    this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.availableLanguages = []
     this.setupLanguages()
   }
@@ -227,8 +229,28 @@ export class Core extends React.Component<IModalProps, IModalState> {
       .catch()
   }
 
-  /** Pre-Step 1 - user picked a wallet and waiting to connect */
+  /**
+   * Checklist before sending the connect method
+   * @param provider that the user selected
+   */
+  private preConnectChecklist = (provider: IProviderUserOptions, showTutorial: boolean) => {
+    // temporarly set the provider in the state, this will be used when the
+    // tutorial or network select is completed and we need the provider
+    this.setState({ provider })
+
+    // show a tutorial to connect the device:
+    if (['Ledger'].includes(provider.name) && showTutorial) {
+      return this.setState({ currentStep: 'tutorial' })
+    }
+
+    // preflight check done, start the connect:
+    this.connectToWallet(provider)
+  }
+
+  /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
   private connectToWallet (providerUserOption: IProviderUserOptions) {
+    providerUserOption.onClick()
+
     this.setState({
       currentStep: 'loading',
       loadingReason: 'Connecting to provider',
@@ -418,11 +440,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={(provider: IProviderUserOptions) => this.preConnectChecklist(provider, true)} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={() => this.preConnectChecklist(provider, false)} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
