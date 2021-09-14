@@ -13,7 +13,9 @@ describe('permissioned e2e testing', () => {
         debug: true
       })
     })
+  })
 
+  const requestAuth = () => {
     cy.visit('/?backend=yes')
     cy.get('#login').click()
     cy.contains('MetaMask').click()
@@ -29,11 +31,13 @@ describe('permissioned e2e testing', () => {
     // mock response exchange to and from the Data Vault
     cy.intercept('GET', 'http(.+)request-auth(.+)', { fixture: 'request-auth.json' }).as('requestAuth')
     cy.intercept('GET', '**auth', { fixture: 'auth.json' }).as('auth')
-  })
+  }
 
   it('Login into the datavault', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
 
     // continue with the content
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
@@ -51,9 +55,78 @@ describe('permissioned e2e testing', () => {
     cy.get('#connected').should('have.text', 'Yes')
   })
 
+  it('Login into the datavault without Name (required by backend)', () => {
+    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
+    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
+
+    // continue with the content
+    cy.get('.rlogin-header2').should('have.text', 'Select information to share')
+    cy.get('label').eq(1).should('have.text', 'Email address: jesse@iovlabs.org (Verifiable Credential)').click()
+
+    cy.contains('Confirm').click()
+    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
+    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
+    cy.get('.rlogin-paragraph').eq(1).should('have.text', 'Email address: jesse@iovlabs.org')
+
+    cy.contains('Confirm Identity').click()
+
+    cy.get('.rlogin-header2').should('have.text', 'Authentication Error')
+    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Name is required.')
+
+    cy.get('#connected').should('have.text', 'No')
+  })
+
+  it('Login into the datavault without Email (required by backend)', () => {
+    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
+    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
+
+    // continue with the content
+    cy.get('.rlogin-header2').should('have.text', 'Select information to share')
+    cy.get('label').eq(0).should('have.text', 'CI Testing').click()
+
+    cy.contains('Confirm').click()
+    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
+    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
+    cy.get('.rlogin-paragraph').eq(1).should('have.text', 'Name: CI Testing')
+
+    cy.contains('Confirm Identity').click()
+
+    cy.get('.rlogin-header2').should('have.text', 'Authentication Error')
+    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Email is required.')
+
+    cy.get('#connected').should('have.text', 'No')
+  })
+
+  it('Login into the datavault without Name and Email (required by backend)', () => {
+    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
+    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
+
+    // continue with the content
+    cy.get('.rlogin-header2').should('have.text', 'Select information to share')
+
+    cy.contains('Confirm').click()
+    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
+    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
+
+    cy.contains('Confirm Identity').click()
+
+    cy.get('.rlogin-header2').should('have.text', 'Authentication Error')
+    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Email is required.')
+
+    cy.get('#connected').should('have.text', 'No')
+  })
+
   it('No credential', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-no-response.json' }).as('name')
+
+    requestAuth()
 
     // continue with the content
     cy.get('.rlogin-button').should('have.text', 'Retry')
@@ -62,6 +135,8 @@ describe('permissioned e2e testing', () => {
   it('No claims', () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-no-response.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-no-response.json' }).as('name')
+
+    requestAuth()
 
     // continue with the content
     cy.get('.rlogin-button').should('have.text', 'Retry')
