@@ -66,11 +66,11 @@ describe('permissioned e2e testing', () => {
     cy.get('label').eq(1).should('have.text', 'Email address: jesse@iovlabs.org (Verifiable Credential)').click()
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
-    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
-    cy.get('.rlogin-paragraph').eq(1).should('have.text', 'Email address: jesse@iovlabs.org')
-
-    cy.contains('Confirm Identity').click()
+    cy.get('.rlogin-header2').should('have.text', 'Information')
+    cy.get('dd.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D')
+    cy.get('dd.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    cy.get('dd.rlogin-list-description').eq(2).should('have.text', 'jesse@iovlabs.org')
+    cy.contains('Confirm').click()
 
     cy.get('.rlogin-header2').should('have.text', 'Authentication Error')
     cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Name is required.')
@@ -89,11 +89,12 @@ describe('permissioned e2e testing', () => {
     cy.get('label').eq(0).should('have.text', 'CI Testing').click()
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
-    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
-    cy.get('.rlogin-paragraph').eq(1).should('have.text', 'Name: CI Testing')
+    cy.get('.rlogin-header2').should('have.text', 'Information')
+    cy.get('dd.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D')
+    cy.get('dd.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    cy.get('dd.rlogin-list-description').eq(2).should('have.text', 'CI Testing')
 
-    cy.contains('Confirm Identity').click()
+    cy.contains('Confirm').click()
 
     cy.get('.rlogin-header2').should('have.text', 'Authentication Error')
     cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Email is required.')
@@ -111,10 +112,11 @@ describe('permissioned e2e testing', () => {
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Use this Identity?')
-    cy.get('.rlogin-paragraph').eq(0).should('have.text', 'did:ethr:rsk:testnet:0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d')
+    cy.get('.rlogin-header2').should('have.text', 'Information')
+    cy.get('dd.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D')
+    cy.get('dd.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
-    cy.contains('Confirm Identity').click()
+    cy.contains('Confirm').click()
 
     cy.get('.rlogin-header2').should('have.text', 'Authentication Error')
     cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Email is required.')
