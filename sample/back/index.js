@@ -32,7 +32,13 @@ const authMiddleware = !permissioned
     ...didAuthConfig,
     requiredCredentials: ['Email'],
     requiredClaims: ['Name'],
-    signupBusinessLogic: (payload) => { console.log(payload); return true; }
+    signupBusinessLogic: (payload) => {
+      if (!payload.sd.credentials.Email) { throw new Error('The Email is required.') }
+      if (!payload.sd.claims.Name) { throw new Error('The Name is required.') }
+
+      // return true is an email credential and name declarative detail is provided
+      return true
+    }
   })(app)
 
 app.use(authMiddleware)

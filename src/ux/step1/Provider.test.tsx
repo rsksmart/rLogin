@@ -10,6 +10,7 @@ describe('Component: Provider', () => {
     logo: 'image.jpg',
     description: 'A provider',
     onClick: jest.fn(),
+    disabled: false,
     width: '100%'
   }
 
@@ -32,5 +33,14 @@ describe('Component: Provider', () => {
 
     wrapper.find(`div.${PROVIDER_CONTAINER_CLASSNAME}`).simulate('click')
     expect(onClick).toBeCalledTimes(1)
+  })
+
+  it('if is disabled should not be fire onClick event', () => {
+    const onClick = jest.fn()
+    const localProps = { ...props, disabled: true, onClick }
+    const wrapper = mount(<Provider {...localProps} />)
+
+    wrapper.find(`div.${PROVIDER_CONTAINER_CLASSNAME}`).simulate('click')
+    expect(onClick).toBeCalledTimes(0)
   })
 })

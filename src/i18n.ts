@@ -29,7 +29,13 @@ const resources = {
       Retry: 'Retry',
       'Use this Identity?': 'Use this Identity?',
       'Confirm Identity': 'Confirm Identity',
-      'Confirming Identity': 'Confirming Identity'
+      'Confirming Identity': 'Confirming Identity',
+      Information: 'Information',
+      Cancel: 'Cancel',
+      'Wallet address': 'Wallet address',
+      Network: 'Network',
+      'Do not show again': 'Don\'t show again',
+      'Connected wallet': 'Connected wallet'
     }
   },
   es: {
@@ -54,7 +60,13 @@ const resources = {
       Retry: 'Retry',
       'Use this Identity?': '¿Usar esta identidad?',
       'Confirm Identity': 'Confirmar identidad',
-      'Confirming Identity': 'Confirmando identidad'
+      'Confirming Identity': 'Confirmando identidad',
+      Information: 'Información',
+      Cancel: 'Cancelar',
+      'Wallet address': 'Billetera',
+      Network: 'Red',
+      'Do not show again': 'No mostrar de nuevo',
+      'Connected wallet': 'Billetera conectada'
     }
   },
   ja: {
@@ -79,7 +91,13 @@ const resources = {
       Retry: 'リトライ',
       'Use this Identity?': 'このIdentityを使用しますか？',
       'Confirm Identity': 'Identityを確認',
-      'Confirming Identity': 'Identityを確認しています'
+      'Confirming Identity': 'Identityを確認しています',
+      Information: '情報',
+      Cancel: 'キャンセル',
+      'Wallet address': 'ウォレットアドレス',
+      Network: '通信網',
+      'Do not show again': '二度と表示しない',
+      'Connected wallet': '接続されたウォレット'
     }
   },
   ko: {
@@ -104,7 +122,13 @@ const resources = {
       Retry: '다시 해 보다',
       'Use this Identity?': '이 신원을 사용할까요?',
       'Confirm Identity': '신원 확인',
-      'Confirming Identity': '신원 확인 중'
+      'Confirming Identity': '신원 확인 중',
+      Information: '정보',
+      Cancel: '취소',
+      'Wallet address': '지갑 주소',
+      Network: '회로망',
+      'Do not show again': '다시 표시하지 않음',
+      'Connected wallet': '연결된 지갑'
     }
   },
   pt: {
@@ -129,7 +153,13 @@ const resources = {
       Retry: 'tentar novamente',
       'Use this Identity?': 'Usar esta Identidade?',
       'Confirm Identity': 'Confirmar Identidade',
-      'Confirming Identity': 'Confirmando Identidade'
+      'Confirming Identity': 'Confirmando Identidade',
+      Information: 'Em formação',
+      Cancel: 'Cancelar',
+      'Wallet address': 'Endereço da carteira',
+      Network: 'Rede',
+      'Do not show again': 'Não mostra de novo',
+      'Connected wallet': 'Carteira conectada'
     }
   },
   ru: {
@@ -154,7 +184,13 @@ const resources = {
       Retry: 'повторить попытку',
       'Use this Identity?': 'Использовать данные этой личности?',
       'Confirm Identity': 'Подтвердить личность',
-      'Confirming Identity': 'Подтверждение личности'
+      'Confirming Identity': 'Подтверждение личности',
+      Information: 'Информация',
+      Cancel: 'Отмена',
+      'Wallet address': 'Адрес кошелька',
+      Network: 'Сеть',
+      'Do not show again': 'Больше не показывать',
+      'Connected wallet': 'Подключенный кошелек'
     }
   },
   zh: {
@@ -179,7 +215,13 @@ const resources = {
       Retry: '重试',
       'Use this Identity?': '使用此身份？',
       'Confirm Identity': '确认身份',
-      'Confirming Identity': '正在确认身份'
+      'Confirming Identity': '正在确认身份',
+      Information: '信息',
+      Cancel: '取消',
+      'Wallet address': '钱包地址',
+      Network: '网络',
+      'Do not show again': '不再显示',
+      'Connected wallet': '连接钱包'
     }
   }
 }

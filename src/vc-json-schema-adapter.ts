@@ -18,3 +18,18 @@ export function credentialToText (schema: string, jwt: string) {
     return 'Invalid credential...'
   }
 }
+
+export function credentialValueToText (schema: string, jwt: string) {
+  try {
+    const jwtDecoded = decodeJWT(jwt)
+
+    try {
+      const parsedEmailVC = parseVerifiableCredential('Email', jwtDecoded.payload.vc)
+      return parsedEmailVC.Email.text
+    } catch (e) {
+      return 'Invalid credential schema...'
+    }
+  } catch (e) {
+    return 'Invalid credential...'
+  }
+}

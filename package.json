@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rlogin",
-  "version": "1.2.0-beta.1",
+  "version": "1.2.0-beta.2",
   "description": "rLogin - the web3.0 SDK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -75,6 +75,7 @@
     "express": "^4.17.1",
     "jest": "^26.5.3",
     "jest-enzyme": "^7.1.2",
+    "jest-transform-stub": "^2.0.0",
     "jsdom": "^16.4.0",
     "jsdom-global": "^3.0.2",
     "nodemon": "^2.0.6",

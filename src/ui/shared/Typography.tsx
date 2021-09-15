@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { HEADER2_CLASS, HEADER3_CLASS, PARAGRAPH_CLASS, BIG_PARAGRAPH_CLASS } from '../../constants/cssSelectors'
+import { HEADER2_CLASS, HEADER3_CLASS, PARAGRAPH_CLASS, BIG_PARAGRAPH_CLASS, SMALL_SPAN } from '../../constants/cssSelectors'
 
 interface TypographyInterface {
   className?: string;
@@ -49,6 +49,20 @@ export const Paragraph: React.FC<TypographyInterface> = ({ children, className }
   <ParagraphWrapper className={className ? `${PARAGRAPH_CLASS} ${className}` : PARAGRAPH_CLASS}>
     {children}
   </ParagraphWrapper>
+)
+
+const SmallSpanWrapper = styled.span`
+  ${typeShared}
+  font-weight: 400 !important;
+  font-size: 12px;
+  color: ${props => props.theme.p};
+  margin: 12px 0;
+  margin-left: 8px;
+`
+export const SmallSpan: React.FC<TypographyInterface> = ({ children, className }) => (
+  <SmallSpanWrapper className={className ? `${SMALL_SPAN} ${className}` : SMALL_SPAN}>
+    {children}
+  </SmallSpanWrapper>
 )
 
 const LeftBigParagraphWrapper = styled(ParagraphWrapper)`
