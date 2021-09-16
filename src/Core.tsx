@@ -16,7 +16,7 @@ import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/pro
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { DONT_SHOW_TUTORIAL_AGAIN_KEY, RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -233,9 +233,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * Checklist before sending the connect method
    * @param provider that the user selected
    */
-  private preConnectChecklist = (provider: IProviderUserOptions, showTutorial: boolean) => {
+  private preConnectChecklist = (provider: IProviderUserOptions) => {
     // show a tutorial to connect a hardware device:
-    if (['Ledger'].includes(provider.name) && showTutorial) {
+    if (['Ledger'].includes(provider.name) && !localStorage.getItem(DONT_SHOW_TUTORIAL_AGAIN_KEY)) {
       return this.setState({ provider, currentStep: 'tutorial' })
     }
 
@@ -436,12 +436,12 @@ export class Core extends React.Component<IModalProps, IModalState> {
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={(provider: IProviderUserOptions) => this.preConnectChecklist(provider, true)} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={(provider: IProviderUserOptions) => this.preConnectChecklist(provider)} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={() => this.preConnectChecklist(provider, false)} />}
+        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={() => this.connectToWallet(provider)} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
