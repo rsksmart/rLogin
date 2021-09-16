@@ -1,7 +1,12 @@
 // eslint-disable-next-line no-use-before-define
-import React from 'react'
+import React, { useState } from 'react'
+import { Trans } from 'react-i18next'
+import { DONT_SHOW_TUTORIAL_AGAIN_KEY } from '../../constants'
 import { Button } from '../../ui/shared/Button'
 import SliderComponent from '../../ui/slider/SliderComponent'
+import Checkbox from '../../ui/shared/Checkbox'
+import { SmallSpan } from '../../ui/shared/Typography'
+import LedgerTutorialComponent from './LedgerTutorialComponent'
 
 interface Interface {
   providerName: string
@@ -9,6 +14,15 @@ interface Interface {
 }
 
 const TutorialComponent: React.FC<Interface> = ({ providerName, handleConnect }) => {
+  const [hideTutorial, setHideTutorial] = useState<boolean>(false)
+
+  const handleButtonClick = () => {
+    if (hideTutorial) {
+      localStorage.setItem(DONT_SHOW_TUTORIAL_AGAIN_KEY, 'true')
+    }
+    handleConnect()
+  }
+
   return (
     <div>
       <h2>{providerName} tutorial</h2>
@@ -28,8 +42,12 @@ const TutorialComponent: React.FC<Interface> = ({ providerName, handleConnect })
       </SliderComponent>
 
       <p>
-        <Button onClick={handleConnect}>Skip tutorial</Button>
+        <Button onClick={handleButtonClick}>Skip tutorial and connect</Button>
       </p>
+      <label>
+        <Checkbox checked={hideTutorial} onChange={() => setHideTutorial(!hideTutorial)} />
+        <SmallSpan><Trans>Do not show again</Trans></SmallSpan>
+      </label>
     </div>
   )
 }

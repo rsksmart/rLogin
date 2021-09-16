@@ -15,7 +15,7 @@ import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/pro
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { DONT_SHOW_TUTORIAL_AGAIN_KEY, RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
