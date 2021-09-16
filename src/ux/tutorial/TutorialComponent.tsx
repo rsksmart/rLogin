@@ -42,7 +42,9 @@ const TutorialComponent: React.FC<Interface> = ({ providerName, handleConnect })
       </SliderComponent>
 
       <p>
-        <Button onClick={handleButtonClick}>Skip tutorial and connect</Button>
+        <Button onClick={handleButtonClick}>
+          <Trans>Finish tutorial and connect</Trans>
+        </Button>
       </p>
       <label>
         <Checkbox checked={hideTutorial} onChange={() => setHideTutorial(!hideTutorial)} />
