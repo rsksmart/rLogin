@@ -260,8 +260,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
-  private connectToWallet (provider: RLoginIProviderUserOptions, networkoptions?: { chainId: number, rpcUrl: string }) {
-    provider.onClick(networkoptions)
+  private connectToWallet (providerUserOption: RLoginIProviderUserOptions, networkoptions?: { chainId: number, rpcUrl: string }) {
+    providerUserOption.onClick(networkoptions)
     this.setState({
       currentStep: 'loading',
       loadingReason: 'Connecting to provider',
