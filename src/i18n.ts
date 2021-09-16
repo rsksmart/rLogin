@@ -35,7 +35,19 @@ const resources = {
       'Wallet address': 'Wallet address',
       Network: 'Network',
       'Do not show again': 'Don\'t show again',
-      'Connected wallet': 'Connected wallet'
+      'Connected wallet': 'Connected wallet',
+      'Finish tutorial and connect': 'Finish tutorial and connect',
+      // Trezor tutorial
+      'Plug in your Ledger device': 'Plug in your Ledger device',
+      'Plug in your ledger device to your computer': 'Plug in your ledger device to your computer',
+      'Install apps': 'Install apps',
+      'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps': 'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps',
+      'Close other apps': 'Close other apps',
+      'Make sure to close any other app that is using ledger now, including Ledger Live': 'Make sure to close any other app that is using ledger now, including Ledger Live',
+      'Open Ethereum or RSK app': 'Open Ethereum or RSK app',
+      'Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.': 'Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.',
+      'Confirm button': 'Confirm button',
+      'Click both buttons on your ledger device to confirm': 'Click both buttons on your ledger device to confirm'
     }
   },
   es: {
