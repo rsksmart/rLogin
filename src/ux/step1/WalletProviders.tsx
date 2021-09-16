@@ -105,10 +105,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
     !hardCodedProviderNames.includes(providerName) ? providerName : null)
 
   // handle connect
-  const handleConnect = (provider: IProviderUserOptions) => {
-    setLoading(provider)
-    provider.onClick()
-  }
+  const handleConnect = (provider: IProviderUserOptions) => setLoading(provider)
 
   return <>
     <Header2>

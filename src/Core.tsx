@@ -234,13 +234,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * @param provider that the user selected
    */
   private preConnectChecklist = (provider: IProviderUserOptions, showTutorial: boolean) => {
-    // temporarly set the provider in the state, this will be used when the
-    // tutorial or network select is completed and we need the provider
-    this.setState({ provider })
-
-    // show a tutorial to connect the device:
+    // show a tutorial to connect a hardware device:
     if (['Ledger'].includes(provider.name) && showTutorial) {
-      return this.setState({ currentStep: 'tutorial' })
+      return this.setState({ provider, currentStep: 'tutorial' })
     }
 
     // preflight check done, start the connect:
@@ -440,7 +436,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={(provider: IProviderUserOptions) => this.preConnectChecklist(provider, true)} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={(provider: IProviderUserOptions) => this.preConnectChecklist(provider, true)} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
