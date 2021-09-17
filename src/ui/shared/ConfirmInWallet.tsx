@@ -8,7 +8,7 @@ import { Header2, Paragraph } from './Typography'
 // @ts-ignore
 import ledgerConfirm from '../../ux/tutorial/assets/LedgerConfirm.svg'
 // @ts-ignore
-import trezorConfirm from '../../ux/tutorial/assets/trezorConfirm.svg'
+import trezorConfirm from '../../ux/tutorial/assets/TrezorConfirm.svg'
 
 interface Interface {
   providerName?: string
