@@ -231,7 +231,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   private connectToWallet (providerUserOption: IProviderUserOptions) {
     this.setState({
       currentStep: 'loading',
-      loadingReason: 'Connecting to provider',
+      loadingReason: `Connecting to ${providerUserOption.name}`,
       selectedProviderUserOption: providerUserOption
     })
   }
@@ -419,8 +419,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
         big={currentStep === 'Step1'}
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={this.connectToWallet} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
-        {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
-        {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
+        {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
+        {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}

@@ -29,13 +29,17 @@ const resources = {
       Retry: 'Retry',
       'Use this Identity?': 'Use this Identity?',
       'Confirm Identity': 'Confirm Identity',
-      'Confirming Identity': 'Confirming Identity',
       Information: 'Information',
       Cancel: 'Cancel',
       'Wallet address': 'Wallet address',
       Network: 'Network',
       'Do not show again': 'Don\'t show again',
-      'Connected wallet': 'Connected wallet'
+      'Connected wallet': 'Connected wallet',
+      'Confirm on your Ledger': 'Confirm on your Ledger',
+      'Confirm on your Trezor': 'Confirm on your Trezor',
+      'Confirm in your wallet': 'Confirm in your wallet',
+      'Click both buttons on your ledger device to confirm.': 'Click both buttons on your ledger device to confirm.',
+      'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your trezor device to sign the message.'
     }
   },
   es: {
