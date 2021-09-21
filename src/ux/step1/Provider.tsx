@@ -46,7 +46,7 @@ const ProviderBox = styled.div<{ disabled: boolean }>`
   background-color: ${props => props.theme.containerBackground};
   opacity: ${({ disabled }) => (disabled ? '50%' : '100%')};
   border-radius: 12px;
-  padding: 7px 0 10px 0;
+  padding: 15px 0 10px 0;
   cursor: inherit;
 
   ${({ disabled }) => !disabled && css`
@@ -61,7 +61,6 @@ const HeaderRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin: 10px 0 -10px 0;
 `
 
 interface IProviderProps {
