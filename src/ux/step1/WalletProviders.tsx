@@ -3,13 +3,13 @@ import React from 'react'
 import styled, { css } from 'styled-components'
 import { Provider } from './Provider'
 import { IProviderUserOptions, providers } from 'web3modal'
-import { Header2, Paragraph } from '../../ui/shared/Typography'
-import { PROVIDERS_WRAPPER_CLASSNAME, ANCHOR_CLASSNAME, PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../../constants/cssSelectors'
+import { Header2 } from '../../ui/shared/Typography'
+import { PROVIDERS_WRAPPER_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../../constants/cssSelectors'
 import { Trans } from 'react-i18next'
-import { ThemeSwitcher } from '../../ui/shared/ThemeSwitch'
 import { themesOptions } from '../../theme'
 
 import { EDGE, TREZOR, LEDGER, DCENT } from './extraProviders'
+import WalletProvidersFooter from './WalletProvidersFooter'
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
@@ -42,33 +42,6 @@ const ProviderRow = styled.div<{ hideMobile?: boolean }>`
     ${({ hideMobile }) => hideMobile && css`
       display: none
     `}
-  }
-`
-
-const LanguageSelector = styled.select`
-  float: left;
-  border: 0;
-  color: ${props => props.theme.p};
-  background-color: ${props => props.theme.modalBackground};
-  size: 12px;
-  &:focus {
-    outline: none;
-  }
-`
-
-const NoWalletFooter = styled.span`
-  float: right;
-  padding: 2px;
-`
-const FooterWrapper = styled.div`
-  padding: 0 8px;
-`
-
-const NoWalletAnchor = styled.a`
-  color: ${props => props.theme.link};
-  text-decoration: none;
-  :hover {
-    color: ${props => props.theme.linkHover};
   }
 `
 
@@ -142,24 +115,13 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
           )}
         </ProviderRow>
       )}
+      <WalletProvidersFooter
+        changeLanguage={changeLanguage}
+        changeTheme={changeTheme}
+        availableLanguages={availableLanguages}
+        selectedLanguageCode={selectedLanguageCode}
+        selectedTheme={selectedTheme}
+      />
     </ProvidersWrapper>
-    <FooterWrapper >
-      <Paragraph>
-        { availableLanguages?.length > 1 &&
-        <LanguageSelector onChange={(val) => changeLanguage(val.target.value)} defaultValue={selectedLanguageCode} name="languages" id="languages">
-          {availableLanguages.map(availableLanguage =>
-            <option key={availableLanguage.code} value={availableLanguage.code} >{availableLanguage.name}</option>
-          )}
-        </LanguageSelector>}
-        <ThemeSwitcher theme={selectedTheme} onChange={changeTheme}></ThemeSwitcher>
-        <NoWalletFooter className={PROVIDERS_FOOTER_TEXT_CLASSNAME}>
-
-          <Trans>No wallet? </Trans>
-          <NoWalletAnchor href="https://developers.rsk.co/wallet/use/" target="_blank" className={ANCHOR_CLASSNAME}>
-            <Trans>Get one here!</Trans>
-          </NoWalletAnchor>
-        </NoWalletFooter>
-      </Paragraph>
-    </FooterWrapper>
   </>
 }
