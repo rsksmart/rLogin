@@ -2,7 +2,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { ConfirmInformation } from './ConfirmInformation'
-import { BUTTON_CLASSNAME, BUTTON_SECONDARY_CLASSNAME, CHECKBOX_CLASSNAME, LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
+import { CHECKBOX_CLASSNAME, LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 
 interface IStore {
   [key: string]: any
@@ -121,9 +121,7 @@ describe('Component: ConfirmInformation', () => {
   it('confirm should call onConfirm prop', () => {
     const wrapper = mount(<ConfirmInformation {...props} />)
 
-    const confirmButton = wrapper.find(`button.${BUTTON_CLASSNAME}`)
-
-    confirmButton.simulate('click')
+    wrapper.find('button.confirm').simulate('click')
 
     expect(props.onConfirm).toBeCalled()
     expect(props.onCancel).not.toBeCalled()
@@ -132,7 +130,7 @@ describe('Component: ConfirmInformation', () => {
   it('cancel should call onCancel prop', () => {
     const wrapper = mount(<ConfirmInformation {...props} />)
 
-    const cancelButton = wrapper.find(`button.${BUTTON_SECONDARY_CLASSNAME}`)
+    const cancelButton = wrapper.find('button.cancel')
 
     cancelButton.simulate('click')
 

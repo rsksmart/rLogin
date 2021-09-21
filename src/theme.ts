@@ -17,6 +17,8 @@ export const light = {
   p: '#B0AEB1', // p
   link: primaryColor,
   linkHover: '#4386c6',
+  buttonText: '#ffffff',
+  buttonTextSecondary: '#6C6B6C',
 
   overlay: 'rgba(0, 0, 0, 0.4)', // ModalLightbox
   error: '#EDB21C',
@@ -50,6 +52,8 @@ export const dark: ThemeType = {
   p: '#B0AEB1', // p
   link: primaryColor,
   linkHover: '#4386c6',
+  buttonText: '#ffffff',
+  buttonTextSecondary: '#dddddd',
 
   overlay: 'rgba(0, 0, 0, 0.4)', // ModalLightbox
   error: '#EDB21C',
