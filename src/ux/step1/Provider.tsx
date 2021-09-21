@@ -2,7 +2,7 @@
 import * as React from 'react'
 import styled, { css } from 'styled-components'
 
-import { Header3, Paragraph } from '../../ui/shared/Typography'
+import { Header3 } from '../../ui/shared/Typography'
 import {
   PROVIDER_CONTAINER_CLASSNAME,
   PROVIDER_CONTAINER_DISABLED_CLASSNAME,
@@ -90,7 +90,6 @@ export function Provider (props: IProviderProps) {
           </ProviderIcon>
           <Header3>{name}</Header3>
         </HeaderRow>
-        <Paragraph>{description}</Paragraph>
       </ProviderBox>
     </ProviderContainer>
   )

@@ -22,7 +22,6 @@ describe('Component: Provider', () => {
   it('has correct text and image', () => {
     const wrapper = mount(<Provider {...props} />)
     expect(wrapper.find('h3').text()).toEqual('Test Provider')
-    expect(wrapper.find('p').text()).toEqual('A provider')
     expect(wrapper.find('img').props().src).toEqual('image.jpg')
   })
 
