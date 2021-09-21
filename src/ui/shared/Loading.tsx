@@ -1,5 +1,4 @@
 // adapted from: https://github.com/LucasBassetti/react-css-loaders/blob/master/lib/bubble-spin/BubbleSpin.jsx
-// eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 

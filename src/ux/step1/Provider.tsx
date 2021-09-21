@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import * as React from 'react'
 import styled, { css } from 'styled-components'
 

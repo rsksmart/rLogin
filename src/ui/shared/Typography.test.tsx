@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import { shallow } from 'enzyme'
 import { Header2, Paragraph } from './Typography'

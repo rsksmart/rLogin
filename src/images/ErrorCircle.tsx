@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled from 'styled-components'
 import { ERROR_ICON_WRAPPER } from '../constants/cssSelectors'

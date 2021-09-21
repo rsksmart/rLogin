@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React, { useState } from 'react'
 import { Button } from '../../ui/shared/Button'
 import { Paragraph, LeftBigParagraph, Header2 } from '../../ui/shared/Typography'

@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled from 'styled-components'
 import { BUTTON_CLASSNAME, BUTTON_SECONDARY_CLASSNAME } from '../../constants/cssSelectors'

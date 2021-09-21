@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { Provider } from './Provider'

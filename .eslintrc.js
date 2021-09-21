@@ -7,7 +7,8 @@ module.exports = {
   extends: [
     'plugin:react/recommended',
     'standard',
-    'plugin:cypress/recommended'
+    'plugin:cypress/recommended',
+    'airbnb-typescript'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

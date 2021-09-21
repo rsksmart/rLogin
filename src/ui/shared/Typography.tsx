@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { HEADER2_CLASS, HEADER3_CLASS, PARAGRAPH_CLASS, BIG_PARAGRAPH_CLASS, SMALL_SPAN } from '../../constants/cssSelectors'
