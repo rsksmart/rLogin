@@ -46,7 +46,7 @@ export const dark: ThemeType = {
 
   h1: '#1a1a1a', // modal-deader
   h2: primaryColor,
-  h3: '#6C6B6C',
+  h3: '#B0AEB1',
   p: '#B0AEB1', // p
   link: primaryColor,
   linkHover: '#4386c6',
@@ -62,7 +62,7 @@ export const dark: ThemeType = {
   modalBackground: '#000000',
 
   closeButton: '#A19191',
-  loadingText: '#444444',
+  loadingText: '#B0AEB1',
   testnetText: '#333333'
 }
 
