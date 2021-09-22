@@ -88,6 +88,8 @@ interface IAvailableLanguage {
   name: string
 }
 
+type NetworkConnectionConfig = { chainId: number, rpcUrl: string }
+
 interface IModalState {
   show: boolean
   currentStep: Step
@@ -103,6 +105,7 @@ interface IModalState {
   loadingReason?: string
   currentTheme?: themesOptions
   selectedProviderUserOption?: IProviderUserOptions
+  chosenNetwork?: NetworkConnectionConfig
 }
 
 const INITIAL_STATE: IModalState = {

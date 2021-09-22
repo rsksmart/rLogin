@@ -44,7 +44,8 @@ const resources = {
       'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your Trezor device to sign the message.',
       'Choose Network': 'Choose Network',
       'Finish tutorial and connect': 'Finish tutorial and connect',
-      // Trezor tutorial
+      'Choose Network': 'Choose Network',
+      // Ledger tutorial
       'Plug in your Ledger device': 'Plug in your Ledger device',
       'Plug in your ledger device to your computer': 'Plug in your ledger device to your computer',
       'Install apps': 'Install apps',
