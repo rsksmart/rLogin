@@ -2,15 +2,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Trans } from 'react-i18next'
-import { Header2, Paragraph } from '../../ui/shared/Typography'
-import SliderComponent from '../../ui/slider/SliderComponent'
+import { Header2, Paragraph } from '../../../ui/shared/Typography'
+import SliderComponent from '../../../ui/slider/SliderComponent'
 
 // @ts-ignore
-import LedgerConnectImage from './assets/LedgerConnectImage.svg'
+import LedgerConnectImage from '../assets/LedgerConnectImage.svg'
 // @ts-ignore
-import LedgerImage from './assets/LedgerImage.svg'
+import LedgerImage from '../assets/LedgerImage.svg'
 // @ts-ignore
-import LedgerConfirm from './assets/LedgerConfirm.svg'
+import LedgerConfirm from '../assets/LedgerConfirm.svg'
 
 const ParagraphWrapper = styled(Paragraph)`
   min-height: 50px;

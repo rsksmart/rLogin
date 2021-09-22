@@ -12,10 +12,11 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
+import { isHardwareWalletProvider, getTutorialLocalStorageKey } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { DONT_SHOW_TUTORIAL_AGAIN_KEY, RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -250,17 +251,38 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * should choose a network first.
    * @param provider The provider selected by the user to use
    */
-  private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
-    // temporarly set the provider to be used when the choose network component returns
-    this.setState({ provider })
+   private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
+     // set the provider to be used when the choose network component returns
+     this.setState({ provider }, () => {
+       // choose the network first:
+       const { rpcUrls } = this.props
+       if (isHardwareWalletProvider(provider.name) && rpcUrls) {
+         return this.setState({ currentStep: 'chooseNetwork' })
+       }
 
-    // choose the network first:
-    const { rpcUrls } = this.props
-    if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
-      return this.setState({ currentStep: 'chooseNetwork' })
+       return this.preTutorialChecklist()
+     })
+   }
+
+  private chooseNetwork = (network: NetworkConnectionConfig) => {
+    this.setState({ chosenNetwork: network }, () => {
+      return this.preTutorialChecklist()
+    })
+  }
+
+  /**
+   * Checklist before sending the connect method
+   * @param provider that the user selected
+   */
+  private preTutorialChecklist = () => {
+    const { name } = this.state.provider
+
+    // show a tutorial to connect a hardware device:
+    if (isHardwareWalletProvider(name) && !localStorage.getItem(getTutorialLocalStorageKey(name))) {
+      return this.setState({ currentStep: 'tutorial' })
     }
 
-    this.connectToWallet(provider)
+    this.connectToWallet()
   }
 
   /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
