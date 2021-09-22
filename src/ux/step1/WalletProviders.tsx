@@ -13,7 +13,7 @@ import { EDGE, TREZOR, LEDGER, DCENT } from './extraProviders'
 
 interface IWalletProvidersProps {
   userProviders: IProviderUserOptions[]
-  setLoading: (providerUserOption: IProviderUserOptions) => void
+  connectToWallet: (provider: IProviderUserOptions) => void
   changeLanguage: (event: any) => void
   changeTheme: (theme: themesOptions) => void
   availableLanguages: { code:string, name:string } []
@@ -90,7 +90,7 @@ export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
   return providersByName
 }
 
-export const WalletProviders = ({ userProviders, setLoading, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => {
+export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => {
   // the providers that are hardcoded into the layout below
   const hardCodedProviderNames = [
     providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name,
@@ -105,10 +105,7 @@ export const WalletProviders = ({ userProviders, setLoading, changeLanguage, cha
     !hardCodedProviderNames.includes(providerName) ? providerName : null)
 
   // handle connect
-  const handleConnect = (provider: IProviderUserOptions) => {
-    setLoading(provider)
-    provider.onClick()
-  }
+  const handleConnect = (provider: IProviderUserOptions) => connectToWallet(provider)
 
   return <>
     <Header2>

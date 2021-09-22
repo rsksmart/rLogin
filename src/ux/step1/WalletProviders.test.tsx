@@ -13,7 +13,7 @@ describe('Component: WalletProviders', () => {
 
   const props = {
     userProviders: providers,
-    setLoading: jest.fn(),
+    connectToWallet: jest.fn(),
     changeLanguage: jest.fn(),
     availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
     selectedLanguageCode: 'en',

@@ -39,7 +39,8 @@ const resources = {
       'Confirm on your Trezor': 'Confirm on your Trezor',
       'Confirm in your wallet': 'Confirm in your wallet',
       'Click both buttons on your ledger device to confirm.': 'Click both buttons on your ledger device to confirm.',
-      'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your trezor device to sign the message.'
+      'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your trezor device to sign the message.',
+      'Choose Network': 'Choose Network'
     }
   },
   es: {
