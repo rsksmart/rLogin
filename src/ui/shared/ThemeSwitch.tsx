@@ -8,6 +8,7 @@ interface SwitchWrapperInterface {
 }
 
 const SwitchWrapper = styled.span`
+  margin-top: 10px;
   height: 16px;
   width: 16px;
   border-radius: 5px;

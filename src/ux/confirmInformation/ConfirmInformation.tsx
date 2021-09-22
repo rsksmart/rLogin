@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { SD } from '../../lib/sdr'
 import { Header2, SmallSpan, typeShared } from '../../ui/shared/Typography'
-import { Button, ButtonSecondary } from '../../ui/shared/Button'
+import { Button } from '../../ui/shared/Button'
 import { credentialValueToText } from '../../vc-json-schema-adapter'
 import { Trans } from 'react-i18next'
 import { getChainName } from '../../adapters'
@@ -75,8 +75,8 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
         </Column>
       </List>
       <CenterContent>
-        <ButtonSecondary onClick={onCancel} disabled={isLoading}><Trans>Cancel</Trans></ButtonSecondary>
-        <Button onClick={handleSubmit} disabled={isLoading}><Trans>Confirm</Trans></Button>
+        <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
+        <Button onClick={handleSubmit} disabled={isLoading} className="confirm"><Trans>Confirm</Trans></Button>
       </CenterContent>
       <CenterContent>
         <label style={{ marginTop: 20 }}>

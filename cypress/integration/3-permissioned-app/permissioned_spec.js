@@ -51,7 +51,7 @@ describe('permissioned e2e testing', () => {
     cy.get('.rlogin-list-description').eq(2).should('have.text', 'CI Testing')
     cy.get('.rlogin-list-description').eq(3).should('have.text', 'jesse@iovlabs.org')
 
-    cy.get('.rlogin-button').click()
+    cy.get('.rlogin-button.confirm').click()
     cy.get('#connected').should('have.text', 'Yes')
   })
 

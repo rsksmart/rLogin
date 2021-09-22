@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled, { css } from 'styled-components'
 
-import { Header3, Paragraph } from '../../ui/shared/Typography'
+import { Header3 } from '../../ui/shared/Typography'
 import {
   PROVIDER_CONTAINER_CLASSNAME,
   PROVIDER_CONTAINER_DISABLED_CLASSNAME,
@@ -45,7 +45,7 @@ const ProviderBox = styled.div<{ disabled: boolean }>`
   background-color: ${props => props.theme.containerBackground};
   opacity: ${({ disabled }) => (disabled ? '50%' : '100%')};
   border-radius: 12px;
-  padding: 10px 0;
+  padding: 15px 0 10px 0;
   cursor: inherit;
 
   ${({ disabled }) => !disabled && css`
@@ -60,7 +60,6 @@ const HeaderRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin: 10px 0 -10px 0;
 `
 
 interface IProviderProps {
@@ -89,7 +88,6 @@ export function Provider (props: IProviderProps) {
           </ProviderIcon>
           <Header3>{name}</Header3>
         </HeaderRow>
-        <Paragraph>{description}</Paragraph>
       </ProviderBox>
     </ProviderContainer>
   )
