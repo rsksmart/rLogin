@@ -26,7 +26,7 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
     cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
-    cy.get('.rlogin-button').click()
+    cy.get('.rlogin-button.confirm').click()
   }
 
   it('logs in with the modal and is connected', () => {
@@ -44,7 +44,7 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
     cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
-    cy.get('.rlogin-button-secondary').click() // cancel button
+    cy.get('.rlogin-button.cancel').click() // cancel button
 
     cy.get('#connected').should('have.text', 'No')
   })
@@ -58,7 +58,7 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
 
     cy.get('.rlogin-checkbox').check({ force: true }) // don't show again
-    cy.get('.rlogin-button').click() // confirm
+    cy.get('.rlogin-button.confirm').click() // confirm
 
     cy.get('#connected').should('have.text', 'Yes')
     cy.get('#reset').click()

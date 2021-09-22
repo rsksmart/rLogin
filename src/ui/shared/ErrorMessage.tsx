@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled from 'styled-components'
 import { ERROR_MESSAGE_WRAPPER, HEADER2_CLASS } from '../../constants/cssSelectors'
@@ -17,10 +16,12 @@ const ErrorHeading = styled.h2`
   color: ${props => props.theme.error};
 `
 
+const forceString = (text: any) => typeof text === 'string' ? text : (text as any).toString()
+
 export const ErrorMessage: React.FC<ErrorMessageInterface> = ({ className, title, description }) => (
   <div className={className ? `${ERROR_MESSAGE_WRAPPER} ${className}` : ERROR_MESSAGE_WRAPPER}>
     <ErrorCircle />
-    {title && <ErrorHeading className={HEADER2_CLASS}>{title}</ErrorHeading>}
-    {description && <Paragraph>{description}</Paragraph>}
+    {title && <ErrorHeading className={HEADER2_CLASS}>{forceString(title)}</ErrorHeading>}
+    {description && <Paragraph>{forceString(description)}</Paragraph>}
   </div>
 )

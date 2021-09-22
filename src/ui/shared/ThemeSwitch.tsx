@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-use-before-define
 import React from 'react'
 import styled from 'styled-components'
 import { themesOptions } from '../../theme'
@@ -9,6 +8,7 @@ interface SwitchWrapperInterface {
 }
 
 const SwitchWrapper = styled.span`
+  margin-top: 10px;
   height: 16px;
   width: 16px;
   border-radius: 5px;

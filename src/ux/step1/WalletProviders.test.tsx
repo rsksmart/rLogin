@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import { mount } from 'enzyme'
 import { WalletProviders } from './WalletProviders'
@@ -13,7 +12,7 @@ describe('Component: WalletProviders', () => {
 
   const props = {
     userProviders: providers,
-    setLoading: jest.fn(),
+    connectToWallet: jest.fn(),
     changeLanguage: jest.fn(),
     availableLanguages: [{ code: 'en', name: 'English' }, { code: 'es', name: 'Spanish' }],
     selectedLanguageCode: 'en',
@@ -32,7 +31,7 @@ describe('Component: WalletProviders', () => {
   it('shows header and footer', () => {
     const wrapper = mount(<WalletProviders {...props} />)
     expect(wrapper.find('h2').text()).toBe('Connect your wallet')
-    expect(wrapper.find(`span.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
+    expect(wrapper.find(`p.${PROVIDERS_FOOTER_TEXT_CLASSNAME}`).text()).toEqual('No wallet? Get one here!')
   })
 
   it('shows custom providers', () => {

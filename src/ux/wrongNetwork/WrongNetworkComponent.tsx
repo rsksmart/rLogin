@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import { getChainName } from '../../adapters'
 import { AddEthereumChainParameter, networks } from './changeNetwork'

@@ -1,18 +1,16 @@
-// eslint-disable-next-line
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { SD } from '../../lib/sdr'
 import { Header2, SmallSpan, typeShared } from '../../ui/shared/Typography'
-import { Button, ButtonSecondary } from '../../ui/shared/Button'
+import { Button } from '../../ui/shared/Button'
 import { credentialValueToText } from '../../vc-json-schema-adapter'
-import Loading from '../../ui/shared/Loading'
 import { Trans } from 'react-i18next'
-import i18next from 'i18next'
 import { getChainName } from '../../adapters'
 import { IProviderUserOptions } from 'web3modal'
 import Checkbox from '../../ui/shared/Checkbox'
 import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 import { getPeerInfo } from './getPeerLogo'
+import ConfirmInWallet from '../../ui/shared/ConfirmInWallet'
 
 const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
 
@@ -22,11 +20,12 @@ interface ConfirmInformationProps {
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
   provider: any
+  providerName?: string
   onConfirm: () => void
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ chainId, address, providerUserOption, sd, provider, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -76,8 +75,8 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
         </Column>
       </List>
       <CenterContent>
-        <ButtonSecondary onClick={onCancel} disabled={isLoading}><Trans>Cancel</Trans></ButtonSecondary>
-        <Button onClick={handleSubmit} disabled={isLoading}><Trans>Confirm</Trans></Button>
+        <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
+        <Button onClick={handleSubmit} disabled={isLoading} className="confirm"><Trans>Confirm</Trans></Button>
       </CenterContent>
       <CenterContent>
         <label style={{ marginTop: 20 }}>
@@ -89,7 +88,7 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
         </label>
       </CenterContent>
     </>
-    : <Loading text={i18next.t('Confirming Identity')} size={10} />
+    : <ConfirmInWallet providerName={providerName || ''} />
 }
 
 const Column = styled.div`

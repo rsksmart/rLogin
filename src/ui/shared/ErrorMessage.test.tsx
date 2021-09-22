@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import { mount } from 'enzyme'
 import { ErrorMessage } from './ErrorMessage'
