@@ -37,7 +37,8 @@ const resources = {
       'Do not show again': 'Don\'t show again',
       'Connected wallet': 'Connected wallet',
       'Finish tutorial and connect': 'Finish tutorial and connect',
-      // Trezor tutorial
+      'Choose Network': 'Choose Network',
+      // Ledger tutorial
       'Plug in your Ledger device': 'Plug in your Ledger device',
       'Plug in your ledger device to your computer': 'Plug in your ledger device to your computer',
       'Install apps': 'Install apps',

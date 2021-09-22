@@ -26,6 +26,7 @@ import i18n from './i18n'
 import { ThemeProvider } from 'styled-components'
 import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
+import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
 
 // copy-pasted and adapted
@@ -73,9 +74,10 @@ interface IModalProps {
   // eslint-disable-next-line no-unused-vars
   themes: { [K in themesOptions]: ThemeType }
   defaultTheme: themesOptions
+  rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'loading' | 'tutorial'
+type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'tutorial' | 'loading'
 
 interface ErrorDetails {
   title: string
@@ -86,6 +88,8 @@ interface IAvailableLanguage {
   code: string
   name: string
 }
+
+type NetworkConnectionConfig = { chainId: number, rpcUrl: string }
 
 interface IModalState {
   show: boolean
@@ -102,6 +106,7 @@ interface IModalState {
   loadingReason?: string
   currentTheme?: themesOptions
   selectedProviderUserOption?: IProviderUserOptions
+  chosenNetwork?: NetworkConnectionConfig
 }
 
 const INITIAL_STATE: IModalState = {
@@ -109,6 +114,16 @@ const INITIAL_STATE: IModalState = {
   lightboxOffset: 0,
   currentStep: 'Step1',
   loadingReason: ''
+}
+
+/**
+ * IProviderUserOptions with added onClick variable
+ */
+interface RLoginIProviderUserOptions {
+  name: string;
+  logo: string;
+  description: string;
+  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<void>; // adds optional options
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
@@ -133,6 +148,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.disconnect = this.disconnect.bind(this)
     this.connectToWallet = this.connectToWallet.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
+    this.chooseNetwork = this.chooseNetwork.bind(this)
     this.availableLanguages = []
     this.setupLanguages()
   }
@@ -230,31 +246,59 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   /**
+   * Before connecting to the provider, go through a checklist of items
+   * Check if the provider supports multiple networks and if the user
+   * should choose a network first.
+   * @param provider The provider selected by the user to use
+   */
+   private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
+    // set the provider to be used when the choose network component returns
+    this.setState({ provider })
+
+    // choose the network first:
+    const { rpcUrls } = this.props
+    if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
+      return this.setState({ currentStep: 'chooseNetwork' })
+    }
+
+    return this.preTutorialChecklist()
+  }
+
+  private chooseNetwork = (network: NetworkConnectionConfig) => {
+    this.setState({ chosenNetwork: network })
+    return this.preTutorialChecklist()
+  }
+
+  /**
    * Checklist before sending the connect method
    * @param provider that the user selected
    */
-  private preConnectChecklist = (provider: IProviderUserOptions) => {
+  private preTutorialChecklist = () => {
     // show a tutorial to connect a hardware device:
-    if (['Ledger'].includes(provider.name) && !localStorage.getItem(DONT_SHOW_TUTORIAL_AGAIN_KEY)) {
-      return this.setState({ provider, currentStep: 'tutorial' })
+    if (['Ledger'].includes(this.state.provider.name) && !localStorage.getItem(DONT_SHOW_TUTORIAL_AGAIN_KEY)) {
+      return this.setState({ currentStep: 'tutorial' })
     }
 
     // preflight check done, start the connect:
-    this.connectToWallet(provider)
+    return this.connectToWallet()
   }
 
   /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
-  private connectToWallet (providerUserOption: IProviderUserOptions) {
-    providerUserOption.onClick()
+  private connectToWallet () {
+    const { provider } = this.state
+    provider.onClick(this.state.chosenNetwork)
 
     this.setState({
       currentStep: 'loading',
       loadingReason: 'Connecting to provider',
-      selectedProviderUserOption: providerUserOption
+      selectedProviderUserOption: this.state.provider
     })
   }
 
-  /** Step 1 confirmed - user picked a wallet provider */
+  /** Step 1 Provider Answered
+   * The provider has answered and is ready to go to the next step
+   * or access the data vault.
+   */
   private setupProvider (userProvider: any) {
     const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
     this.setState({ provider })
@@ -411,7 +455,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes } = this.props
+    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes, rpcUrls } = this.props
 
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
@@ -436,12 +480,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
-        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} setLoading={(provider: IProviderUserOptions) => this.preConnectChecklist(provider)} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
+        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={this.chooseNetwork} />}
+        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} />}
+
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={() => this.connectToWallet(provider)} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
