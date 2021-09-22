@@ -146,9 +146,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
-    this.connectToWallet = this.connectToWallet.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
+    this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
     this.chooseNetwork = this.chooseNetwork.bind(this)
+    this.connectToWallet = this.connectToWallet.bind(this)
 
     this.availableLanguages = []
     this.setupLanguages()
@@ -254,20 +255,22 @@ export class Core extends React.Component<IModalProps, IModalState> {
    */
    private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
      // set the provider to be used when the choose network component returns
-     this.setState({ provider })
+     this.setState({ provider }, () => {
+      // choose the network first:
+      const { rpcUrls } = this.props
+      if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
+        return this.setState({ currentStep: 'chooseNetwork' })
+      }
 
-     // choose the network first:
-     const { rpcUrls } = this.props
-     if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
-       return this.setState({ currentStep: 'chooseNetwork' })
-     }
+      return this.preTutorialChecklist()
 
-     return this.preTutorialChecklist()
+     })
    }
 
   private chooseNetwork = (network: NetworkConnectionConfig) => {
-    this.setState({ chosenNetwork: network })
-    return this.preTutorialChecklist()
+    this.setState({ chosenNetwork: network }, () => {
+      return this.preTutorialChecklist()
+    })
   }
 
   /**
