@@ -13,10 +13,11 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
+import { isHardwareWalletProvider, getTutorialLocalStorageKey } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { DONT_SHOW_TUTORIAL_AGAIN_KEY, RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
+import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -258,7 +259,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      this.setState({ provider }, () => {
        // choose the network first:
        const { rpcUrls } = this.props
-       if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
+       if (isHardwareWalletProvider(provider.name) && rpcUrls) {
          return this.setState({ currentStep: 'chooseNetwork' })
        }
 
@@ -277,8 +278,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * @param provider that the user selected
    */
   private preTutorialChecklist = () => {
+    const { name } = this.state.provider
+
     // show a tutorial to connect a hardware device:
-    if (['Ledger'].includes(this.state.provider.name) && !localStorage.getItem(DONT_SHOW_TUTORIAL_AGAIN_KEY)) {
+    if (isHardwareWalletProvider(name) && !localStorage.getItem(getTutorialLocalStorageKey(name))) {
       return this.setState({ currentStep: 'tutorial' })
     }
 

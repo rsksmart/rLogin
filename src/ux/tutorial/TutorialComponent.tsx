@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react'
 import { Trans } from 'react-i18next'
-import { DONT_SHOW_TUTORIAL_AGAIN_KEY } from '../../constants'
+import { getTutorialLocalStorageKey, isDCent, isLedger, isTrezor } from '../../lib/hardware-wallets'
 import { Button } from '../../ui/shared/Button'
 import Checkbox from '../../ui/shared/Checkbox'
 import { SmallSpan } from '../../ui/shared/Typography'
-import LedgerTutorialComponent from './LedgerTutorialComponent'
+import { DCentTutorialComponent, LedgerTutorialComponent, TrezorTutorialComponent } from './tutorials'
 
 interface Interface {
   providerName: string
@@ -17,14 +17,16 @@ const TutorialComponent: React.FC<Interface> = ({ providerName, handleConnect })
 
   const handleButtonClick = () => {
     if (hideTutorial) {
-      localStorage.setItem(DONT_SHOW_TUTORIAL_AGAIN_KEY, 'true')
+      localStorage.setItem(getTutorialLocalStorageKey(providerName), 'true')
     }
     handleConnect()
   }
 
   return (
     <div>
-      <LedgerTutorialComponent />
+      {isLedger(providerName) && <LedgerTutorialComponent />}
+      {isTrezor(providerName) && <TrezorTutorialComponent />}
+      {isDCent(providerName) && <DCentTutorialComponent />}
       <p>
         <Button onClick={handleButtonClick}>
           <Trans>Finish tutorial and connect</Trans>
