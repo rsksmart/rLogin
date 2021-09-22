@@ -55,7 +55,14 @@ const resources = {
       'Open Ethereum or RSK app': 'Open Ethereum or RSK app',
       'Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.': 'Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.',
       'Confirm button': 'Confirm button',
-      'Click both buttons on your ledger device to confirm': 'Click both buttons on your ledger device to confirm'
+      'Click both buttons on your ledger device to confirm': 'Click both buttons on your ledger device to confirm',
+      // Trezor tutorial
+      'Plug in your Trezor device': 'Plug in your Trezor device',
+      'Please install Trezor Bridge and follow the instructions to connect your device.': 'Please install Trezor Bridge and follow the instructions to connect your device',
+      'Trezor Bridge': 'Trezor Bridge',
+      // DCent tutorial
+      'Plug in your D\'Cent device': 'Plug in your D\'Cent device',
+      'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.': 'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.'
     }
   },
   es: {
