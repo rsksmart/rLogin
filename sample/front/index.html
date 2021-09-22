@@ -43,10 +43,19 @@
 
     <script src="http://localhost:3005/index.js"></script>
 
-    <script src="https://unpkg.com/@walletconnect/web3-provider@1.3.2/dist/umd/index.min.js"></script>
-    <script src="https://unpkg.com/@portis/web3@4.0.0/umd/index.js"></script>
-    <script src="https://unpkg.com/@rsksmart/rlogin-ledger-provider@1.0.0-beta.6/dist/bundle.js"></script>
-    <script src="https://unpkg.com/@rsksmart/ipfs-cpinner-client@0.1.3/dist/bundle.js"></script>
+    <!-- Mobile -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.3.2/dist/umd/index.min.js" integrity="sha384-e1LVDbPXlpouaOa/B5TOOA/EeKsLWbCQpRC6XB5RBn0eKI8E1msrTnw8Dvkft020" crossorigin="anonymous"></script>
+
+    <!-- Custodial -->
+    <script src="https://unpkg.com/@portis/web3@4.0.0/umd/index.js" integrity="sha384-rVrQx3OPQbx/BulpfW0MLzID/fIM+x2qiI9Ibhpgd8MKK7wqsVPRRLDMQDWU7zS3" crossorigin="anonymous"></script>
+
+    <!-- Hardware -->
+    <script src="https://unpkg.com/@rsksmart/rlogin-ledger-provider@1.0.0-beta.8/dist/bundle.js" integrity="sha384-m/q7N5NZG7fIxx00ult4A74N/jPFwgG564OiwXPPXpdHzu1i5BAyxPA4535U/Yqs" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@rsksmart/rlogin-trezor-provider@1.0.0-beta.9/dist/bundle.js" integrity="sha384-rr3MHx1XrgmOTDi1vXLwgGmAr5U7UXddzRRZNwU53MWO817EY6yucdp4imrHdMeD" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@rsksmart/rlogin-dcent-provider@1.0.0-beta.8/dist/bundle.js" integrity="sha384-Zt1JFaeCbx2cs8Cu7N/4gYXPBB33TlqZoJlqboFo+vJuerwJcOGWzm2Xd8lpOWG2" crossorigin="anonymous"></script>
+
+    <!-- RIF Data Vault Client -->
+    <script src="https://unpkg.com/@rsksmart/ipfs-cpinner-client@0.1.3/dist/bundle.js" integrity="sha384-Vqy7eKjwpV8AMv0kkeflaAUxoUgdOyjYJ3sNfEHOdptoaF8NuOFl0Ag/g0HChrCn" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
       if (window.ethereum) {
@@ -100,7 +109,15 @@
           },
           'custom-ledger': {
             ...window.rLoginLedgerProvider.ledgerProviderOptions,
-          }
+          },
+          'custom-trezor': {
+            ...window.rLoginTrezorProvider.trezorProviderOptions,
+            manifestEmail: 'info@iovlabs.org',
+            manifestAppUrl: 'https://basic-sample.rlogin.identity.rifos.org/',
+          },
+          'custom-dcent': {
+            ...window.rLoginDCentProvider.dcentProviderOptions,
+          },
         },
         backendUrl,
         keepModalHidden,

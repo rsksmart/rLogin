@@ -252,7 +252,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
     // choose the network first:
     const { rpcUrls } = this.props
-    if (['Ledger', 'Trezor', 'Dcent'].includes(provider.name) && rpcUrls) {
+    if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
       return this.setState({ currentStep: 'chooseNetwork' })
     }
 
