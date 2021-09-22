@@ -42,7 +42,26 @@ const resources = {
       'Confirm in your wallet': 'Confirm in your wallet',
       'Click both buttons on your ledger device to confirm.': 'Click both buttons on your Ledger device to confirm.',
       'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your Trezor device to sign the message.',
-      'Choose Network': 'Choose Network'
+      'Choose Network': 'Choose Network',
+      'Finish tutorial and connect': 'Finish tutorial and connect',
+      // Ledger tutorial
+      'Plug in your Ledger device': 'Plug in your Ledger device',
+      'Plug in your ledger device to your computer': 'Plug in your ledger device to your computer',
+      'Install apps': 'Install apps',
+      'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps': 'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps',
+      'Close other apps': 'Close other apps',
+      'Make sure to close any other app that is using ledger now, including Ledger Live': 'Make sure to close any other app that is using ledger now, including Ledger Live',
+      'Open Ethereum or RSK app': 'Open Ethereum or RSK app',
+      'Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.': 'Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.',
+      'Confirm button': 'Confirm button',
+      'Click both buttons on your ledger device to confirm': 'Click both buttons on your ledger device to confirm',
+      // Trezor tutorial
+      'Plug in your Trezor device': 'Plug in your Trezor device',
+      'Please install Trezor Bridge and follow the instructions to connect your device.': 'Please install Trezor Bridge and follow the instructions to connect your device',
+      'Trezor Bridge': 'Trezor Bridge',
+      // DCent tutorial
+      'Plug in your D\'Cent device': 'Plug in your D\'Cent device',
+      'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.': 'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.'
     }
   },
   es: {

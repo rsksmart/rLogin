@@ -17,7 +17,6 @@ interface Interface {
 }
 
 const ConfirmInWallet: React.FC<Interface> = ({ providerName }) => {
-  console.log(providerName)
   switch (providerName) {
     case 'Ledger': return (
       <>

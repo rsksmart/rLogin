@@ -7,7 +7,7 @@ interface IStore {
   [key: string]: any
 }
 
-class LocalStorageMock {
+export class LocalStorageMock {
   private store: IStore
 
   constructor () {

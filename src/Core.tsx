@@ -12,6 +12,7 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
+import { isHardwareWalletProvider, getTutorialLocalStorageKey } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
@@ -26,6 +27,7 @@ import { ThemeProvider } from 'styled-components'
 import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
+import TutorialComponent from './ux/tutorial/TutorialComponent'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -75,7 +77,7 @@ interface IModalProps {
   rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading'
+type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -86,6 +88,8 @@ interface IAvailableLanguage {
   code: string
   name: string
 }
+
+type NetworkConnectionConfig = { chainId: number, rpcUrl: string }
 
 interface IModalState {
   show: boolean
@@ -102,6 +106,7 @@ interface IModalState {
   loadingReason?: string
   currentTheme?: themesOptions
   selectedProviderUserOption?: IProviderUserOptions
+  chosenNetwork?: NetworkConnectionConfig
 }
 
 const INITIAL_STATE: IModalState = {
@@ -141,8 +146,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
-    this.connectToWallet = this.connectToWallet.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
+    this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
+    this.chooseNetwork = this.chooseNetwork.bind(this)
+    this.connectToWallet = this.connectToWallet.bind(this)
+
     this.availableLanguages = []
     this.setupLanguages()
   }
@@ -245,171 +253,196 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * should choose a network first.
    * @param provider The provider selected by the user to use
    */
-  private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
-    // temporarly set the provider to be used when the choose network component returns
-    this.setState({ provider })
+   private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
+     // set the provider to be used when the choose network component returns
+     this.setState({ provider }, () => {
+       // choose the network first:
+       const { rpcUrls } = this.props
+       if (isHardwareWalletProvider(provider.name) && rpcUrls) {
+         return this.setState({ currentStep: 'chooseNetwork' })
+       }
 
-    // choose the network first:
-    const { rpcUrls } = this.props
-    if (['Ledger', 'Trezor', 'D\'Cent'].includes(provider.name) && rpcUrls) {
-      return this.setState({ currentStep: 'chooseNetwork' })
-    }
+       return this.preTutorialChecklist()
+     })
+   }
 
-    this.connectToWallet(provider)
-  }
-
-  /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
-  private connectToWallet (providerUserOption: RLoginIProviderUserOptions, networkoptions?: { chainId: number, rpcUrl: string }) {
-    providerUserOption.onClick(networkoptions)
-    this.setState({
-      currentStep: 'loading',
-      loadingReason: `Connecting to ${providerUserOption.name}`,
-      selectedProviderUserOption: providerUserOption
+  private chooseNetwork = (network: NetworkConnectionConfig) => {
+    this.setState({ chosenNetwork: network }, () => {
+      return this.preTutorialChecklist()
     })
   }
 
-  /** Step 1 Provider Answered
+  /**
+   * Checklist before sending the connect method
+   * @param provider that the user selected
+   */
+   private preTutorialChecklist = () => {
+     const { name } = this.state.provider
+
+     // show a tutorial to connect a hardware device:
+     if (isHardwareWalletProvider(name) && !localStorage.getItem(getTutorialLocalStorageKey(name))) {
+       return this.setState({ currentStep: 'tutorial' })
+     }
+
+     // preflight check done, start the connect:
+     return this.connectToWallet()
+   }
+
+   /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
+   private connectToWallet () {
+     const { provider, chosenNetwork } = this.state
+     const providerName = provider.name || 'Provider'
+     provider.onClick(chosenNetwork)
+
+     this.setState({
+       currentStep: 'loading',
+       loadingReason: `Connecting to ${providerName}`,
+       selectedProviderUserOption: provider
+     })
+   }
+
+   /** Step 1 Provider Answered
    * The provider has answered and is ready to go to the next step
    * or access the data vault.
    */
-  private setupProvider (userProvider: any) {
-    const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
-    this.setState({ provider })
+   private setupProvider (userProvider: any) {
+     const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
+     this.setState({ provider })
 
-    const { onAccountsChange } = this.props
+     const { onAccountsChange } = this.props
 
-    return Promise.all([
-      ethAccounts(provider),
-      ethChainId(provider)
-    ]).then(([accounts, chainId]) => {
-      if (!this.setChainId(chainId)) return false
+     return Promise.all([
+       ethAccounts(provider),
+       ethChainId(provider)
+     ]).then(([accounts, chainId]) => {
+       if (!this.setChainId(chainId)) return false
 
-      const address = accounts[0]
+       const address = accounts[0]
 
-      this.setState({ provider, address })
+       this.setState({ provider, address })
 
-      const onChainIdChanged = (chainId: string) => this.setChainId(chainId)
+       const onChainIdChanged = (chainId: string) => this.setChainId(chainId)
 
-      provider.on(ACCOUNTS_CHANGED, onAccountsChange)
-      provider.on(CHAIN_CHANGED, onChainIdChanged)
+       provider.on(ACCOUNTS_CHANGED, onAccountsChange)
+       provider.on(CHAIN_CHANGED, onChainIdChanged)
 
-      return true
-    })
-  }
+       return true
+     })
+   }
 
-  private detectFlavor () {
-    const { backendUrl } = this.props
+   private detectFlavor () {
+     const { backendUrl } = this.props
 
-    if (!backendUrl) {
-      this.setState({
-        currentStep: 'ConfirmInformation'
-      })
-    } else {
-      const loadingReason = i18next.t('Connecting to server')
-      this.setState({ loadingReason })
-      // request schema to back end
-      return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
-        this.setState({
-          challenge,
-          sdr,
-          sd: undefined,
-          currentStep: sdr ? 'Step2' : 'ConfirmInformation'
-          // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
-        })
-      })
-    }
-  }
+     if (!backendUrl) {
+       this.setState({
+         currentStep: 'ConfirmInformation'
+       })
+     } else {
+       const loadingReason = i18next.t('Connecting to server')
+       this.setState({ loadingReason })
+       // request schema to back end
+       return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
+         this.setState({
+           challenge,
+           sdr,
+           sd: undefined,
+           currentStep: sdr ? 'Step2' : 'ConfirmInformation'
+           // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
+         })
+       })
+     }
+   }
 
-  /** Step 2  */
-  private async fetchSelectiveDisclosureRequest () {
-    const { provider, address, sdr } = this.state
-    const { dataVaultOptions } = this.props
-    const did = this.did()
+   /** Step 2  */
+   private async fetchSelectiveDisclosureRequest () {
+     const { provider, address, sdr } = this.state
+     const { dataVaultOptions } = this.props
+     const did = this.did()
 
-    if (!dataVaultOptions) throw new Error('Invalid setup')
-    const dataVault = await createDataVault(dataVaultOptions!, provider, did, address!)
+     if (!dataVaultOptions) throw new Error('Invalid setup')
+     const dataVault = await createDataVault(dataVaultOptions!, provider, did, address!)
 
-    this.setState({ dataVault })
+     this.setState({ dataVault })
 
-    return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
-  }
+     return fetchSelectiveDisclosureRequest(sdr!, dataVault, did)
+   }
 
-  private onConfirmSelectiveDisclosure (sd: SD) {
-    this.setState({ sd, currentStep: 'ConfirmInformation' })
-  }
+   private onConfirmSelectiveDisclosure (sd: SD) {
+     this.setState({ sd, currentStep: 'ConfirmInformation' })
+   }
 
-  /** Step 3 */
-  private onConfirmAuth () {
-    const { backendUrl, onConnect } = this.props
-    const { provider, dataVault, challenge, address, sd } = this.state
-    const did = this.did()
+   /** Step 3 */
+   private onConfirmAuth () {
+     const { backendUrl, onConnect } = this.props
+     const { provider, dataVault, challenge, address, sd } = this.state
+     const did = this.did()
 
-    if (!backendUrl) {
-      return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
-    }
+     if (!backendUrl) {
+       return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
+     }
 
-    const handleConnect = (provider: any) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
+     const handleConnect = (provider: any) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
 
-    confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
-      .catch((error: Error | AxiosError) => {
-        // this error handling is added to help user when challenge expired. in that
-        // case we ask for a new challenge and ask again the user to sign
-        if ((error as AxiosError).response && (error as AxiosError).response?.data === 'INVALID_CHALLENGE_RESPONSE') {
-          return requestSignup(backendUrl!, this.did()).then(({ challenge }) =>
-            confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
-          )
-        }
-        throw error
-      })
-      .catch((error: Error | AxiosError) => {
-        const description = (error as AxiosError).response && (error as AxiosError).response?.data
-        if (description) {
-          this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: decodeURI(description) } })
-          return
-        }
+     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+       .catch((error: Error | AxiosError) => {
+         // this error handling is added to help user when challenge expired. in that
+         // case we ask for a new challenge and ask again the user to sign
+         if ((error as AxiosError).response && (error as AxiosError).response?.data === 'INVALID_CHALLENGE_RESPONSE') {
+           return requestSignup(backendUrl!, this.did()).then(({ challenge }) =>
+             confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+           )
+         }
+         throw error
+       })
+       .catch((error: Error | AxiosError) => {
+         const description = (error as AxiosError).response && (error as AxiosError).response?.data
+         if (description) {
+           this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: decodeURI(description) } })
+           return
+         }
 
-        this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
-      })
-  }
+         this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
+       })
+   }
 
-  private setLightboxRef (c: HTMLDivElement | null) {
-    this.lightboxRef = c
-  }
+   private setLightboxRef (c: HTMLDivElement | null) {
+     this.lightboxRef = c
+   }
 
-  /**
+   /**
    * Disconnect from WalletConnect or Portis if it is the selected provider, and connected
    * @param provider web3 Provider
    */
-  private disconnectProvider (): void {
-    const { provider } = this.state
-    if (provider && provider.disconnect) {
-      provider.disconnect()
-      localStorage.removeItem(WALLETCONNECT)
-    }
-  }
+   private disconnectProvider (): void {
+     const { provider } = this.state
+     if (provider && provider.disconnect) {
+       provider.disconnect()
+       localStorage.removeItem(WALLETCONNECT)
+     }
+   }
 
-  /**
+   /**
    * Handle disconnect and cleanup state
    */
-  public async disconnect (): Promise<void> {
-    const { providerController } = this.props
+   public async disconnect (): Promise<void> {
+     const { providerController } = this.props
 
-    // WalletConnect and Portis Wrapper:
-    this.disconnectProvider()
+     // WalletConnect and Portis Wrapper:
+     this.disconnectProvider()
 
-    localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
-    localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
-    localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
+     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
+     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
+     localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
 
-    Object.keys(localStorage).map((key: string) => {
-      if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
-        localStorage.removeItem(key)
-      }
-    })
+     Object.keys(localStorage).map((key: string) => {
+       if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
+         localStorage.removeItem(key)
+       }
+     })
 
-    providerController.clearCachedProvider()
-    this.setState(INITIAL_STATE)
-  }
+     providerController.clearCachedProvider()
+     this.setState(INITIAL_STATE)
+   }
 
   public changeLanguage = (language: string) => {
     const { showModal, onLanguageChanged } = this.props
@@ -458,7 +491,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.connectToWallet(provider, { rpcUrl, chainId })} />}
+        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.chooseNetwork({ rpcUrl, chainId })} />}
+        {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
     </ThemeProvider>
