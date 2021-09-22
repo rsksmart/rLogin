@@ -149,6 +149,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.connectToWallet = this.connectToWallet.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.chooseNetwork = this.chooseNetwork.bind(this)
+
     this.availableLanguages = []
     this.setupLanguages()
   }
@@ -285,13 +286,13 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
   private connectToWallet () {
-    const { provider } = this.state
-    provider.onClick(this.state.chosenNetwork)
+    const { provider, chosenNetwork } = this.state
+    provider.onClick(chosenNetwork)
 
     this.setState({
       currentStep: 'loading',
       loadingReason: 'Connecting to provider',
-      selectedProviderUserOption: this.state.provider
+      selectedProviderUserOption: provider
     })
   }
 
