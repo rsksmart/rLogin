@@ -15,7 +15,7 @@ const ParagraphWrapper = styled(Paragraph)`
 const TrezorTutorialComponent = () => <>
   <Header2><Trans>Plug in your Trezor device</Trans></Header2>
   <ParagraphWrapper><Trans>Please install Trezor Bridge and follow the instructions to connect your device.</Trans></ParagraphWrapper>
-  <ParagraphWrapper><a href="https://wallet.trezor.io/#/bridge" target="_blank"><Trans>Trezor Bridge</Trans></a></ParagraphWrapper>
+  <ParagraphWrapper><a href="https://wallet.trezor.io/#/bridge" target="_blank" rel="noreferrer"><Trans>Trezor Bridge</Trans></a></ParagraphWrapper>
   <HardwareImage src={TrezorDevice} alt="Trezor device" />
 </>
 
