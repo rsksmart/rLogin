@@ -13,8 +13,8 @@ const ParagraphWrapper = styled(Paragraph)`
 `
 
 const DCentTutorialComponent = () => <>
-  <Header2><Trans>Plug in your D'Cent device</Trans></Header2>
-  <ParagraphWrapper><Trans>D'Cent Bridge will pop up. Follow the insttructions to connect your device.</Trans></ParagraphWrapper>
+  <Header2><Trans>Plug in your D&apos;Cent device</Trans></Header2>
+  <ParagraphWrapper><Trans>D&apos;Cent Bridge will pop up. Follow the insttructions to connect your device.</Trans></ParagraphWrapper>
   <HardwareImage src={DCentDevice} alt="DCent device" />
 </>
 
