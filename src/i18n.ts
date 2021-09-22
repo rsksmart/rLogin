@@ -35,7 +35,8 @@ const resources = {
       'Wallet address': 'Wallet address',
       Network: 'Network',
       'Do not show again': 'Don\'t show again',
-      'Connected wallet': 'Connected wallet'
+      'Connected wallet': 'Connected wallet',
+      'Choose Network': 'Choose Network'
     }
   },
   es: {

@@ -118,7 +118,7 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
     
     > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/helpers.ts
 
-### Flavors
+## Flavors
 
 - Fully-decentralized apps: this kind of apps are used only client-side. The front-end will need to know user's address and information for presentational purposes. The core operations are performed using blockchain transactions.
 
@@ -247,12 +247,33 @@ The Cypress tests can also be run in a headless browser by running the command:
 npm run cypress:run
 ```
 
-## Multi-language
+## Additional Features
+
+### Multi-language
 Please take a look at the following file to add more languages:
 ```
 /src/i18n.ts
 ```
+### Choose network for hardware wallets
 
+A dapp and hardware wallet could support multiple networks so to help users, a middle step has been added to choose the network. To enable this, the developer needs to add fallback chains. Below is an example of how a developer would add Ledger with the network choose:
+
+```
+const rLogin = new window.RLogin.default({
+  cacheProvider: false,
+  providerOptions: {
+    'custom-ledger': {
+      ...window.rLoginLedgerProvider.ledgerProviderOptions,
+    }
+  },
+  rpcUrls: {
+    30: 'https://public-node.rsk.co',
+    31: 'https://public-node.testnet.rsk.co'
+  }
+}
+```
+
+In this case, the RPC Url and ChainId parameters do not need to be added in the providerOptions section.
 
 ## Sample apps
 
