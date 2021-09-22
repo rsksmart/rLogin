@@ -7,7 +7,7 @@ import { ModalCard } from './ModalCard'
 import { ModalCloseButton } from './ModalCloseButton'
 import { ModalHeader } from './ModalHeader'
 import { ModalBody } from './ModalBody'
-import PoweredByRif from '../../images/PoweredByRif'
+import PoweredByComponent from './PoweredByComponent'
 
 interface ModalProps {
   lightboxOffset: number
@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({
       <ModalCard mainModalCard={mainModalCard} big={big}>
         <ModalHeader className={MODAL_HEADER_CLASSNAME}>
           <ModalCloseButton className={MODAL_CLOSE_BUTTON_CLASSNAME} onClick={onClose} />
-          <PoweredByRif />
+          <PoweredByComponent />
         </ModalHeader>
         <ModalBody className={MODAL_BODY_CLASSNAME} big={big}>
           {children}

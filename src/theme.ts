@@ -32,7 +32,8 @@ export const light = {
 
   closeButton: '#A19191',
   loadingText: '#999999',
-  testnetText: '#AAAAAA'
+  testnetText: '#AAAAAA',
+  rifLogoOutline: '#000000'
 }
 
 export type ThemeType = typeof light;
@@ -67,7 +68,8 @@ export const dark: ThemeType = {
 
   closeButton: '#A19191',
   loadingText: '#B0AEB1',
-  testnetText: '#333333'
+  testnetText: '#333333',
+  rifLogoOutline: '#1a1a1a'
 }
 
 export const themes = {
