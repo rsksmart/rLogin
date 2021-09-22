@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Trans } from 'react-i18next'
 import { Header2, Paragraph } from '../../../ui/shared/Typography'
 import SliderComponent from '../../../ui/slider/SliderComponent'
+import { HardwareImage } from './common'
 
 // @ts-ignore
 import LedgerConnectImage from '../assets/LedgerConnectImage.svg'
@@ -14,10 +15,6 @@ import LedgerConfirm from '../assets/LedgerConfirm.svg'
 
 const ParagraphWrapper = styled(Paragraph)`
   min-height: 50px;
-`
-
-const HardwareImage = styled.img`
-  height: 105px;
 `
 
 const LedgerTutorialComponent: React.FC = () => {
