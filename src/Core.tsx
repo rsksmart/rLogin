@@ -145,8 +145,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
-    this.connectToWallet = this.connectToWallet.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
+<<<<<<< HEAD
+=======
+    this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
+    this.chooseNetwork = this.chooseNetwork.bind(this)
+    this.connectToWallet = this.connectToWallet.bind(this)
+
+>>>>>>> Run preConnectChecklist and chooseNetwork after setting state
     this.availableLanguages = []
     this.setupLanguages()
   }
