@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import styled from 'styled-components'
 import { MODAL_CONTAINER_CLASSNAME } from '../../constants/cssSelectors'

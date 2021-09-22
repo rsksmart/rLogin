@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React, { useState } from 'react'
 import { SelectiveDisclosureRequest } from './SelectiveDisclosureRequest'
 import { SelectiveDisclosureResponse } from './SelectiveDisclosureResponse'

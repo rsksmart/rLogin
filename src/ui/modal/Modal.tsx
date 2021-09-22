@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react'
 import { MODAL_HITBOX_CLASSNAME, MODAL_LIGHTBOX_CLASSNAME, MODAL_CLOSE_BUTTON_CLASSNAME, MODAL_HEADER_CLASSNAME, MODAL_BODY_CLASSNAME } from '../../constants/cssSelectors'
 import { ModalLightbox } from './ModalLightbox'
