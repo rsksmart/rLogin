@@ -254,6 +254,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * @param provider The provider selected by the user to use
    */
    private preConnectChecklist = (provider: RLoginIProviderUserOptions) => {
+     console.log('1. preConnect...')
      // set the provider to be used when the choose network component returns
      this.setState({ provider }, () => {
        // choose the network first:
@@ -267,6 +268,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
   private chooseNetwork = (network: NetworkConnectionConfig) => {
+    console.log('2. chooseNetwork')
     this.setState({ chosenNetwork: network }, () => {
       return this.preTutorialChecklist()
     })
@@ -278,6 +280,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    */
    private preTutorialChecklist = () => {
      const { name } = this.state.provider
+     console.log('3. preTutorialChecklist')
 
      // show a tutorial to connect a hardware device:
      if (isHardwareWalletProvider(name) && !localStorage.getItem(getTutorialLocalStorageKey(name))) {
@@ -295,7 +298,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
      this.setState({
        currentStep: 'loading',
-       loadingReason: `Connecting to ${provider.name || 'Provider'}`,
+       loadingReason: `Connecting to ${provider.name}`,
        selectedProviderUserOption: provider
      })
    }
