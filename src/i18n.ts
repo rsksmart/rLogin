@@ -37,9 +37,11 @@ const resources = {
       'Connected wallet': 'Connected wallet',
       'Confirm on your Ledger': 'Confirm on your Ledger',
       'Confirm on your Trezor': 'Confirm on your Trezor',
+      'Confirm on your D\'Cent': 'Confirm on your D\'Cent',
+      'Click OK in your D\'Cent device to sign the message.': 'Click OK in your D\'Cent device to sign the message.',
       'Confirm in your wallet': 'Confirm in your wallet',
-      'Click both buttons on your ledger device to confirm.': 'Click both buttons on your ledger device to confirm.',
-      'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your trezor device to sign the message.',
+      'Click both buttons on your ledger device to confirm.': 'Click both buttons on your Ledger device to confirm.',
+      'Click on the screen of your trezor device to sign the message.': 'Click on the screen of your Trezor device to sign the message.',
       'Choose Network': 'Choose Network'
     }
   },
