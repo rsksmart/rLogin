@@ -119,11 +119,11 @@ const INITIAL_STATE: IModalState = {
 /**
  * IProviderUserOptions with added onClick variable
  */
-interface RLoginIProviderUserOptions {
+export interface RLoginIProviderUserOptions extends IProviderUserOptions {
   name: string;
   logo: string;
   description: string;
-  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<void>; // adds optional options
+  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<any>; // adds optional options
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
@@ -292,13 +292,22 @@ export class Core extends React.Component<IModalProps, IModalState> {
    private connectToWallet () {
      const { provider, chosenNetwork } = this.state
      const providerName = provider.name || 'Provider'
-     provider.onClick(chosenNetwork)
 
-     this.setState({
-       currentStep: 'loading',
-       loadingReason: `Connecting to ${providerName}`,
-       selectedProviderUserOption: provider
-     })
+     provider.onClick(chosenNetwork)
+       .then(() =>
+         this.setState({
+           currentStep: 'loading',
+           loadingReason: `Connecting to ${providerName}`,
+           selectedProviderUserOption: provider
+         }))
+       .catch((err: any) =>
+         this.setState({
+           currentStep: 'error',
+           errorReason: {
+             title: `Could not connect to ${providerName}`,
+             description: (err instanceof Error) ? err.message : err.toString()
+           }
+         }))
    }
 
    /** Step 1 Provider Answered

@@ -13,7 +13,6 @@ describe('Web3 Provider throws an error when connecting', () => {
     })
 
     // overwrite the enable method to throw an error:
-    // console.log(provider)
     provider.request = (_props) => Promise.reject(new Error('Not today'))
 
     cy.on('window:before:load', (win) => {
@@ -27,6 +26,6 @@ describe('Web3 Provider throws an error when connecting', () => {
     cy.contains('MetaMask').click()
 
     cy.get('.rlogin-header2').should('have.text', 'Could not connect to MetaMask')
-    cy.get('.rlogin-paragraph').should('have.text', 'Not today')
+    cy.get('.rlogin-paragraph').should('have.text', 'User Rejected')
   })
 })
