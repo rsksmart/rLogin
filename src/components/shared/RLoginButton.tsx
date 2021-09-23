@@ -17,8 +17,8 @@ export const RLoginButton: React.FC<RLoginButtonInterface> = ({ children, disabl
     font-size: '18px';
     line-height: '100%';
     cursor: ${() => disabled ? 'auto' : 'pointer'};
-    background-color: ${props => disabled ? props.theme.disabledBackground : props.theme.primaryBackground};
-    color: ${props => disabled ? props.theme.disabledText : props.theme.primaryText};
+    backgroundColor: '#008FF7';
+    color: '#FFFFFF';
   `
   return (
     <ButtonWrapper
