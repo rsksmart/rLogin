@@ -8,6 +8,7 @@ interface ErrorMessageInterface {
   className?: string;
   title?: string;
   description?: string;
+  footerCta?: React.ReactNode;
 }
 
 const ErrorHeading = styled.h2`
@@ -18,10 +19,11 @@ const ErrorHeading = styled.h2`
 
 const forceString = (text: any) => typeof text === 'string' ? text : (text as any).toString()
 
-export const ErrorMessage: React.FC<ErrorMessageInterface> = ({ className, title, description }) => (
+export const ErrorMessage: React.FC<ErrorMessageInterface> = ({ className, title, description, footerCta }) => (
   <div className={className ? `${ERROR_MESSAGE_WRAPPER} ${className}` : ERROR_MESSAGE_WRAPPER}>
     <ErrorCircle />
     {title && <ErrorHeading className={HEADER2_CLASS}>{forceString(title)}</ErrorHeading>}
     {description && <Paragraph>{forceString(description)}</Paragraph>}
+    {footerCta && <div className="footer">{footerCta}</div>}
   </div>
 )

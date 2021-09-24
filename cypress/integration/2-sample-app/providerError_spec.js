@@ -28,4 +28,14 @@ describe('Web3 Provider throws an error when connecting', () => {
     cy.get('.rlogin-header2').should('have.text', 'Could not connect to MetaMask')
     cy.get('.rlogin-paragraph').should('have.text', 'User Rejected')
   })
+
+  it('starts over', () => {
+    cy.visit('/')
+    cy.get('#login').click()
+    cy.contains('MetaMask').click()
+    cy.get('.rlogin-header2').should('have.text', 'Could not connect to MetaMask')
+
+    cy.contains('Start Over').click()
+    cy.get('.rlogin-header2').should('have.text', 'Connect your wallet')
+  })
 })

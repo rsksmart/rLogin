@@ -13,4 +13,11 @@ describe('Component: Error Message', () => {
     expect(wrapper.find('h2').text()).toBe('A title')
     expect(wrapper.find('p').text()).toBe('Error description')
   })
+
+  it('handles call to action', () => {
+    const footer = <p>Click me!</p>
+    const wrapper = mount(<ErrorMessage title="A title" description="Error description" footerCta={footer} />)
+
+    expect(wrapper.find('.footer').text()).toBe('Click me!')
+  })
 })

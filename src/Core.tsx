@@ -28,6 +28,7 @@ import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
+import { Button } from './ui/shared/Button'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -82,6 +83,7 @@ type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' 
 interface ErrorDetails {
   title: string
   description?: string
+  footerCta?: React.ReactNode
 }
 
 interface IAvailableLanguage {
@@ -305,7 +307,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
            currentStep: 'error',
            errorReason: {
              title: `Could not connect to ${providerName}`,
-             description: (err instanceof Error) ? err.message : err.toString()
+             description: (err instanceof Error) ? err.message : err.toString(),
+             footerCta: <Button onClick={() => this.setState({ ...INITIAL_STATE, show: true })}>Start Over</Button>
            }
          }))
    }
@@ -498,7 +501,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
+        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.chooseNetwork({ rpcUrl, chainId })} />}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
