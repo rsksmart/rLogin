@@ -49,6 +49,8 @@
     <!-- Custodial -->
     <script src="https://unpkg.com/@portis/web3@4.0.0/umd/index.js" integrity="sha384-rVrQx3OPQbx/BulpfW0MLzID/fIM+x2qiI9Ibhpgd8MKK7wqsVPRRLDMQDWU7zS3" crossorigin="anonymous"></script>
 
+    <script src="https://unpkg.com/@toruslabs/torus-embed@1.13.4/dist/torus.umd.min.js" integrity="sha256-PYFNxx1jq9Yra6tv1R5bB+VBP3lxSQG+aGie+UcVYro=" crossorigin="anonymous"></script>
+
     <!-- Hardware -->
     <script src="https://unpkg.com/@rsksmart/rlogin-ledger-provider@1.0.0-beta.8/dist/bundle.js" integrity="sha384-m/q7N5NZG7fIxx00ult4A74N/jPFwgG564OiwXPPXpdHzu1i5BAyxPA4535U/Yqs" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@rsksmart/rlogin-trezor-provider@1.0.0-beta.9/dist/bundle.js" integrity="sha384-rr3MHx1XrgmOTDi1vXLwgGmAr5U7UXddzRRZNwU53MWO817EY6yucdp4imrHdMeD" crossorigin="anonymous"></script>
@@ -98,7 +100,7 @@
             }
           },
           portis: {
-            package: Portis,
+            package: window.Portis,
             options: {
               id: "34616571-d57b-4805-868b-2dcc7b7662d7",
               network: {
@@ -118,6 +120,9 @@
           'custom-dcent': {
             ...window.rLoginDCentProvider.dcentProviderOptions,
           },
+          torus: {
+            package: window.Torus,
+          }
         },
         backendUrl,
         keepModalHidden,
