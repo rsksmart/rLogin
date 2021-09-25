@@ -1,5 +1,4 @@
 export type NetworkParams = {
-    networkParams : {
         host: string,
         chainId: number,
         networkId: number,
@@ -7,7 +6,6 @@ export type NetworkParams = {
         ticker: string,
         tickerName: string,
         networkName: string
-    }
   }
 export type NetworkParamsOptions = {
     [key:string]: NetworkParams

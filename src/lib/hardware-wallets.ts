@@ -41,26 +41,22 @@ export function requiresNetworkSelection (providerName: string) {
 
 const TORUS_NETWORK_PARAMS: NetworkParamsOptions = {
   30: {
-    networkParams: {
-      host: 'https://public-node.rsk.co',
-      chainId: 30,
-      networkId: 30,
-      blockExplorer: 'https://explorer.rsk.co/',
-      ticker: 'rBTC',
-      tickerName: 'rBTC',
-      networkName: 'RSK - Mainnet'
-    }
+    host: 'https://public-node.rsk.co',
+    chainId: 30,
+    networkId: 30,
+    blockExplorer: 'https://explorer.rsk.co/',
+    ticker: 'rBTC',
+    tickerName: 'rBTC',
+    networkName: 'RSK - Mainnet'
   },
   31: {
-    networkParams: {
-      host: 'https://public-node.testnet.rsk.co',
-      chainId: 31,
-      networkId: 31,
-      blockExplorer: 'https://explorer.testnet.rsk.co/',
-      ticker: 'tRBTC',
-      tickerName: 'tRBTC',
-      networkName: 'RSK - Testnet'
-    }
+    host: 'https://public-node.testnet.rsk.co',
+    chainId: 31,
+    networkId: 31,
+    blockExplorer: 'https://explorer.testnet.rsk.co/',
+    ticker: 'tRBTC',
+    tickerName: 'tRBTC',
+    networkName: 'RSK - Testnet'
   }
 }
 

@@ -463,7 +463,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
     const { onClose, userProviders, backendUrl, providerController, supportedChains, themes, rpcUrls } = this.props
-    const networkParamsOptions = PROVIDERS_NETWORK_PARAMS[selectedProviderUserOption?.name || '']
+    const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
     /**
      * handleClose is fired when the modal or providerModal is closed by the user
