@@ -16,7 +16,6 @@ import { isHardwareWalletProvider, getTutorialLocalStorageKey } from './lib/hard
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -28,6 +27,8 @@ import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
+import { Button } from './ui/shared/Button'
+import disconnectFromProvider from './lib/providerDisconnect'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -146,6 +147,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
+    this.closeModal = this.closeModal.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
     this.chooseNetwork = this.chooseNetwork.bind(this)
@@ -172,14 +174,15 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
+    /*
     // this resets the state if an unhandled error closed the modal
-
-    if (this.state.currentStep === 'loading' &&
-      !prevState.show && this.state.show
-    ) {
-      this.disconnectProvider()
-      this.setState({ currentStep: 'Step1' })
+    console.log('componentDidUpdate', prevState.show, this.state.show)
+    if (this.state.currentStep === 'loading' && !prevState.show && this.state.show) {
+      console.log('componentDidUpdate closing()')
+      this.closeModal()
     }
+    */
+
     if (this.lightboxRef) {
       const lightboxRect = this.lightboxRef.getBoundingClientRect()
       const lightboxOffset = lightboxRect.top > 0 ? lightboxRect.top : 0
@@ -410,38 +413,33 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    /**
-   * Disconnect from WalletConnect or Portis if it is the selected provider, and connected
-   * @param provider web3 Provider
+   * Disconnect from the provider
    */
-   private disconnectProvider (): void {
+   public disconnect () {
+     const { providerController } = this.props
      const { provider } = this.state
-     if (provider && provider.disconnect) {
-       provider.disconnect()
-       localStorage.removeItem(WALLETCONNECT)
-     }
+
+     disconnectFromProvider(provider)
+
+     // clean up the provider controller
+     providerController.clearCachedProvider()
+     this.setState(INITIAL_STATE)
    }
 
    /**
-   * Handle disconnect and cleanup state
-   */
-   public async disconnect (): Promise<void> {
-     const { providerController } = this.props
+    * Close Modal
+    * Triggered when the user closes the modal without finishing the process
+    */
+   private closeModal () {
+     const { onClose, providerController } = this.props
+     console.log('closing modal')
 
-     // WalletConnect and Portis Wrapper:
-     this.disconnectProvider()
-
-     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
-     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
-     localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
-
-     Object.keys(localStorage).map((key: string) => {
-       if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
-         localStorage.removeItem(key)
-       }
-     })
-
+     // clean up the provider controller
      providerController.clearCachedProvider()
      this.setState(INITIAL_STATE)
+
+     // send the onClose method to the dapp
+     onClose()
    }
 
   public changeLanguage = (language: string) => {
@@ -461,34 +459,20 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes, rpcUrls } = this.props
-
-    /**
-     * handleClose is fired when the modal or providerModal is closed by the user
-     */
-    const handleClose = () => {
-      // disconnect WalletConnect and Portis
-      this.disconnectProvider()
-
-      providerController.clearCachedProvider()
-      onClose()
-
-      // reset state
-      this.setState(INITIAL_STATE)
-    }
+    const { userProviders, backendUrl, supportedChains, themes, rpcUrls } = this.props
 
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
       <Modal
         lightboxOffset={lightboxOffset}
         show={show}
-        onClose={handleClose}
+        onClose={this.closeModal}
         setLightboxRef={this.setLightboxRef}
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} providerName={selectedProviderUserOption?.name} />}
+        {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.chooseNetwork({ rpcUrl, chainId })} />}
