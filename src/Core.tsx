@@ -27,7 +27,6 @@ import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
-import { Button } from './ui/shared/Button'
 import disconnectFromProvider from './lib/providerDisconnect'
 
 // copy-pasted and adapted
@@ -423,7 +422,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     */
    private closeModal () {
      const { onClose, providerController } = this.props
-     console.log('closing modal')
 
      // clean up the provider controller
      providerController.clearCachedProvider()
