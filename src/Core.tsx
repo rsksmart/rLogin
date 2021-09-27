@@ -173,16 +173,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return i18n.language
   }
 
-  public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
-    /*
-    // this resets the state if an unhandled error closed the modal
-    console.log('componentDidUpdate', prevState.show, this.state.show)
-    if (this.state.currentStep === 'loading' && !prevState.show && this.state.show) {
-      console.log('componentDidUpdate closing()')
-      this.closeModal()
-    }
-    */
-
+  public componentDidUpdate (_prevProps: IModalProps, _prevState: IModalState) {
     if (this.lightboxRef) {
       const lightboxRect = this.lightboxRef.getBoundingClientRect()
       const lightboxOffset = lightboxRect.top > 0 ? lightboxRect.top : 0
