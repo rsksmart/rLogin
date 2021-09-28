@@ -1,5 +1,7 @@
-import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, CACHED_PROVIDER_KEY, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, IProviderUserOptions, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, ERROR_EVENT, connectors, injected, providers } from 'web3modal'
 import { NetworkParams } from '../lib/networkOptionsTypes';
+import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, CACHED_PROVIDER_KEY, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, connectors, injected, providers } from 'web3modal'
+
+import { RLoginIProviderUserOptions } from '../Core'
 
 export class RLoginProviderController {
   public cachedProvider: string = '';
@@ -134,7 +136,7 @@ export class RLoginProviderController {
       })
     }
 
-    const userOptions: IProviderUserOptions[] = []
+    const userOptions: RLoginIProviderUserOptions[] = []
 
     providerList.forEach((id: string) => {
       const provider = this.getProvider(id)
@@ -178,27 +180,30 @@ export class RLoginProviderController {
     setLocal(CACHED_PROVIDER_KEY, id)
   }
 
-  public connectTo = async (
+  public connectTo = (
     id: string,
     connector: (providerPackage: any, opts: any) => Promise<any>,
     optionalOpts?: { chainId?: number, rpcUrl?: string, networkParams?: any }
   ) => {
-    try {
-      const providerPackage = this.getProviderOption(id, 'package')
-      const providerOptions = {
-        ...this.getProviderOption(id, 'options'),
-        ...optionalOpts
-      }
-
-      const opts = { network: this.network || undefined, ...providerOptions }
-      const provider = await connector(providerPackage, opts)
-      this.eventController.trigger(CONNECT_EVENT, provider)
-      if (this.shouldCacheProvider && this.cachedProvider !== id) {
-        this.setCachedProvider(id)
-      }
-    } catch (error) {
-      this.eventController.trigger(ERROR_EVENT)
+    const providerPackage = this.getProviderOption(id, 'package')
+    const providerOptions = {
+      ...this.getProviderOption(id, 'options'),
+      ...optionalOpts
     }
+
+    const opts = { network: this.network || undefined, ...providerOptions }
+
+    return new Promise((resolve, reject) => {
+      connector(providerPackage, opts)
+        .then((provider: any) => {
+          this.eventController.trigger(CONNECT_EVENT, provider)
+          if (this.shouldCacheProvider && this.cachedProvider !== id) {
+            this.setCachedProvider(id)
+          }
+          resolve(true)
+        })
+        .catch((err: any) => reject(err))
+    })
   };
 
   public async connectToCachedProvider () {
