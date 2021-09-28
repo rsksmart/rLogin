@@ -254,7 +254,7 @@ Please take a look at the following file to add more languages:
 ```
 /src/i18n.ts
 ```
-### Choose network for hardware wallets
+### Choose network for hardware wallets and Torus
 
 A dapp and hardware wallet could support multiple networks so to help users, a middle step has been added to choose the network. To enable this, the developer needs to add fallback chains. Below is an example of how a developer would add Ledger with the network choose:
 

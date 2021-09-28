@@ -1,3 +1,4 @@
+import { NetworkParams } from '../lib/networkOptionsTypes'
 import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, CACHED_PROVIDER_KEY, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, connectors, injected, providers } from 'web3modal'
 
 import { RLoginIProviderUserOptions } from '../Core'
@@ -145,7 +146,7 @@ export class RLoginProviderController {
           name,
           logo,
           description: getProviderDescription(provider),
-          onClick: (opts?: { chainId: number, rpcUrl: string }) => this.connectTo(id, connector, opts)
+          onClick: (opts?: { chainId: number, rpcUrl?: string, networkParams?: NetworkParams }) => this.connectTo(id, connector, opts)
         })
       }
     })
@@ -182,7 +183,7 @@ export class RLoginProviderController {
   public connectTo = (
     id: string,
     connector: (providerPackage: any, opts: any) => Promise<any>,
-    optionalOpts?: { chainId?: number, rpcUrl?: string }
+    optionalOpts?: { chainId?: number, rpcUrl?: string, networkParams?: any }
   ) => {
     const providerPackage = this.getProviderOption(id, 'package')
     const providerOptions = {
