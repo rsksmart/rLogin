@@ -12,7 +12,7 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
-import { isHardwareWalletProvider, getTutorialLocalStorageKey } from './lib/hardware-wallets'
+import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
@@ -28,6 +28,8 @@ import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
 import disconnectFromProvider from './lib/providerDisconnect'
+import { NetworkParams } from './lib/networkOptionsTypes'
+import { Button } from './ui/shared/Button'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -82,6 +84,7 @@ type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' 
 interface ErrorDetails {
   title: string
   description?: string
+  footerCta?: React.ReactNode
 }
 
 interface IAvailableLanguage {
@@ -89,7 +92,7 @@ interface IAvailableLanguage {
   name: string
 }
 
-type NetworkConnectionConfig = { chainId: number, rpcUrl: string }
+type NetworkConnectionConfig = { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }
 
 interface IModalState {
   show: boolean
@@ -119,11 +122,11 @@ const INITIAL_STATE: IModalState = {
 /**
  * IProviderUserOptions with added onClick variable
  */
-interface RLoginIProviderUserOptions {
+export interface RLoginIProviderUserOptions extends IProviderUserOptions {
   name: string;
   logo: string;
   description: string;
-  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<void>; // adds optional options
+  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<any>; // adds optional options
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
@@ -251,7 +254,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      this.setState({ provider }, () => {
        // choose the network first:
        const { rpcUrls } = this.props
-       if (isHardwareWalletProvider(provider.name) && rpcUrls) {
+       if (requiresNetworkSelection(provider.name) && rpcUrls) {
          return this.setState({ currentStep: 'chooseNetwork' })
        }
 
@@ -285,13 +288,23 @@ export class Core extends React.Component<IModalProps, IModalState> {
    private connectToWallet () {
      const { provider, chosenNetwork } = this.state
      const providerName = provider.name || 'Provider'
-     provider.onClick(chosenNetwork)
 
-     this.setState({
-       currentStep: 'loading',
-       loadingReason: `Connecting to ${providerName}`,
-       selectedProviderUserOption: provider
-     })
+     provider.onClick(chosenNetwork)
+       .then(() =>
+         this.setState({
+           currentStep: 'loading',
+           loadingReason: `Connecting to ${providerName}`,
+           selectedProviderUserOption: provider
+         }))
+       .catch((err: any) =>
+         this.setState({
+           currentStep: 'error',
+           errorReason: {
+             title: `Could not connect to ${providerName}`,
+             description: (err instanceof Error) ? err.message : err.toString(),
+             footerCta: <Button onClick={() => this.setState({ ...INITIAL_STATE, show: true })}>Start Over</Button>
+           }
+         }))
    }
 
    /** Step 1 Provider Answered
@@ -449,6 +462,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
     const { userProviders, backendUrl, supportedChains, themes, rpcUrls } = this.props
+    const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
       <Modal
@@ -462,9 +476,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
+        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.chooseNetwork({ rpcUrl, chainId })} />}
+        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl, networkParams }) => this.chooseNetwork({ chainId, rpcUrl, networkParams })} />}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
