@@ -126,7 +126,11 @@ export class RLogin {
     .then(() => this.eventController.trigger(event, ...args))
 
   /** event handlers */
-  private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
+  private onClose = () => {
+    this.resetState()
+    this.handleOnAndTrigger(CLOSE_EVENT)
+  }
+
   private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, selectedTheme, dataVault })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
@@ -200,7 +204,7 @@ export class RLogin {
         return
       }
 
-      await this.toggleModal() // pre: the modal is closed
+      this.showModal()
     });
 
   /**
