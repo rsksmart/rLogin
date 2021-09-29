@@ -65,9 +65,10 @@ export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
 export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => {
   // the providers that are hardcoded into the layout below
   const hardCodedProviderNames = [
-    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name,
-    providers.WALLETCONNECT.name, providers.PORTIS.name, EDGE.name,
-    LEDGER.name, TREZOR.name, DCENT.name
+    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, // browser
+    providers.WALLETCONNECT.name, // mobile
+    providers.PORTIS.name, providers.TORUS.name, EDGE.name, // custodial
+    LEDGER.name, TREZOR.name, DCENT.name // hardware
   ]
 
   const providersByName = userProvidersByName(userProviders)
@@ -94,6 +95,7 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
       </ProviderRow>
       <ProviderRow>
         <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[providers.TORUS.name] || providers.TORUS} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[EDGE.name] || EDGE} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
