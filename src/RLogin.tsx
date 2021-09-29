@@ -121,6 +121,10 @@ export class RLogin {
     this.updateState({ show: true })
   }
 
+  public showModalInfo = () => {
+    this.updateState({ show: true, currentStep: 'ConfirmInformation', mode: 'display' })
+  }
+
   /** handles an event and closes modal if open */
   private handleOnAndTrigger = async (event: string, ...args: any) => this.closeModalIfOpen()
     .then(() => this.eventController.trigger(event, ...args))
