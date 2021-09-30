@@ -79,7 +79,7 @@ interface IModalProps {
   rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
+type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -97,7 +97,6 @@ type NetworkConnectionConfig = { chainId: number, rpcUrl?: string, networkParams
 interface IModalState {
   show: boolean
   currentStep: Step
-  displayMode: boolean
   lightboxOffset: number
   provider?: any
   sdr?: SDR
@@ -117,8 +116,7 @@ const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
   currentStep: 'Step1',
-  loadingReason: '',
-  displayMode: false
+  loadingReason: ''
 }
 
 /**
@@ -344,7 +342,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
      if (!backendUrl) {
        this.setState({
-         currentStep: 'ConfirmInformation'
+         currentStep: 'confirmInformation'
        })
      } else {
        const loadingReason = i18next.t('Connecting to server')
@@ -355,7 +353,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
            challenge,
            sdr,
            sd: undefined,
-           currentStep: sdr ? 'Step2' : 'ConfirmInformation'
+           currentStep: sdr ? 'Step2' : 'confirmInformation'
            // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
          })
        })
@@ -377,7 +375,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private onConfirmSelectiveDisclosure (sd: SD) {
-     this.setState({ sd, currentStep: 'ConfirmInformation' })
+     this.setState({ sd, currentStep: 'confirmInformation' })
    }
 
    /** Step 3 */
@@ -463,7 +461,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, displayMode, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
+    const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
     const { userProviders, backendUrl, supportedChains, themes, rpcUrls } = this.props
     const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
@@ -478,9 +476,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'ConfirmInformation' && <ConfirmInformation displayMode={displayMode} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
+        {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
-        {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+        {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl, networkParams }) => this.chooseNetwork({ chainId, rpcUrl, networkParams })} />}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}

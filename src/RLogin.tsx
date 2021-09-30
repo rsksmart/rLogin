@@ -122,7 +122,11 @@ export class RLogin {
   }
 
   public showWalletInfo = () => {
-    this.updateState({ show: true, currentStep: 'ConfirmInformation', displayMode: true })
+    this.updateState({ show: true, currentStep: 'walletInfo' })
+  }
+
+  public showChangeNetwork = () => {
+    this.updateState({ show: true, currentStep: 'changeNetwork' })
   }
 
   /** handles an event and closes modal if open */
