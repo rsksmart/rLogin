@@ -121,7 +121,7 @@ export class RLogin {
     this.updateState({ show: true })
   }
 
-  public showModalInfo = () => {
+  public showWalletInfo = () => {
     this.updateState({ show: true, currentStep: 'ConfirmInformation', displayMode: true })
   }
 

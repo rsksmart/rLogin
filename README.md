@@ -118,13 +118,15 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
     
     > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/helpers.ts
 
-5. Once you are connected, you can use the showModalInfo to open a popup with the wallet info.
+### Triggers
 
-    ```typescript
-    const openWalletInfo = () => {
-        rLogin.showModalInfo()
-    }
-    ```
+Once the user is connected, you can use the triggers to show info to the user.
+
+To show the **wallet information** (address and network):
+
+```typescript
+rLogin.showWalletInfo()
+```
 
 ## Flavors
 

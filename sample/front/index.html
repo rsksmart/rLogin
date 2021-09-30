@@ -148,7 +148,7 @@
       // setup login button
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
-      document.getElementById('showInfo').addEventListener('click', () => rLogin.showModalInfo());
+      document.getElementById('showInfo').addEventListener('click', () => rLogin.showWalletInfo());
       rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
       rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
       // ui - display handlers
