@@ -118,6 +118,14 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
     
     > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/helpers.ts
 
+5. Once you are connected, you can use the showModalInfo to open a popup with the wallet info.
+
+    ```typescript
+    const openWalletInfo = () => {
+        rLogin.showModalInfo()
+    }
+    ```
+
 ## Flavors
 
 - Fully-decentralized apps: this kind of apps are used only client-side. The front-end will need to know user's address and information for presentational purposes. The core operations are performed using blockchain transactions.
