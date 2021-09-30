@@ -7,3 +7,9 @@ import LocalStorageMock from './LocalStorageMock'
 Enzyme.configure({ adapter: new Adapter() })
 
 Object.defineProperty(window, 'localStorage', { value: LocalStorageMock })
+
+// mocking TextEncoder/TextDecoder
+const { TextEncoder, TextDecoder } = require('util')
+
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder
