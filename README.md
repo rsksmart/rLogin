@@ -122,13 +122,13 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
 
 Once the user is connected, you can use the triggers to show info to the user.
 
-1. To show the **wallet information** (address and network):
+- To show the **wallet information** (address and network):
 
 ```typescript
 rLogin.showWalletInfo()
 ```
 
-2. To open a dialog that allows the user to select another network:
+- To open a dialog that allows the user to select another network:
 
 ```typescript
 rLogin.showChangeNetwork()
