@@ -12,14 +12,13 @@ import ConfirmInWallet from '../../ui/shared/ConfirmInWallet'
 import styled from 'styled-components'
 
 import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
-import { Mode } from '../../Core'
 
 const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
 
 interface ConfirmInformationProps {
   chainId: number | undefined
   address: string | undefined
-  mode: Mode
+  displayMode: boolean
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
   provider: any
@@ -28,7 +27,7 @@ interface ConfirmInformationProps {
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ mode, chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -45,10 +44,10 @@ export function ConfirmInformation ({ mode, chainId, address, providerUserOption
     const DONT_SHOW_AGAIN_DEFAULT: boolean =
       localStorage.getItem(DONT_SHOW_AGAIN_KEY) ? JSON.parse(localStorage.getItem(DONT_SHOW_AGAIN_KEY)!) : false
 
-    if (DONT_SHOW_AGAIN_DEFAULT && mode === 'connect') {
+    if (DONT_SHOW_AGAIN_DEFAULT && !displayMode) {
       handleSubmit()
     }
-  }, [mode])
+  }, [displayMode])
 
   const peerWallet = getPeerInfo(provider?.wc?.peerMeta)
 
@@ -80,7 +79,7 @@ export function ConfirmInformation ({ mode, chainId, address, providerUserOption
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
         </Column>
       </List>
-      {mode === 'connect' && (
+      {!displayMode && (
         <>
           <CenterContent>
             <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
@@ -101,20 +100,20 @@ export function ConfirmInformation ({ mode, chainId, address, providerUserOption
     : <ConfirmInWallet providerName={providerName || ''} />
 }
 
-export const Column = styled.div`
+const Column = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 `
 
-export const List = styled.dl`
+const List = styled.dl`
   display: flex;
   padding: 50px 0;
   justify-content: center;
   gap: 30px;
 `
 
-export const TitleWrapper = styled.dt`
+const TitleWrapper = styled.dt`
   ${typeShared}
   font-weight: 500 !important;
   font-size: 16px;
@@ -126,13 +125,13 @@ export const TitleWrapper = styled.dt`
   max-width: 150px;
   text-align: left;
 `
-export const Title: React.FC<{ className?: string; }> = ({ children, className }) => (
+const Title: React.FC<{ className?: string; }> = ({ children, className }) => (
   <TitleWrapper className={className ? `${LIST_TITLE} ${className}` : LIST_TITLE}>
     {children}
   </TitleWrapper>
 )
 
-export const DescriptionWrapper = styled.dd`
+const DescriptionWrapper = styled.dd`
   ${typeShared}
   font-weight: 400 !important;
   font-size: 16px;
@@ -144,19 +143,19 @@ export const DescriptionWrapper = styled.dd`
   max-width: 150px;
   text-align: left;
 `
-export const Description: React.FC<{ className?: string; }> = ({ children, className }) => (
+const Description: React.FC<{ className?: string; }> = ({ children, className }) => (
   <DescriptionWrapper className={className ? `${LIST_DESCRIPTION} ${className}` : LIST_DESCRIPTION}>
     {children}
   </DescriptionWrapper>
 )
 
-export const CenterContent = styled.div`
+const CenterContent = styled.div`
   display: flex; 
   gap: 16px;
   justify-content: center;
 `
 
-export const LogoWrapper = styled.div`
+const LogoWrapper = styled.div`
   margin-top: 30px;
   width: 85px;
   height: 85px;

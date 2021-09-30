@@ -94,12 +94,10 @@ interface IAvailableLanguage {
 
 type NetworkConnectionConfig = { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }
 
-export type Mode = 'connect' | 'display'
-
 interface IModalState {
   show: boolean
   currentStep: Step
-  mode: Mode
+  displayMode: boolean
   lightboxOffset: number
   provider?: any
   sdr?: SDR
@@ -120,7 +118,7 @@ const INITIAL_STATE: IModalState = {
   lightboxOffset: 0,
   currentStep: 'Step1',
   loadingReason: '',
-  mode: 'connect'
+  displayMode: false
 }
 
 /**
@@ -465,7 +463,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public render = () => {
-    const { show, lightboxOffset, currentStep, mode, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
+    const { show, lightboxOffset, currentStep, displayMode, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
     const { userProviders, backendUrl, supportedChains, themes, rpcUrls } = this.props
     const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
@@ -480,7 +478,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'ConfirmInformation' && <ConfirmInformation mode={mode} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
+        {currentStep === 'ConfirmInformation' && <ConfirmInformation displayMode={displayMode} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl, networkParams }) => this.chooseNetwork({ chainId, rpcUrl, networkParams })} />}
