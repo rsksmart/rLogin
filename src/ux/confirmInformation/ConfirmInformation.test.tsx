@@ -2,7 +2,6 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { ConfirmInformation } from './ConfirmInformation'
 import { CHECKBOX_CLASSNAME, LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
-import { Mode } from '../../Core'
 
 interface IStore {
   [key: string]: any
@@ -45,7 +44,7 @@ describe('Component: ConfirmInformation', () => {
     provider: undefined,
     onConfirm: jest.fn(),
     onCancel: jest.fn(),
-    mode: 'connect' as Mode
+    displayMode: false
   }
 
   beforeEach(() => {
@@ -140,7 +139,7 @@ describe('Component: ConfirmInformation', () => {
   })
 
   it('mode == display should not show any action button', () => {
-    const wrapper = mount(<ConfirmInformation {...props} mode="display" />)
+    const wrapper = mount(<ConfirmInformation {...props} displayMode={true} />)
 
     const confirmButton = wrapper.find('button.confirm').exists()
     const cancelButton = wrapper.find('button.cancel').exists()
