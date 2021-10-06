@@ -121,6 +121,14 @@ export class RLogin {
     this.updateState({ show: true })
   }
 
+  public showWalletInfo = () => {
+    this.updateState({ show: true, currentStep: 'walletInfo' })
+  }
+
+  public showChangeNetwork = () => {
+    this.updateState({ show: true, currentStep: 'changeNetwork' })
+  }
+
   /** handles an event and closes modal if open */
   private handleOnAndTrigger = async (event: string, ...args: any) => this.closeModalIfOpen()
     .then(() => this.eventController.trigger(event, ...args))

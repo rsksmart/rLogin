@@ -28,6 +28,10 @@
       <p id="refresh-token" class="be-only"></p>
       <hr />
       <h2>Actions</h2>
+      <button id="showInfo" disabled>show wallet info</button>
+      <br /><br />
+      <button id="changeNetwork" disabled>change network</button>
+      <br /><br />
       <button id="send-tx" disabled>send</button>
       <p id="tx"></p>
       <button id="sign" disabled>sign</button>
@@ -147,6 +151,8 @@
       // setup login button
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
+      document.getElementById('showInfo').addEventListener('click', () => rLogin.showWalletInfo());
+      document.getElementById('changeNetwork').addEventListener('click', () => rLogin.showChangeNetwork());
       rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
       rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
       // ui - display handlers
@@ -180,6 +186,8 @@
 
         document.getElementById('login').setAttribute('disabled', true)
         document.getElementById('loginMetamask').setAttribute('disabled', true)
+        document.getElementById('showInfo').removeAttribute('disabled')
+        document.getElementById('changeNetwork').removeAttribute('disabled')
         document.getElementById('reset').removeAttribute('disabled')
 
         // handle eip-1193
@@ -320,6 +328,8 @@
           // reset button states:
           document.getElementById('login').removeAttribute('disabled')
           document.getElementById('loginMetamask').removeAttribute('disabled')
+          document.getElementById('showInfo').setAttribute('disabled', true)
+          document.getElementById('changeNetwork').setAttribute('disabled', true)
           document.getElementById('send-tx').setAttribute('disabled', true)
           document.getElementById('sign').setAttribute('disabled', true)
           document.getElementById('sign-typed-data').setAttribute('disabled', true)

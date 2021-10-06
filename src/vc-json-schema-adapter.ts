@@ -10,7 +10,7 @@ export function credentialToText (schema: string, jwt: string) {
 
     try {
       const parsedEmailVC = parseVerifiableCredential('Email', jwtDecoded.payload.vc)
-      return `${parsedEmailVC.Email.prefix.en}: ${parsedEmailVC.Email.text}`
+      return `${parsedEmailVC.Email?.prefix.en}: ${parsedEmailVC.Email?.text}`
     } catch (e) {
       return 'Invalid credential schema...'
     }
@@ -25,7 +25,7 @@ export function credentialValueToText (schema: string, jwt: string) {
 
     try {
       const parsedEmailVC = parseVerifiableCredential('Email', jwtDecoded.payload.vc)
-      return parsedEmailVC.Email.text
+      return parsedEmailVC.Email?.text
     } catch (e) {
       return 'Invalid credential schema...'
     }
