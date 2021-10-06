@@ -136,4 +136,15 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
     cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
   })
+
+  it('should open change network modal', () => {
+    loginWithModal()
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+    cy.get('#changeNetwork').click()
+
+    cy.get('.rlogin-header2').should('have.text', 'Select Network')
+    cy.get('.changeNetwork').should('be.visible')
+  })
 })
