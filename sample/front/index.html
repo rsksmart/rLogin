@@ -28,6 +28,10 @@
       <p id="refresh-token" class="be-only"></p>
       <hr />
       <h2>Actions</h2>
+      <button id="showInfo" disabled>show wallet info</button>
+      <br /><br />
+      <button id="changeNetwork" disabled>change network</button>
+      <br /><br />
       <button id="send-tx" disabled>send</button>
       <p id="tx"></p>
       <button id="sign" disabled>sign</button>
@@ -48,6 +52,8 @@
 
     <!-- Custodial -->
     <script src="https://unpkg.com/@portis/web3@4.0.0/umd/index.js" integrity="sha384-rVrQx3OPQbx/BulpfW0MLzID/fIM+x2qiI9Ibhpgd8MKK7wqsVPRRLDMQDWU7zS3" crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/@toruslabs/torus-embed@1.13.4/dist/torus.umd.min.js" integrity="sha256-PYFNxx1jq9Yra6tv1R5bB+VBP3lxSQG+aGie+UcVYro=" crossorigin="anonymous"></script>
 
     <!-- Hardware -->
     <script src="https://unpkg.com/@rsksmart/rlogin-ledger-provider@1.0.0-beta.8/dist/bundle.js" integrity="sha384-m/q7N5NZG7fIxx00ult4A74N/jPFwgG564OiwXPPXpdHzu1i5BAyxPA4535U/Yqs" crossorigin="anonymous"></script>
@@ -90,6 +96,7 @@
           walletconnect: {
             package: window.WalletConnectProvider.default,
             options: {
+              bridge: "https://walletconnect-bridge.rifos.org/",
               rpc: {
                 1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
                 30: 'https://public-node.rsk.co',
@@ -98,7 +105,7 @@
             }
           },
           portis: {
-            package: Portis,
+            package: window.Portis,
             options: {
               id: "34616571-d57b-4805-868b-2dcc7b7662d7",
               network: {
@@ -118,6 +125,9 @@
           'custom-dcent': {
             ...window.rLoginDCentProvider.dcentProviderOptions,
           },
+          torus: {
+            package: window.Torus,
+          }
         },
         backendUrl,
         keepModalHidden,
@@ -141,6 +151,8 @@
       // setup login button
       document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
+      document.getElementById('showInfo').addEventListener('click', () => rLogin.showWalletInfo());
+      document.getElementById('changeNetwork').addEventListener('click', () => rLogin.showChangeNetwork());
       rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
       rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
       // ui - display handlers
@@ -174,6 +186,8 @@
 
         document.getElementById('login').setAttribute('disabled', true)
         document.getElementById('loginMetamask').setAttribute('disabled', true)
+        document.getElementById('showInfo').removeAttribute('disabled')
+        document.getElementById('changeNetwork').removeAttribute('disabled')
         document.getElementById('reset').removeAttribute('disabled')
 
         // handle eip-1193
@@ -314,6 +328,8 @@
           // reset button states:
           document.getElementById('login').removeAttribute('disabled')
           document.getElementById('loginMetamask').removeAttribute('disabled')
+          document.getElementById('showInfo').setAttribute('disabled', true)
+          document.getElementById('changeNetwork').setAttribute('disabled', true)
           document.getElementById('send-tx').setAttribute('disabled', true)
           document.getElementById('sign').setAttribute('disabled', true)
           document.getElementById('sign-typed-data').setAttribute('disabled', true)

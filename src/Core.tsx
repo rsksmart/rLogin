@@ -12,11 +12,10 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
-import { isHardwareWalletProvider, getTutorialLocalStorageKey } from './lib/hardware-wallets'
+import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from './constants'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
 import { AxiosError } from 'axios'
 import { portisWrapper } from './lib/portisWrapper'
@@ -28,6 +27,9 @@ import { ThemeType, themesOptions } from './theme'
 import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
+import disconnectFromProvider from './lib/providerDisconnect'
+import { NetworkParams } from './lib/networkOptionsTypes'
+import { Button } from './ui/shared/Button'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -77,11 +79,12 @@ interface IModalProps {
   rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'ConfirmInformation' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
+type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
   description?: string
+  footerCta?: React.ReactNode
 }
 
 interface IAvailableLanguage {
@@ -89,7 +92,7 @@ interface IAvailableLanguage {
   name: string
 }
 
-type NetworkConnectionConfig = { chainId: number, rpcUrl: string }
+type NetworkConnectionConfig = { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }
 
 interface IModalState {
   show: boolean
@@ -119,11 +122,11 @@ const INITIAL_STATE: IModalState = {
 /**
  * IProviderUserOptions with added onClick variable
  */
-interface RLoginIProviderUserOptions {
+export interface RLoginIProviderUserOptions extends IProviderUserOptions {
   name: string;
   logo: string;
   description: string;
-  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<void>; // adds optional options
+  onClick: (optionalOpts?: { chainId: number, rpcUrl: string }) => Promise<any>; // adds optional options
 }
 
 export class Core extends React.Component<IModalProps, IModalState> {
@@ -146,6 +149,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmSelectiveDisclosure = this.onConfirmSelectiveDisclosure.bind(this)
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
+    this.closeModal = this.closeModal.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
     this.chooseNetwork = this.chooseNetwork.bind(this)
@@ -171,15 +175,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return i18n.language
   }
 
-  public componentDidUpdate (prevProps: IModalProps, prevState: IModalState) {
-    // this resets the state if an unhandled error closed the modal
-
-    if (this.state.currentStep === 'loading' &&
-      !prevState.show && this.state.show
-    ) {
-      this.disconnectProvider()
-      this.setState({ currentStep: 'Step1' })
-    }
+  public componentDidUpdate (_prevProps: IModalProps, _prevState: IModalState) {
     if (this.lightboxRef) {
       const lightboxRect = this.lightboxRef.getBoundingClientRect()
       const lightboxOffset = lightboxRect.top > 0 ? lightboxRect.top : 0
@@ -258,7 +254,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      this.setState({ provider }, () => {
        // choose the network first:
        const { rpcUrls } = this.props
-       if (isHardwareWalletProvider(provider.name) && rpcUrls) {
+       if (requiresNetworkSelection(provider.name) && rpcUrls) {
          return this.setState({ currentStep: 'chooseNetwork' })
        }
 
@@ -292,13 +288,23 @@ export class Core extends React.Component<IModalProps, IModalState> {
    private connectToWallet () {
      const { provider, chosenNetwork } = this.state
      const providerName = provider.name || 'Provider'
-     provider.onClick(chosenNetwork)
 
-     this.setState({
-       currentStep: 'loading',
-       loadingReason: `Connecting to ${providerName}`,
-       selectedProviderUserOption: provider
-     })
+     provider.onClick(chosenNetwork)
+       .then(() =>
+         this.setState({
+           currentStep: 'loading',
+           loadingReason: `Connecting to ${providerName}`,
+           selectedProviderUserOption: provider
+         }))
+       .catch((err: any) =>
+         this.setState({
+           currentStep: 'error',
+           errorReason: {
+             title: `Could not connect to ${providerName}`,
+             description: (err instanceof Error) ? err.message : err.toString(),
+             footerCta: <Button onClick={() => this.setState({ ...INITIAL_STATE, show: true })}>Start Over</Button>
+           }
+         }))
    }
 
    /** Step 1 Provider Answered
@@ -307,6 +313,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    */
    private setupProvider (userProvider: any) {
      const provider = userProvider.isPortis ? portisWrapper(userProvider) : userProvider
+
      this.setState({ provider })
 
      const { onAccountsChange } = this.props
@@ -335,7 +342,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
      if (!backendUrl) {
        this.setState({
-         currentStep: 'ConfirmInformation'
+         currentStep: 'confirmInformation'
        })
      } else {
        const loadingReason = i18next.t('Connecting to server')
@@ -346,7 +353,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
            challenge,
            sdr,
            sd: undefined,
-           currentStep: sdr ? 'Step2' : 'ConfirmInformation'
+           currentStep: sdr ? 'Step2' : 'confirmInformation'
            // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
          })
        })
@@ -368,11 +375,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private onConfirmSelectiveDisclosure (sd: SD) {
-     this.setState({ sd, currentStep: 'ConfirmInformation' })
+     this.setState({ sd, currentStep: 'confirmInformation' })
    }
 
    /** Step 3 */
-   private onConfirmAuth () {
+   private onConfirmAuth (): Promise<any> {
      const { backendUrl, onConnect } = this.props
      const { provider, dataVault, challenge, address, sd } = this.state
      const did = this.did()
@@ -383,7 +390,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
      const handleConnect = (provider: any) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
 
-     confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+     return confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
        .catch((error: Error | AxiosError) => {
          // this error handling is added to help user when challenge expired. in that
          // case we ask for a new challenge and ask again the user to sign
@@ -398,7 +405,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
          const description = (error as AxiosError).response && (error as AxiosError).response?.data
          if (description) {
            this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: decodeURI(description) } })
-           return
+           return Promise.resolve()
          }
 
          this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
@@ -410,38 +417,32 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    /**
-   * Disconnect from WalletConnect or Portis if it is the selected provider, and connected
-   * @param provider web3 Provider
+   * Disconnect from the provider
    */
-   private disconnectProvider (): void {
+   public disconnect () {
+     const { providerController } = this.props
      const { provider } = this.state
-     if (provider && provider.disconnect) {
-       provider.disconnect()
-       localStorage.removeItem(WALLETCONNECT)
-     }
+
+     disconnectFromProvider(provider)
+
+     // clean up the provider controller
+     providerController.clearCachedProvider()
+     this.setState(INITIAL_STATE)
    }
 
    /**
-   * Handle disconnect and cleanup state
-   */
-   public async disconnect (): Promise<void> {
-     const { providerController } = this.props
+    * Close Modal
+    * Triggered when the user closes the modal without finishing the process
+    */
+   private closeModal () {
+     const { onClose, providerController } = this.props
 
-     // WalletConnect and Portis Wrapper:
-     this.disconnectProvider()
-
-     localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
-     localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
-     localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
-
-     Object.keys(localStorage).map((key: string) => {
-       if (key.startsWith('DV_ACCESS_TOKEN') || key.startsWith('DV_REFRESH_TOKEN')) {
-         localStorage.removeItem(key)
-       }
-     })
-
+     // clean up the provider controller
      providerController.clearCachedProvider()
      this.setState(INITIAL_STATE)
+
+     // send the onClose method to the dapp
+     onClose()
    }
 
   public changeLanguage = (language: string) => {
@@ -461,37 +462,24 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
-    const { onClose, userProviders, backendUrl, providerController, supportedChains, themes, rpcUrls } = this.props
-
-    /**
-     * handleClose is fired when the modal or providerModal is closed by the user
-     */
-    const handleClose = () => {
-      // disconnect WalletConnect and Portis
-      this.disconnectProvider()
-
-      providerController.clearCachedProvider()
-      onClose()
-
-      // reset state
-      this.setState(INITIAL_STATE)
-    }
+    const { userProviders, backendUrl, supportedChains, themes, rpcUrls } = this.props
+    const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
       <Modal
         lightboxOffset={lightboxOffset}
         show={show}
-        onClose={handleClose}
+        onClose={this.closeModal}
         setLightboxRef={this.setLightboxRef}
         mainModalCard={this.mainModalCard}
         big={currentStep === 'Step1'}
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'ConfirmInformation' && <ConfirmInformation chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={handleClose} providerName={selectedProviderUserOption?.name} />}
-        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description}/>}
-        {currentStep === 'wrongNetwork' && <WrongNetworkComponent supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl }) => this.chooseNetwork({ rpcUrl, chainId })} />}
+        {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
+        {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
+        {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl, networkParams }) => this.chooseNetwork({ chainId, rpcUrl, networkParams })} />}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>

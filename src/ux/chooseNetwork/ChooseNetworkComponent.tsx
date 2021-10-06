@@ -6,14 +6,17 @@ import { Header2 } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
+import { NetworkParams, NetworkParamsOptions } from '../../lib/networkOptionsTypes'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
-  chooseNetwork: (network: { chainId: number, rpcUrl: string }) => void
+  networkParamsOptions?: NetworkParamsOptions
+  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }) => void
 }
 
 const ChooseNetworkComponent: React.FC<Interface> = ({
   rpcUrls,
+  networkParamsOptions,
   chooseNetwork
 }) => {
   if (!rpcUrls) {
@@ -22,7 +25,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
 
   const handleSelect = () =>
-    chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId] })
+    chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId], networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]) })
 
   return (
     <div>

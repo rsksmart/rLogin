@@ -16,17 +16,19 @@ describe('modal - chose metamask fails, then walletconnect works', () => {
     })
   })
 
-  it('Try to open Metamask but fails', () => { // no error here until web3modal fixes the error return for connect
+  it('Try to open Metamask but fails', () => {
     cy.visit('/')
     cy.contains('login with rLogin').click()
     cy.contains('MetaMask').click()
-    cy.get('.rlogin-modal-lightbox').should('be.not.visible')
+    cy.get('.rlogin-header2').should('have.text', 'Could not connect to MetaMask')
+    cy.get('.rlogin-modal-close-button').click()
   })
 
-  it('retry to open Metamask but fails', () => { // no error here until web3modal fixes the error return for connect
+  it('retry to open Metamask but fails', () => {
     cy.contains('login with rLogin').click()
     cy.contains('MetaMask').click()
-    cy.get('.rlogin-modal-lightbox').should('be.not.visible')
+    cy.get('.rlogin-header2').should('have.text', 'Could not connect to MetaMask')
+    cy.get('.rlogin-modal-close-button').click()
   })
 
   it('shows a QR code for WalletConnect', () => { // try with WalletConnect should work

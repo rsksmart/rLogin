@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
 import { SD } from '../../lib/sdr'
 import { Header2, SmallSpan, typeShared } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
@@ -8,41 +7,47 @@ import { Trans } from 'react-i18next'
 import { getChainName } from '../../adapters'
 import { IProviderUserOptions } from 'web3modal'
 import Checkbox from '../../ui/shared/Checkbox'
-import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 import { getPeerInfo } from './getPeerLogo'
 import ConfirmInWallet from '../../ui/shared/ConfirmInWallet'
+import styled from 'styled-components'
+
+import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 
 const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
 
 interface ConfirmInformationProps {
   chainId: number | undefined
   address: string | undefined
+  displayMode: boolean
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
   provider: any
   providerName?: string
-  onConfirm: () => void
+  onConfirm: () => Promise<any>
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true)
-    onConfirm()
+
+    await onConfirm()
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
     const DONT_SHOW_AGAIN_DEFAULT: boolean =
       localStorage.getItem(DONT_SHOW_AGAIN_KEY) ? JSON.parse(localStorage.getItem(DONT_SHOW_AGAIN_KEY)!) : false
 
-    if (DONT_SHOW_AGAIN_DEFAULT) {
+    if (DONT_SHOW_AGAIN_DEFAULT && !displayMode) {
       handleSubmit()
     }
-  }, [])
+  }, [displayMode])
 
   const peerWallet = getPeerInfo(provider?.wc?.peerMeta)
 
@@ -74,19 +79,23 @@ export function ConfirmInformation ({ chainId, address, providerUserOption, sd, 
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
         </Column>
       </List>
-      <CenterContent>
-        <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
-        <Button onClick={handleSubmit} disabled={isLoading} className="confirm"><Trans>Confirm</Trans></Button>
-      </CenterContent>
-      <CenterContent>
-        <label style={{ marginTop: 20 }}>
-          <Checkbox checked={dontShowAgainSelected} onChange={() => setDontShowAgainSelected(prev => {
-            localStorage.setItem(DONT_SHOW_AGAIN_KEY, JSON.stringify(!prev))
-            return !prev
-          })} />
-          <SmallSpan><Trans>Do not show again</Trans></SmallSpan>
-        </label>
-      </CenterContent>
+      {!displayMode && (
+        <>
+          <CenterContent>
+            <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
+            <Button onClick={handleSubmit} disabled={isLoading} className="confirm"><Trans>Confirm</Trans></Button>
+          </CenterContent>
+          <CenterContent>
+            <label style={{ marginTop: 20 }}>
+              <Checkbox checked={dontShowAgainSelected} onChange={() => setDontShowAgainSelected(prev => {
+                localStorage.setItem(DONT_SHOW_AGAIN_KEY, JSON.stringify(!prev))
+                return !prev
+              })} />
+              <SmallSpan><Trans>Do not show again</Trans></SmallSpan>
+            </label>
+          </CenterContent>
+        </>
+      )}
     </>
     : <ConfirmInWallet providerName={providerName || ''} />
 }
@@ -116,7 +125,7 @@ const TitleWrapper = styled.dt`
   max-width: 150px;
   text-align: left;
 `
-export const Title: React.FC<{ className?: string; }> = ({ children, className }) => (
+const Title: React.FC<{ className?: string; }> = ({ children, className }) => (
   <TitleWrapper className={className ? `${LIST_TITLE} ${className}` : LIST_TITLE}>
     {children}
   </TitleWrapper>
@@ -134,7 +143,7 @@ const DescriptionWrapper = styled.dd`
   max-width: 150px;
   text-align: left;
 `
-export const Description: React.FC<{ className?: string; }> = ({ children, className }) => (
+const Description: React.FC<{ className?: string; }> = ({ children, className }) => (
   <DescriptionWrapper className={className ? `${LIST_DESCRIPTION} ${className}` : LIST_DESCRIPTION}>
     {children}
   </DescriptionWrapper>
