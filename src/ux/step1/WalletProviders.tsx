@@ -7,7 +7,7 @@ import { PROVIDERS_WRAPPER_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../.
 import { Trans } from 'react-i18next'
 import { themesOptions } from '../../theme'
 
-import { EDGE, TREZOR, LEDGER, DCENT } from './extraProviders'
+import { TREZOR, LEDGER, DCENT } from './extraProviders'
 import WalletProvidersFooter from './WalletProvidersFooter'
 
 interface IWalletProvidersProps {
@@ -67,7 +67,7 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
   const hardCodedProviderNames = [
     providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, // browser
     providers.WALLETCONNECT.name, // mobile
-    providers.PORTIS.name, providers.TORUS.name, EDGE.name, // custodial
+    providers.PORTIS.name, providers.TORUS.name, // custodial
     LEDGER.name, TREZOR.name, DCENT.name // hardware
   ]
 
@@ -96,7 +96,6 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
       <ProviderRow>
         <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.TORUS.name] || providers.TORUS} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[EDGE.name] || EDGE} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
         <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} handleConnect={handleConnect} />
