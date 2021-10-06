@@ -3,7 +3,7 @@
 </p>
 <h3 align="middle">rLogin</h3>
 <p align="middle">
-    Connect your dApp to RSK blockchain and SSI in breeze
+    Login tool for RSK
 </p>
 <p align="middle">
     <a href="https://badge.fury.io/js/%40rsksmart%2Frlogin">
@@ -21,168 +21,139 @@
     <a href='https://coveralls.io/github/rsksmart/rLogin?branch=develop'>
       <img src='https://coveralls.io/repos/github/rsksmart/rLogin/badge.svg?branch=develop' alt='Coverage Status' />
     </a>
-    <a href="https://developers.rsk.co/rif/identity/rlogin/libraries/modal/">
+    <a href="https://developers.rsk.co/rif/rlogin/">
         <img src="https://img.shields.io/badge/-docs-brightgreen" alt="docs" />
     </a>
 </p>
 
-rLogin is a tool that allows the front end developer to connect their user with blockchain functionalities and self-sovereign identity models seamlessly. It provides a standard button and a pop-up that, within its different flavors, allows the developer to correctly authenticate a user following the Decentralized Identity and Verifiable Credentials protocols. In addition, it will allow the developer to interact with a user-centric cloud like service called the _data vault_. This service can be used to store and retrieve user's information with their permission.
+Integrate rLogin into your app and allow your users to choose their favorite wallets to login. With a single tool you will get connected to their wallet using an API compatible with Metamask, continue developing as you did.
 
-[Read the docs](https://developers.rsk.co/rif/identity/rlogin/libraries/modal/) for more information and integration guidelines.
+<p align="middle">
+    <img src="https://i.imgur.com/yARsVXh.png" />
+</p>
 
-## Features
+Wallet support:
+- Browser wallets: Metamask, Nifty, Liquality
+- Mobile wallets via Wallet Connect
+- Custodial wallets: Portis, Torus (beta)
+- Hardware wallets: Ledger, Trezor, D'Cent
 
-- Supported wallet providers
-    - Browser wallets - wallets that are installed as an extension of the web browser
-        - [Metamask wallet](https://metamask.io/)
-        - [Nifty wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid)
-        - [Liquality wallet](https://liquality.io/atomic-swap-wallet.html)
-    - Mobile wallets - wallets that are installed in mobile phone and support [Wallet Connect](https://walletconnect.org/)
-        - [rWallet](https://developers.rsk.co/wallet/rwallet/)
-        - [Trust wallet](https://trustwallet.com/)
-- Supported networks
-    - RSK Mainnet
-    - RSK Testnet
-    - Ethereum Mainnet
-    - Ganache (test network)
-- Add or Switch to Network if the user is on a different network.
-  - Supports RSK networks, but open to PRs for additional chains
+Network support:
+- RSK Mainnet, RSK Testnet
+- Etheruem, Ropsten, Kovan, Rinkeby, Gorely
 
-### Portis Support
+EIP 1193 support
 
-[Portis](https://portis.io) is not [EIP1193](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1193.md) compatible, however, rLogin creates a wrapper for it allowing `.request` methods to be called. Portis does not estimate the gasPrice correctly on RSK, so the wrapper will get the correct amount from the previous block. You can override this setting by passing `gasPrice` with your transaction. If your code uses the older `send` or `sendAsync` methods, you will also need to send the `gasPrice` attribute or the amount Portis adds will be too low.
+Clients support:
+- `ethers`, `web3.js` and others
 
-The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net_version`, `eth_getBlockByNumber`, `eth_sendTransaction`, `eth_sendRawTransaction`, `personal_sign`, `eth_signTypedData`.
+## Getting started
 
+Follow this guide to configure rLogin in minutes
 
-## Quick start
+Sample app: [`rsksmart/rLogin-sample-apps`](https://github.com/rsksmart/rLogin-sample-apps/tree/main/basic-dapp)
 
-1. Install rLogin
+### 1. Install rLogin
 
-    ```
-    npm i @rsksmart/rlogin
-    ```
+```
+yarn add @rsksmart/rlogin
+```
 
-2. Create `rLogin` DOM element, configure supported networks and wallet providers
+Add wallets peer dependecies:
 
-    ```typescript
-    import RLogin from '@rsksmart/rlogin'
-    import WalletConnectProvider from '@walletconnect/web3-provider'
+| Wallet provider | Required package |
+| - | - |
+| Browser wallets | none |
+| Wallet Connect | `@walletconnect/web3-provider` |
+| Portis | `@portis/web3` |
+| Torus (beta) | `@toruslabs/torus-embed` |
+| Trezor | `@rsksmart/rlogin-trezor-provider` |
+| Ledger | `@rsksmart/rlogin-ledger-provider` |
+| D'Cent | `@rsksmart/rlogin-dcent-provider` |
 
-    export const rLogin = new RLogin({
-      cacheProvider: false,
-      providerOptions: {
-        walletconnect: {
-          package: WalletConnectProvider,
-          bridge: "https://walletconnect-bridge.rifos.org/", // optional: if not specified it will work with the default bridge
-          options: {
-            rpc: {
-              1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
-              30: 'https://public-node.rsk.co',
-              31: 'https://public-node.testnet.rsk.co'
-            }
-          }
+```
+yarn add @walletconnect/web3-provider @portis/web3 @toruslabs/torus-embed @rsksmart/rlogin-trezor-provider @rsksmart/rlogin-ledger-provider @rsksmart/rlogin-dcent-provider
+```
+
+### 2. Create the DOM element
+
+```typescript
+import RLogin from '@rsksmart/rlogin'
+import WalletConnectProvider from '@walletconnect/web3-provider'
+import Portis from '@portis/web3'
+import Torus from '@toruslabs/torus-embed'
+import { trezorProviderOptions } from '@rsksmart/rlogin-trezor-provider'
+import { ledgerProviderOptions } from '@rsksmart/rlogin-ledger-provider'
+import { dcentProviderOptions } from '@rsksmart/rlogin-dcent-provider'
+
+const rpcUrls = {
+  30: 'https://public-node.rsk.co',
+  31: 'https://public-node.testnet.rsk.co',
+}
+
+const supportedChains = Object.keys(rpcUrls).map(Number)
+
+export const rLogin = new RLogin({
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
+        rpc: rpcUrls
+      }
+    },
+    portis: {
+      package: Portis,
+      options: {
+        id: "a1c8672b-7b1c-476b-b3d0-41c27d575920",
+        network: {
+          nodeUrl: 'https://public-node.testnet.rsk.co',
+          chainId: 31,
         }
-      },
-      supportedChains: [1, 30, 31]
+      }
+    },
+    torus: {
+        package: Torus,
+    },
+    'custom-ledger': ledgerProviderOptions,
+    'custom-dcent': dcentProviderOptions,
+    'custom-trezor': {
+      ...trezorProviderOptions,
+      options: {
+        manifestEmail: 'info@iovlabs.org',
+        manifestAppUrl: 'https://basic-sample.rlogin.identity.rifos.org/',
+      }
+    }
+  },
+  rpcUrls,
+  supportedChains
+})
+```
+
+> We usually put this all together in a single file called `rlogin.ts` and export a single instance of `RLogin`. This ensures a single DOM element is creted.
+
+### 3. Connect!
+
+```typescript
+import { providers } from 'ethers'
+
+const login = () => rLogin.connect()
+    .then(({ provider, disconnect }) => {
+        const provider = new providers.Web3Provider(provider)
+        provider.getSigner(0).getAddress().then(console.log)
     })
-    ```
-    
-    > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/rLogin.ts
-    
-3. Show the pop-up to the user
-
-    ```typescript
-    const handleLogin = () => {
-        rLogin.connect()
-          .then((rLoginResponse: any) => {
-            const provider = rLoginResponse.provider;
-            const dataVault = rLoginResponse.dataVault;
-            const disconnect = rLoginResponse.disconnect;
-
-            // save the response to be used later, here we are using React context
-            context.rLoginresponse(rLoginResponse)
-          })
-          .catch((err: string) => console.log(err))
-    }
-    ```
-    
-    > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/app/LoginScreen.tsx
-    
-4. Request RPC methods
-
-    ```
-    export const getAccounts = (provider: any) => provider.request({ method: 'eth_accounts' })
-    ```
-    
-    Or use `provider` as Web3 provider for your client of preference: [`Web3.js`](https://github.com/ethereum/web3.js/), [`ethjs`](https://github.com/ethjs/ethjs), [`ethers.js`](https://github.com/ethers-io/ethers.js/) or other.
-    
-    > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/helpers.ts
-
-## Flavors
-
-- Fully-decentralized apps: this kind of apps are used only client-side. The front-end will need to know user's address and information for presentational purposes. The core operations are performed using blockchain transactions.
-
-- Open apps: this are apps that can be accessed by anyone controlling a wallet. This apps are usually decentralized applications where user relays some operations to a centralized service. This applications need a challenge-response authentication - use a seamless setup with `@rsksmart/express-did-auth`
-
-- Permissioned apps: for example, apps using Google OAuth to receive user's email are categorized in this flavor. This process of requesting credentials to grant user access is common and usually relies on centralized data silos. This dApp flavor will cover requesting user's Verifiable Credentials in a fully user-centric manner - this is setup in the backend activating _Selective disclosure requests_
-
-- Closed apps: for example, a back office. This are apps that only specific user's can access. This flavor is used to prove the user accessing an app holds or is delegated by a specific identity - perform this validations in your server's business logic
-
-### Set up for the different flavors
-- Fully-decentralized apps: 
-```typescript
-  import RLogin from '@rsksmart/rlogin'
-
-  export const rLogin = new RLogin({
-    cacheProvider: false,
-    providerOptions: {
-      // providers configurations
-    },
-    supportedChains: [1, 30, 31]
-  })
-```
-- Open apps:
-```typescript
-  import RLogin from '@rsksmart/rlogin'
- 
-  export const rLogin = new RLogin({
-    cacheProvider: false,
-    providerOptions: {
-      // providers configurations
-    },
-    supportedChains: [1, 30, 31],
-    backendUrl: 'http://url-to-backend'  // just add the backend url
-  })
 ```
 
-- Permissioned apps: 
-```typescript
-  import RLogin from '@rsksmart/rlogin'
-  import * as RIFDataVault from '@rsksmart/ipfs-cpinner-client'
+You can use `provider` with your client of preference: [`Web3.js`](https://github.com/ethereum/web3.js/), [`ethjs`](https://github.com/ethjs/ethjs), [`ethers.js`](https://github.com/ethers-io/ethers.js/) or other.
 
-  export const rLogin = new RLogin({
-    cacheProvider: false,
-    providerOptions: {
-      // providers configurations
-    },
-    supportedChains: [1, 30, 31],
-    backendUrl: 'http://url-to-backend',
-     // add the modules that will handle the data vault connection and the service url for the supported networks
-    dataVaultOptions: {
-      package: RIFDataVault,
-      serviceUrl: 'https://data-vault.identity.rifos.org'
-    }
-  }),
-```
+Use `disconnect` to disconnect from the selected wallet. This single function simplifies handling the wallet specifics at all.
 
-## The code
+## Read the docs
 
-The tool tries not to re-implement functionalities that are provided by other libraries. The work is strongly based on:
-
-- [`web3modal`](https://github.com/web3Modal/web3modal/)
-    - Wallet provider integrations are imported from npm package
-    - Core and components are re-implemented to enable developing custom UX flow and custom components
+Read more in our [docs](https://developers.rsk.co/rif/rlogin/):
+- [Sample apps](https://developers.rsk.co/rif/rlogin/samples)
+- [Features](https://developers.rsk.co/rif/rlogin/features): i18n, theming, dark/light, listeners, triggers
+- [Integrated backend authentication](https://developers.rsk.co/rif/rlogin/authentication)
+- [Migrating from other modals](https://developers.rsk.co/rif/rlogin/migrating): `web3modal` or `web3react`
 
 ## Run for development
 
@@ -192,21 +163,21 @@ The tool tries not to re-implement functionalities that are provided by other li
 npm i
 ```
 
+### Testing
+
 **Run tests** - runs with `jest`
 
 ```
 npm test
 ```
 
-Currently, there are no tests :(. Please test it with a [sample app](#sample-apps).
-
-The best way to test it is to run `npm build:dev` to update the bundle after saving files. You will need to reload page after rebuilding, that is not automated yet.
-
 **Lint** - runs `eslint` syntax checks
 
 ```
 npm run lint
 ```
+
+### Building
 
 **Build for production** - builds `umd` into `dist/main.js`
 
@@ -228,15 +199,50 @@ npm run serve
 
 > Metamask cannot be accessed without `http` - see https://ethereum.stackexchange.com/a/62217/620
 
-## Cypress end-to-end testing
+### The code
 
-To run the cypress E2E testing scripts, start the app using the permissioned flavor:
+The key points:
+- `src/RLogin.ts` is the API. There we create the DOM element.
+- `src/Core.ts` handles the whole UX. It connects to the wallet, does the authentication, show the modal when triggered and so on.
+- `src/ux` has the different flows for the UX described. You will finde _step1_ or _confirmInformation_
+- `src/ui` are the visual components of the rLogin
+- `src/lib` has the wallet specifics and authentication implementations
+
+The rLogin depends on `web3modal` for some functionality. We imported and adapted part of the code to enable us expanding the UX.
+
+### Run the sample apps
+
+This apps are built specifically for e2e testing but you can run them to test your changes. We also recommend to `yarn link` and use [`rLogin-sample-apps`](https://github.com/rsksmart/rLogin-sample-apps) to test them too
+
+**Basic app** (no backend) - serves the rLogin and the front-end
+
+```
+npm run sample:dapp
+```
+
+**Open flavor** - will run a backend with authentication installed
+
+```
+npm run sample:open
+```
+
+**Permissioned flavor** - will also request specific information and connect to the RIF Data Vault
 
 ```
 npm run sample:permissioned
 ```
 
-Then in a new terminal, run start the Cypress app and interact with the tests:
+### e2e eith Cypress
+
+We use [Cypress](https://www.cypress.io/) to do the e2e. The apps used to do it are described above. You will also find [`@rsksmart/mock-web3-provider`](https://github.com/rsksmart/mock-web3-provider), this is our Mock simulating Metamask.
+
+To run the cypress e2e testing scripts, start the app using the permissioned flavor.
+
+```
+npm run sample:permissioned
+```
+
+Then in a new terminal, start the Cypress app and interact with the tests:
 
 ```
 npm run cypress:open
@@ -248,44 +254,9 @@ The Cypress tests can also be run in a headless browser by running the command:
 npm run cypress:run
 ```
 
-## Additional Features
+### Branching model
 
-### Multi-language
-Please take a look at the following file to add more languages:
-```
-/src/i18n.ts
-```
-### Choose network for hardware wallets and Torus
-
-A dapp and hardware wallet could support multiple networks so to help users, a middle step has been added to choose the network. To enable this, the developer needs to add fallback chains. Below is an example of how a developer would add Ledger with the network choose:
-
-```
-const rLogin = new window.RLogin.default({
-  cacheProvider: false,
-  providerOptions: {
-    'custom-ledger': {
-      ...window.rLoginLedgerProvider.ledgerProviderOptions,
-    }
-  },
-  rpcUrls: {
-    30: 'https://public-node.rsk.co',
-    31: 'https://public-node.testnet.rsk.co'
-  }
-}
-```
-
-In this case, the RPC Url and ChainId parameters do not need to be added in the providerOptions section.
-
-## Sample apps
-
-Please first build for production.
-
-| Flavor | Import from | Location | Command |  |
-| - | - | - | - | - |
-| Fully-decentralized | HTML DOM | _./sample/decentralized_ | `npm run sample:dapp` | Serves the library in _http://localhost:3005_ and a dApp in _http://localhost:3006_. Go to _3006_ with your browser |
-| Open app | HTML DOM | _./sample/with_be_ | `npm run sample:open` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006/?backend=yes_ and back end in _http://localhost:3007_. This mode will not ask for Data Vault access. Go to _3006_ with your browser |
-| Permissioned app | HTML DOM | _./sample/decentralized_ | `npm run sample:permissioned` | Serves the library in _http://localhost:3005_, dApp in _http://localhost:3006_ and back end in _http://localhost:3007_. This mode will ask for Data Vault access. Go to _3006_ with your browser |
-
-## Acknowledgements
-
-Find all acknowledged bugs, future features, and improvements in [repo issues](issues)
+- `master` has latest release. Merge into `master` will deploy to npm. Do merge commits.
+- `develop` has latest approved PR. PRs need to pass `ci`. Do squash & merge.
+- Use branches pointing to `develop` to add new PRs.
+- Do external PRs against latest commit in `develop`.
