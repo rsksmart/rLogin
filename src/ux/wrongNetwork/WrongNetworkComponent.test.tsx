@@ -9,7 +9,9 @@ describe('Component: WrongNetworkComponent', () => {
   const sharedProps = {
     supportedNetworks: [1],
     isMetamask: true,
-    changeNetwork: jest.fn()
+    changeNetwork: jest.fn(),
+    chainId: undefined,
+    isWrongNetwork: true
   }
 
   it('renders the component', () => {
@@ -57,6 +59,23 @@ describe('Component: WrongNetworkComponent', () => {
     it('sends the params when clicked', () => {
       const changeNetwork = jest.fn()
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[31]} changeNetwork={changeNetwork} />)
+
+      wrapper.find('button').simulate('click')
+      expect(changeNetwork).toBeCalledWith(networks.get(31))
+    })
+  })
+
+  describe('can change network (!isWrongNetwork)', () => {
+    it('displays text when it can not change network', () => {
+      const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[1, 30, 31]} isWrongNetwork={false} />)
+
+      expect(wrapper.find('ul.automatic li').at(0).text()).toBe('RSK Mainnet')
+      expect(wrapper.find('ul.manual li').at(0).text()).toBe('Ethereum Mainnet')
+    })
+
+    it('sends the params when clicked', () => {
+      const changeNetwork = jest.fn()
+      const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[31]} changeNetwork={changeNetwork} isWrongNetwork={false} />)
 
       wrapper.find('button').simulate('click')
       expect(changeNetwork).toBeCalledWith(networks.get(31))

@@ -119,6 +119,22 @@ The following methods are confirmed to work: `eth_chainId`, `eth_accounts`, `net
     
     > Sample: https://github.com/rsksmart/rif-identity-manager/blob/main/src/helpers.ts
 
+### Triggers
+
+Once the user is connected, you can use the triggers to show info to the user.
+
+- To show the **wallet information** (address and network):
+
+```typescript
+rLogin.showWalletInfo()
+```
+
+- To open a dialog that allows the user to select another network:
+
+```typescript
+rLogin.showChangeNetwork()
+```
+
 ## Flavors
 
 - Fully-decentralized apps: this kind of apps are used only client-side. The front-end will need to know user's address and information for presentational purposes. The core operations are performed using blockchain transactions.

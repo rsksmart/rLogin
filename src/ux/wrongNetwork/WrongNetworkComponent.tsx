@@ -8,12 +8,14 @@ import OtherNetworkSpan from './OtherNetworkSpan'
 
 interface WrongNetworkComponentInterface {
   supportedNetworks: number[] | undefined,
+  chainId: number | undefined,
   isMetamask: boolean | null,
+  isWrongNetwork: boolean,
   changeNetwork: (params: AddEthereumChainParameter) => void
 }
 
 const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
-  supportedNetworks, isMetamask, changeNetwork
+  supportedNetworks, isMetamask, isWrongNetwork, chainId, changeNetwork
 }) => {
   if (!supportedNetworks) {
     return <></>
@@ -36,21 +38,24 @@ const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
   return (
     <div>
       <Header2>Select Network</Header2>
-      <Paragraph>
+      {isWrongNetwork && <Paragraph>
         {`You are connected to an incorrect network with ${isMetamask ? 'Metamask' : 'your wallet'}. `}
         {'Please change your wallet to '}
         {supportedNetworks.length === 1
           ? <>the following network:</>
           : <>one of the following networks:</>
         }
-      </Paragraph>
+      </Paragraph>}
+      {!isWrongNetwork && chainId && <Paragraph>
+        Current network: {getChainName(chainId)}
+      </Paragraph>}
 
       {quickConnect.length !== 0 && (
         <>
           <Header3>Automatically connect Metamask to</Header3>
           <NetworkUnorderedList className="automatic">
-            {quickConnect.map((chainId: number) => (
-              <li key={chainId}><ChangeNetworkButton params={networks.get(chainId)} changeNetwork={handleChangeNetwork} /></li>))}
+            {quickConnect.filter(cid => cid !== chainId).map((cid: number) => (
+              <li key={cid}><ChangeNetworkButton params={networks.get(cid)} changeNetwork={handleChangeNetwork} /></li>))}
           </NetworkUnorderedList>
         </>
       )}
