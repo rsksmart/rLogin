@@ -29,7 +29,7 @@
 Integrate rLogin into your app and allow your users to choose their favorite wallets to login. With a single tool you will get connected to their wallet using an API compatible with Metamask, continue developing as you did.
 
 <p align="middle">
-    <img src="https://i.imgur.com/yARsVXh.png" />
+    <img src="https://user-images.githubusercontent.com/36084092/136245834-1710d0a4-4348-4621-8737-8be5105a2295.png" />
 </p>
 
 Wallet support:
