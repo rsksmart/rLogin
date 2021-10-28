@@ -30,6 +30,7 @@ import TutorialComponent from './ux/tutorial/TutorialComponent'
 import disconnectFromProvider from './lib/providerDisconnect'
 import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
+import { RLOGIN_SELECTED_PROVIDER } from './constants'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -116,7 +117,10 @@ const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
   currentStep: 'Step1',
-  loadingReason: ''
+  loadingReason: '',
+  selectedProviderUserOption: localStorage.getItem(RLOGIN_SELECTED_PROVIDER)
+    ? JSON.parse(localStorage.getItem(RLOGIN_SELECTED_PROVIDER)!)
+    : undefined
 }
 
 /**
@@ -290,12 +294,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const providerName = provider.name || 'Provider'
 
      provider.onClick(chosenNetwork)
-       .then(() =>
+       .then(() => {
          this.setState({
            currentStep: 'loading',
            loadingReason: `Connecting to ${providerName}`,
            selectedProviderUserOption: provider
-         }))
+         })
+         localStorage.setItem(RLOGIN_SELECTED_PROVIDER, JSON.stringify(provider))
+       })
        .catch((err: any) =>
          this.setState({
            currentStep: 'error',
