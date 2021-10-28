@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SimpleFunction, IProviderUserOptions } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions, setLocal, getLocal } from 'web3modal'
 import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEncryptionManager } from '@rsksmart/ipfs-cpinner-client-types'
 
 import { WalletProviders } from './ux/step1'
@@ -117,10 +117,7 @@ const INITIAL_STATE: IModalState = {
   show: false,
   lightboxOffset: 0,
   currentStep: 'Step1',
-  loadingReason: '',
-  selectedProviderUserOption: localStorage.getItem(RLOGIN_SELECTED_PROVIDER)
-    ? JSON.parse(localStorage.getItem(RLOGIN_SELECTED_PROVIDER)!)
-    : undefined
+  loadingReason: ''
 }
 
 /**
@@ -164,7 +161,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public state: IModalState = {
-    ...INITIAL_STATE
+    ...INITIAL_STATE,
+    selectedProviderUserOption: getLocal(RLOGIN_SELECTED_PROVIDER)
   };
 
   public lightboxRef?: HTMLDivElement | null;
@@ -280,7 +278,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const { name } = this.state.provider
 
      // show a tutorial to connect a hardware device:
-     if (isHardwareWalletProvider(name) && !localStorage.getItem(getTutorialLocalStorageKey(name))) {
+     if (isHardwareWalletProvider(name) && !getLocal(getTutorialLocalStorageKey(name))) {
        return this.setState({ currentStep: 'tutorial' })
      }
 
@@ -300,7 +298,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
            loadingReason: `Connecting to ${providerName}`,
            selectedProviderUserOption: provider
          })
-         localStorage.setItem(RLOGIN_SELECTED_PROVIDER, JSON.stringify(provider))
+         setLocal(RLOGIN_SELECTED_PROVIDER, provider)
        })
        .catch((err: any) =>
          this.setState({
