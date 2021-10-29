@@ -209,7 +209,6 @@ export class RLogin {
 
       if (this.cachedProvider) {
         await this.providerController.connectToCachedProvider()
-        return
       }
 
       this.showModal()

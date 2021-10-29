@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { SimpleFunction, IProviderUserOptions } from 'web3modal'
+import { SimpleFunction, IProviderUserOptions, setLocal, getLocal } from 'web3modal'
 import { IIPFSCpinnerClient as IDataVault, IAuthManagerNewable, IWeb3ProviderEncryptionManager } from '@rsksmart/ipfs-cpinner-client-types'
 
 import { WalletProviders } from './ux/step1'
@@ -30,6 +30,7 @@ import TutorialComponent from './ux/tutorial/TutorialComponent'
 import disconnectFromProvider from './lib/providerDisconnect'
 import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
+import { RLOGIN_SELECTED_PROVIDER } from './constants'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -160,7 +161,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   public state: IModalState = {
-    ...INITIAL_STATE
+    ...INITIAL_STATE,
+    selectedProviderUserOption: getLocal(RLOGIN_SELECTED_PROVIDER)
   };
 
   public lightboxRef?: HTMLDivElement | null;
@@ -276,7 +278,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const { name } = this.state.provider
 
      // show a tutorial to connect a hardware device:
-     if (isHardwareWalletProvider(name) && !localStorage.getItem(getTutorialLocalStorageKey(name))) {
+     if (isHardwareWalletProvider(name) && !getLocal(getTutorialLocalStorageKey(name))) {
        return this.setState({ currentStep: 'tutorial' })
      }
 
@@ -287,15 +289,22 @@ export class Core extends React.Component<IModalProps, IModalState> {
    /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
    private connectToWallet () {
      const { provider, chosenNetwork } = this.state
+     const { providerController } = this.props
+
      const providerName = provider.name || 'Provider'
 
      provider.onClick(chosenNetwork)
-       .then(() =>
+       .then(() => {
          this.setState({
            currentStep: 'loading',
            loadingReason: `Connecting to ${providerName}`,
            selectedProviderUserOption: provider
-         }))
+         })
+
+         if (providerController?.shouldCacheProvider) {
+           setLocal(RLOGIN_SELECTED_PROVIDER, provider)
+         }
+       })
        .catch((err: any) =>
          this.setState({
            currentStep: 'error',

@@ -4,12 +4,6 @@ import { mount } from 'enzyme'
 import TutorialComponent from './TutorialComponent'
 import { LEDGER_NAME, TREZOR_NAME, DCENT_NAME, getTutorialLocalStorageKey } from '../../lib/hardware-wallets'
 import { CHECKBOX_CLASSNAME } from '../../constants/cssSelectors'
-import { LocalStorageMock } from '../confirmInformation/ConfirmInformation.test'
-
-// TODO: refactor this into another place. i lost a lot of time
-// trying to fix "SecurityError: localStorage is not available for opaque origins"
-// see: https://github.com/jsdom/jsdom/wiki/Don't-stuff-jsdom-globals-onto-the-Node-global
-global.localStorage = new LocalStorageMock() as any
 
 describe('Component: Provider', () => {
   const props = {
