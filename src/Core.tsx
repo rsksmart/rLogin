@@ -289,6 +289,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
    /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
    private connectToWallet () {
      const { provider, chosenNetwork } = this.state
+     const { providerController } = this.props
+
      const providerName = provider.name || 'Provider'
 
      provider.onClick(chosenNetwork)
@@ -298,7 +300,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
            loadingReason: `Connecting to ${providerName}`,
            selectedProviderUserOption: provider
          })
-         setLocal(RLOGIN_SELECTED_PROVIDER, provider)
+
+         if (providerController?.shouldCacheProvider) {
+           setLocal(RLOGIN_SELECTED_PROVIDER, provider)
+         }
        })
        .catch((err: any) =>
          this.setState({

@@ -153,6 +153,25 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('#connected').should('have.text', 'Yes')
   })
 
+  it('should store the selected provider only if cachedProvider is set to true', () => {
+    loginWithModal(false)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+
+    // eslint-disable-next-line
+    expect(localStorage.getItem('RLOGIN_SELECTED_PROVIDER')).to.be.null
+
+    cy.reload()
+
+    cy.get('#connected').should('have.text', 'No')
+
+    loginWithModal(false)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+  })
+
   it('should NOT stay connected after a disconnect (cacheProvider)', () => {
     loginWithModal(true)
     confirmInformationStep()
