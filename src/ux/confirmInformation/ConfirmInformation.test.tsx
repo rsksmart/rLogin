@@ -3,36 +3,6 @@ import { mount } from 'enzyme'
 import { ConfirmInformation } from './ConfirmInformation'
 import { CHECKBOX_CLASSNAME, LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 
-interface IStore {
-  [key: string]: any
-}
-
-export class LocalStorageMock {
-  private store: IStore
-
-  constructor () {
-    this.store = {}
-  }
-
-  clear () {
-    this.store = {}
-  }
-
-  getItem (key: string) {
-    return this.store[key] || null
-  }
-
-  setItem (key: string, value: any) {
-    this.store[key] = String(value)
-  }
-
-  removeItem (key: string) {
-    delete this.store[key]
-  }
-};
-
-global.localStorage = new LocalStorageMock() as any
-
 describe('Component: ConfirmInformation', () => {
   const providerUserOption = { name: 'test1', logo: 'test1.jpg', description: 'description1', onClick: jest.fn() }
 

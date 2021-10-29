@@ -72,6 +72,9 @@
       const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
       const backendUrl = withBackend && 'http://localhost:3007'
 
+      // enable cacheProvider
+      const withCacheProvider = new URLSearchParams(window.location.search).get('cache') === 'yes'
+
       // hide modals
       const keepModalHidden = new URLSearchParams(window.location.search).get('keepModalHidden') === 'yes'
 
@@ -91,7 +94,7 @@
 
       // setup rLogin
       const rLogin = new window.RLogin.default({
-        cacheProvider: false,
+        cacheProvider: withCacheProvider,
         providerOptions: {
           walletconnect: {
             package: window.WalletConnectProvider.default,

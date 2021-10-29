@@ -15,8 +15,8 @@ describe('sample:dapp testing, no backend', () => {
     })
   })
 
-  const loginWithModal = () => {
-    cy.visit('/')
+  const loginWithModal = (withCacheProvider = false) => {
+    cy.visit(`/${withCacheProvider ? '?cache=yes' : ''}`)
     cy.get('#login').click()
     cy.contains('MetaMask').click()
   }
@@ -135,6 +135,57 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('.rlogin-header2').should('have.text', 'Information')
     cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
     cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+  })
+
+  it('should stay connected after reload (cacheProvider)', () => {
+    loginWithModal(true)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+
+    cy.reload()
+
+    cy.get('#connected').should('have.text', 'No')
+
+    cy.get('#login').click()
+    cy.get('.rlogin-button.confirm').click()
+
+    cy.get('#connected').should('have.text', 'Yes')
+  })
+
+  it('should store the selected provider only if cachedProvider is set to true', () => {
+    loginWithModal(false)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+
+    // eslint-disable-next-line
+    expect(localStorage.getItem('RLOGIN_SELECTED_PROVIDER')).to.be.null
+
+    cy.reload()
+
+    cy.get('#connected').should('have.text', 'No')
+
+    loginWithModal(false)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+  })
+
+  it('should NOT stay connected after a disconnect (cacheProvider)', () => {
+    loginWithModal(true)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+
+    cy.get('#reset').click()
+
+    cy.get('#connected').should('have.text', '')
+
+    loginWithModal(true)
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
   })
 
   it('should open change network modal', () => {

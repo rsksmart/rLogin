@@ -12,8 +12,7 @@ import ConfirmInWallet from '../../ui/shared/ConfirmInWallet'
 import styled from 'styled-components'
 
 import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
-
-const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
+import { DONT_SHOW_AGAIN_KEY } from '../../constants'
 
 interface ConfirmInformationProps {
   chainId: number | undefined
