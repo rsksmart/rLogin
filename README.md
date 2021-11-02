@@ -98,7 +98,8 @@ export const rLogin = new RLogin({
     walletconnect: {
       package: WalletConnectProvider,
       options: {
-        rpc: rpcUrls
+        rpc: rpcUrls,
+        chainId: 30
       }
     },
     portis: {
