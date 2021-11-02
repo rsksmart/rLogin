@@ -1,5 +1,4 @@
 <!--
-  Welcome to RIF Identity!
-  Please follow this guidelines to make your PR
-  https://developers.rsk.co/rif/identity/contribute/
+  Welcome to RLogin!
+  Please follow the README guidelines to do a PR
 -->
