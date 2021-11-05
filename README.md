@@ -114,7 +114,12 @@ export const rLogin = new RLogin({
     torus: {
         package: Torus,
     },
-    'custom-ledger': ledgerProviderOptions,
+    'custom-ledger': {
+      ...ledgerProviderOptions,
+      options: {
+        rpcUrl: 'https://public-node.testnet.rsk.co',
+        chainId: 31
+      },
     'custom-dcent': dcentProviderOptions,
     'custom-trezor': {
       ...trezorProviderOptions,
