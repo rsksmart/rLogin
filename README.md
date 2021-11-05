@@ -119,7 +119,8 @@ export const rLogin = new RLogin({
       options: {
         rpcUrl: 'https://public-node.testnet.rsk.co',
         chainId: 31
-      },
+       }
+    },
     'custom-dcent': dcentProviderOptions,
     'custom-trezor': {
       ...trezorProviderOptions,
