@@ -206,12 +206,15 @@ export class RLogin {
     // eslint-disable-next-line
     new Promise(async (resolve, reject) => { // weird async, to be refactored
       this.setupHandlers(resolve, reject)
+      try {
+        if (this.cachedProvider) {
+          await this.providerController.connectToCachedProvider()
+        }
 
-      if (this.cachedProvider) {
-        await this.providerController.connectToCachedProvider()
+        this.showModal()
+      } catch(err) {
+        reject(err)
       }
-
-      this.showModal()
     });
 
   /**
