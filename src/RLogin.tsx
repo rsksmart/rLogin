@@ -212,7 +212,7 @@ export class RLogin {
         }
 
         this.showModal()
-      } catch(err) {
+      } catch (err) {
         reject(err)
       }
     });
