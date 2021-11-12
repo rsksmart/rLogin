@@ -71,12 +71,13 @@ describe('sample:dapp testing, no backend', () => {
 
   describe('sample:permissioned', () => {
     it('logs in with injected', () => {
-      cy.visit('/cacheProvider', {
+      cy.visit('/cacheProvider?backend=yes', {
         onBeforeLoad: function (window) {
           window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
         }
       })
 
+      cy.get('#login').click()
       cy.get('.rlogin-header2').should('have.text', 'Would you like to give us access to info in your data vault?')
     })
   })
