@@ -4,6 +4,12 @@ describe('sample:dapp testing, no backend', () => {
   const address = '0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D'
   const privateKey = 'de926db3012af759b4f24b5a51ef6afa397f04670f634aa4f48d4480417007f3'
 
+  const rLoginCached = JSON.stringify({
+    "name": "MetaMask",
+    "logo": "data:image/svg+xml;",
+    "description": "Connect to your MetaMask Wallet"
+  })
+
   beforeEach(() => {
     cy.on('window:before:load', (win) => {
       win.ethereum = currentProvider({
@@ -30,6 +36,7 @@ describe('sample:dapp testing, no backend', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
           window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
         }
       })
 
@@ -54,6 +61,7 @@ describe('sample:dapp testing, no backend', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
           window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
           window.localStorage.setItem('RLogin:DontShowAgain', 'true')
         }
       })
@@ -76,17 +84,6 @@ describe('sample:dapp testing, no backend', () => {
   })
 
   describe('sample:permissioned', () => {
-    it('logs in with injected', () => {
-      cy.visit('/?cache=yes&backend=yes', {
-        onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
-        }
-      })
-
-      cy.get('#login').click()
-      cy.get('.rlogin-header2').should('have.text', 'Would you like to give us access to info in your data vault?')
-    })
-
     it('resets with a junk provider', () => {
       cy.visit('/?cache=yes&backend=yes', {
         onBeforeLoad: function (window) {
