@@ -1,0 +1,190 @@
+<html>
+  <head>
+    <title>rLogin | dApp sample</title>
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,300i,400,400i,500,500i,700,700i,900,900i&amp;display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div style="width: 100%; height: 100%;">
+      <h2>Login - cache provider</h2>
+      <button id="login">login with rLogin</button>
+      <button id="loginMetamask">login with rLogin (defaults: Metamask)</button>
+      <hr />
+      <h2>Wallet provider info</h2>
+      <p id="error" style="color: red;"></p>
+      <h3>Cached Provider?</h3>
+      <p id="cachedProvider">...</p>
+      <h3>Supported chains</h3>
+      <p id="supportedChains">30, 31</p>
+      <h3>Connected</h3>
+      <p id="connected">No</p>
+      <h3>Accounts</h3>
+      <ul id="accounts"></ul>
+      <h3>Chain id</h3>
+      <p id="chain-id"></p>
+      <hr class="be-only" />
+      <h2 class="be-only">Backend connection info</h2>
+      <h3 class="be-only">Access token</h3>
+      <p id="access-token" class="be-only"></p>
+      <h3 class="be-only">Refresh token</h3>
+      <p id="refresh-token" class="be-only"></p>
+      <hr />
+      <h2>Actions</h2>
+      <button id="showInfo" disabled>show wallet info</button>
+      <br /><br />
+      <button id="changeNetwork" disabled>change network</button>
+
+      <hr />
+      <button id="reset" disabled>Reset</button>
+    </div>
+
+    <script src="http://localhost:3005/index.js"></script>
+
+    <!-- Mobile -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.3.2/dist/umd/index.min.js" integrity="sha384-e1LVDbPXlpouaOa/B5TOOA/EeKsLWbCQpRC6XB5RBn0eKI8E1msrTnw8Dvkft020" crossorigin="anonymous"></script>
+
+    <!-- RIF Data Vault Client -->
+    <script src="https://unpkg.com/@rsksmart/ipfs-cpinner-client@0.1.3/dist/bundle.js" integrity="sha384-Vqy7eKjwpV8AMv0kkeflaAUxoUgdOyjYJ3sNfEHOdptoaF8NuOFl0Ag/g0HChrCn" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      if (window.ethereum) {
+        window.ethereum.autoRefreshOnNetworkChange = false
+      }
+
+      // detect flavor
+      const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
+      const backendUrl = withBackend && 'http://localhost:3007'
+
+      if (!withBackend) {
+        const beOnly = document.getElementsByClassName('be-only')
+        for (let i = 0; i < beOnly.length; ++i) {
+          beOnly[i].remove()
+        }
+      }
+
+      // setup rLogin
+      const rLogin = new window.RLogin.default({
+        cacheProvider: true,
+        providerOptions: {
+          walletconnect: {
+            package: window.WalletConnectProvider.default,
+            options: {
+              bridge: "https://walletconnect-bridge.rifos.org/",
+              rpc: {
+                1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+                30: 'https://public-node.rsk.co',
+                31: 'https://public-node.testnet.rsk.co',
+              }
+            }
+          }
+        },
+        backendUrl,
+        supportedChains: [30,31],
+        dataVaultOptions: {
+          package:RIFDataVault,
+          serviceUrl: 'https://data-vault.identity.rifos.org',
+        },
+        rpcUrls: {
+          1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+          30: 'https://public-node.rsk.co',
+          31: 'https://public-node.testnet.rsk.co'
+        }
+      })
+
+      window.rLogin=rLogin;
+
+      console.log('rLogin setup?', rLogin)
+
+      // setup login button
+      document.getElementById('login').addEventListener('click', () => rLogin.connect().then(handleProvider).catch(err => console.log('Error: ', err)));
+      document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
+      document.getElementById('showInfo').addEventListener('click', () => rLogin.showWalletInfo());
+      document.getElementById('changeNetwork').addEventListener('click', () => rLogin.showChangeNetwork());
+      rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
+      rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
+
+      // ui - display handlers
+      const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
+      const displayAccounts = (accounts) => setElementInnerText('accounts', accounts.join(', '))
+      const handleError = (error) => setElementInnerText('error', `Error: ${error.message}`)
+      const displayChainId = (chainId) => setElementInnerText('chain-id', parseInt(chainId))
+      const displayDisconnectError = ({ message, code, data }) => setElementInnerText('error', `message: ${message} - code: ${code} - data: ${data}`)
+      const displayAccessToken = (accessToken) => setElementInnerText('access-token', accessToken)
+      const displayRefreshToken = (refreshToken) => setElementInnerText('refresh-token', refreshToken)
+
+      function providerRPC (provider, args) {
+        return provider.request(args)
+      }
+      // json rpc methods
+      const getAccounts = (provider) => providerRPC(provider, { method: 'eth_accounts' })
+      const getNetwork = (provider) => providerRPC(provider, { method: 'net_version' }).then(parseInt)
+      const getChainId = (provider) => getNetwork(provider).then(networkId => `0x${networkId.toString(16)}`) // keeping it consistent with eip-1193
+      const sendTransaction = (provider, params) => providerRPC(provider, { method: 'eth_sendTransaction', params })
+
+      const handleProvider = function (rLoginResponse) {
+        const provider = rLoginResponse.provider
+        setElementInnerText('connected', 'Yes')
+
+        document.getElementById('login').setAttribute('disabled', true)
+        document.getElementById('loginMetamask').setAttribute('disabled', true)
+        document.getElementById('showInfo').removeAttribute('disabled')
+        document.getElementById('changeNetwork').removeAttribute('disabled')
+        document.getElementById('reset').removeAttribute('disabled')
+
+        // handle eip-1193
+        provider.on(window.RLogin.ACCOUNTS_CHANGED, (response) =>
+          (response.length !== 0) ? displayAccounts(response) : disconnect())
+        provider.on(window.RLogin.CHAIN_CHANGED, displayChainId)
+
+        // query wallet provider info
+        getAccounts(provider).then(displayAccounts)
+        getChainId(provider).then(displayChainId)
+
+        // did auth
+        displayRefreshToken(localStorage.getItem(window.RLogin.RLOGIN_REFRESH_TOKEN))
+        displayAccessToken(localStorage.getItem(window.RLogin.RLOGIN_ACCESS_TOKEN))
+
+        // eth_sendTransaction
+        let sendButton = document.getElementById('send-tx')
+
+        sendButton.removeAttribute('disabled')
+        sendButton.addEventListener('click', () => {
+          getAccounts(provider)
+            .then(accounts => accounts[0])
+            .then(from => sendTransaction(provider, [{ from, to: from, value: '100000' }]))
+            .then(txHash => setElementInnerText('tx', txHash))
+            .catch(handleError)
+        });
+
+
+        const disconnect = () => {
+          rLoginResponse.disconnect()
+          provider.removeAllListeners()
+
+          // clean up all HTML elements (top to bottom):
+          setElementInnerText('error', '')
+          setElementInnerText('connected', '')
+          setElementInnerText('accounts', '')
+          setElementInnerText('chain-id', '')
+          setElementInnerText('access-token', '')
+          setElementInnerText('refresh-token', '')
+          setElementInnerText('accounts', '')
+          // reset button states:
+          document.getElementById('login').removeAttribute('disabled')
+          document.getElementById('loginMetamask').removeAttribute('disabled')
+          document.getElementById('showInfo').setAttribute('disabled', true)
+          document.getElementById('changeNetwork').setAttribute('disabled', true)
+        }
+
+        provider.on('disconnect', disconnect)
+        document.getElementById('reset').addEventListener('click', disconnect)
+      }
+
+
+      window.addEventListener('DOMContentLoaded', () => {
+        setElementInnerText('cachedProvider', localStorage.getItem('WEB3_CONNECT_CACHED_PROVIDER'))
+      });
+
+    </script>
+  </body>
+</html>

@@ -55,9 +55,11 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
     ? <>
       <Header2><Trans>Information</Trans></Header2>
       <CenterContent>
-        <LogoWrapper>
-          <img src={providerUserOption.logo} alt={providerUserOption.name} />
-        </LogoWrapper>
+        {providerUserOption && (
+          <LogoWrapper>
+            <img src={providerUserOption.logo} alt={providerUserOption.name} />
+          </LogoWrapper>
+        )}
         {peerWallet && <LogoWrapper>
           <img src={peerWallet.logo} alt={peerWallet.name} />
         </LogoWrapper>}
