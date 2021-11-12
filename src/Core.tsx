@@ -340,7 +340,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    private detectFlavor () {
      const { backendUrl, showModal } = this.props
 
-     // show the modal in case it is hidden:
+     // show the modal and set to loading in case it is hidden:
      this.setState({ currentStep: 'loading' })
      showModal()
 

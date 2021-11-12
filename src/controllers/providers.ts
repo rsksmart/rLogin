@@ -208,8 +208,9 @@ export class RLoginProviderController {
 
   public async connectToCachedProvider () {
     const provider = this.getProvider(this.cachedProvider)
+
     if (typeof provider !== 'undefined') {
-      await this.connectTo(provider.id, provider.connector)
+      return this.connectTo(provider.id, provider.connector)
     }
   }
 

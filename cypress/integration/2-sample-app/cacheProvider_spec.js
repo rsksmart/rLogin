@@ -67,6 +67,19 @@ describe('sample:dapp testing, no backend', () => {
       cy.get('#login').click()
       cy.get('#connected').should('have.text', 'Yes')
     })
+
+    it('provider throws an error when connecting', () => {
+      cy.visit('/cacheProvider', {
+        onBeforeLoad: function (window) {
+          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.ethereum.request = (_props) => Promise.reject(new Error('rejected'))
+        }
+      })
+
+      cy.get('#cachedProvider').should('have.text', '"injected"')
+      cy.get('#login').click()
+      cy.get('.rlogin-header2').should('have.text', 'Connect your wallet')
+    })
   })
 
   describe('sample:permissioned', () => {
@@ -79,6 +92,17 @@ describe('sample:dapp testing, no backend', () => {
 
       cy.get('#login').click()
       cy.get('.rlogin-header2').should('have.text', 'Would you like to give us access to info in your data vault?')
+    })
+
+    it('resets with a junk provider', () => {
+      cy.visit('/cacheProvider?backend=yes', {
+        onBeforeLoad: function (window) {
+          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"tacos"')
+        }
+      })
+
+      cy.get('#login').click()
+      cy.get('.rlogin-header2').should('have.text', 'Connect your wallet')
     })
   })
 })

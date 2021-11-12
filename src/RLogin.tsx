@@ -208,8 +208,11 @@ export class RLogin {
       this.setupHandlers(resolve, reject)
 
       if (this.cachedProvider) {
-        await this.providerController.connectToCachedProvider()
-        return
+        this.providerController.connectToCachedProvider()
+          .catch((error: any) => {
+            reject(error)
+            this.showModal()
+          })
       }
 
       this.showModal()
