@@ -21,12 +21,11 @@ interface ConfirmInformationProps {
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
   provider: any
-  providerName?: string
   onConfirm: () => Promise<any>
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -54,9 +53,11 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
     ? <>
       <Header2><Trans>Information</Trans></Header2>
       <CenterContent>
-        <LogoWrapper>
-          <img src={providerUserOption.logo} alt={providerUserOption.name} />
-        </LogoWrapper>
+        {providerUserOption && (
+          <LogoWrapper>
+            <img src={providerUserOption.logo} alt={providerUserOption.name} />
+          </LogoWrapper>
+        )}
         {peerWallet && <LogoWrapper>
           <img src={peerWallet.logo} alt={peerWallet.name} />
         </LogoWrapper>}
@@ -96,7 +97,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
         </>
       )}
     </>
-    : <ConfirmInWallet providerName={providerName || ''} />
+    : <ConfirmInWallet providerName={providerUserOption ? providerUserOption.name : ''} />
 }
 
 const Column = styled.div`

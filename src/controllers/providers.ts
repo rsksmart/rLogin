@@ -208,11 +208,17 @@ export class RLoginProviderController {
     })
   };
 
-  public async connectToCachedProvider () {
-    const provider = this.getProvider(this.cachedProvider)
-    if (typeof provider !== 'undefined') {
-      await this.connectTo(provider.id, provider.connector)
-    }
+  public connectToCachedProvider () {
+    return new Promise((resolve, reject) => {
+      // get the optional options to be passed to the provider from localStorage
+      const cachedOptions = getLocal(RLOGIN_SELECTED_PROVIDER)
+      const optionalOpts = cachedOptions ? cachedOptions.chosenNetwork : {}
+
+      const provider = this.getProvider(this.cachedProvider)
+      typeof provider !== 'undefined'
+        ? resolve(this.connectTo(provider.id, provider.connector, optionalOpts))
+        : reject(new Error('Provider not found'))
+    })
   }
 
   public on (event: string, callback: (result: any) => void): () => void {
