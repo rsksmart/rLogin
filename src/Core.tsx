@@ -109,7 +109,10 @@ interface IModalState {
   dataVault?: IDataVault
   loadingReason?: string
   currentTheme?: themesOptions
-  selectedProviderUserOption?: IProviderUserOptions
+  selectedProviderUserOption?: {
+    provider: IProviderUserOptions,
+    chosenNetwork?: NetworkConnectionConfig
+  }
   chosenNetwork?: NetworkConnectionConfig
 }
 
@@ -298,11 +301,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
          this.setState({
            currentStep: 'loading',
            loadingReason: `Connecting to ${providerName}`,
-           selectedProviderUserOption: provider
+           selectedProviderUserOption: { provider }
          })
 
          if (providerController?.shouldCacheProvider) {
-           setLocal(RLOGIN_SELECTED_PROVIDER, provider)
+           setLocal(RLOGIN_SELECTED_PROVIDER, {
+             provider,
+             chosenNetwork
+           })
          }
        })
        .catch((err: any) =>
@@ -484,8 +490,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
         big={currentStep === 'Step1'}
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
-        {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.name} />}
-        {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} providerName={selectedProviderUserOption?.name} />}
+        {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.provider.name} />}
+        {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerUserOption={selectedProviderUserOption!.provider} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={({ chainId, rpcUrl, networkParams }) => this.chooseNetwork({ chainId, rpcUrl, networkParams })} />}
