@@ -122,8 +122,10 @@
           },
           'custom-trezor': {
             ...window.rLoginTrezorProvider.trezorProviderOptions,
-            manifestEmail: 'info@iovlabs.org',
-            manifestAppUrl: 'https://basic-sample.rlogin.identity.rifos.org/',
+            options: {
+              manifestEmail: 'info@iovlabs.org',
+              manifestAppUrl: 'https://rlogin-sample.rifos.org/',
+            }
           },
           'custom-dcent': {
             ...window.rLoginDCentProvider.dcentProviderOptions,
