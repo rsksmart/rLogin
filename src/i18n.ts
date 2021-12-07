@@ -48,7 +48,7 @@ const resources = {
       'Plug in your Ledger device': 'Plug in your Ledger device',
       'Plug in your ledger device to your computer': 'Plug in your ledger device to your computer',
       'Install apps': 'Install apps',
-      'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps': 'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps',
+      'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps. For RSK Testnet enable developer mode and install RSK Test app.': 'Open Ledger Live in your computer and install the BTC and ETH, and RSK apps. For RSK Testnet enable developer mode and install RSK Test app.',
       'Close other apps': 'Close other apps',
       'Make sure to close any other app that is using ledger now, including Ledger Live': 'Make sure to close any other app that is using ledger now, including Ledger Live',
       'Open Ethereum or RSK app': 'Open Ethereum or RSK app',
