@@ -5,6 +5,7 @@ export const LEDGER_NAME = 'Ledger'
 export const TREZOR_NAME = 'Trezor'
 export const DCENT_NAME = 'D\'Cent'
 export const TORUS_NAME = 'Torus'
+export const PORTIS_NAME = 'Portis'
 
 export function isHardwareWalletProvider (providerName: string) {
   return [LEDGER_NAME, TREZOR_NAME, DCENT_NAME].includes(providerName)
@@ -35,8 +36,12 @@ export function isTorus (providerName: string) {
   return providerName === TORUS_NAME
 }
 
+export function isPortis (providerName: string) {
+  return providerName === PORTIS_NAME
+}
+
 export function requiresNetworkSelection (providerName: string) {
-  return isHardwareWalletProvider(providerName) || isTorus(providerName)
+  return isHardwareWalletProvider(providerName) || isTorus(providerName) || isPortis(providerName)
 }
 
 const TORUS_NETWORK_PARAMS: NetworkParamsOptions = {
@@ -60,6 +65,18 @@ const TORUS_NETWORK_PARAMS: NetworkParamsOptions = {
   }
 }
 
+const PORTIS_NETWORK_PARAMS: NetworkParamsOptions = {
+  30: {
+    chainId: 30,
+    nodeUrl: 'https://public-node.rsk.co'
+  },
+  31: {
+    chainId: 31,
+    nodeUrl: 'https://public-node.testnet.rsk.co'
+  }
+}
+
 export const PROVIDERS_NETWORK_PARAMS:{[key:string]:NetworkParamsOptions} = {
-  [TORUS_NAME]: TORUS_NETWORK_PARAMS
+  [TORUS_NAME]: TORUS_NETWORK_PARAMS,
+  [PORTIS_NAME]: PORTIS_NETWORK_PARAMS
 }
