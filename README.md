@@ -35,7 +35,7 @@ Integrate rLogin into your app and allow your users to choose their favorite wal
 Wallet support:
 - Browser wallets: Metamask, Nifty, Liquality
 - Mobile wallets via Wallet Connect
-- Custodial wallets: Portis, Torus (beta)
+- Custodial wallets: Portis, Torus
 - Hardware wallets: Ledger, Trezor, D'Cent
 
 Network support:

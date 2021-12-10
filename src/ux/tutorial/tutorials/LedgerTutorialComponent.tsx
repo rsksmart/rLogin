@@ -27,7 +27,7 @@ const LedgerTutorialComponent: React.FC = () => {
       </div>
       <div>
         <Header2>Install apps</Header2>
-        <ParagraphWrapper>Open Ledger Live in your computer and install the BTC and ETH, and RSK apps</ParagraphWrapper>
+        <ParagraphWrapper>Open Ledger Live in your computer and install the BTC and ETH, and RSK apps. For RSK Testnet enable developer mode and install RSK Test app.</ParagraphWrapper>
         <HardwareImage src={LedgerImage} alt="Ledger Device" />
       </div>
       <div>
@@ -37,7 +37,7 @@ const LedgerTutorialComponent: React.FC = () => {
       </div>
       <div>
         <Header2><Trans>Open Ethereum or RSK app</Trans></Header2>
-        <ParagraphWrapper><Trans>Open the Ethereum or RSK app selecting in through your Ledger device. Use the Ethereum app for RSK Testnet and the RSK app for RSK Mainnet.</Trans></ParagraphWrapper>
+        <ParagraphWrapper><Trans>Open RSK app selecting in through your Ledger device.</Trans></ParagraphWrapper>
         <HardwareImage src={LedgerImage} alt="Ledger Device" />
       </div>
       <div>
