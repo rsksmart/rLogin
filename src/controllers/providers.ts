@@ -189,15 +189,12 @@ export class RLoginProviderController {
     optionalOpts?: { chainId?: number, rpcUrl?: string, networkParams?: any }
   ) => {
     const providerPackage = this.getProviderOption(id, 'package')
-    const providerDefaultOptions = this.getProviderOption(id, 'options')
     const providerOptions = {
-      ...providerDefaultOptions,
+      ...this.getProviderOption(id, 'options'),
       ...optionalOpts
     }
 
-    const network = optionalOpts?.networkParams ? optionalOpts?.networkParams : this.network || undefined
-
-    const opts = { ...providerOptions, network }
+    const opts = { network: this.network || undefined, ...providerOptions }
 
     return new Promise((resolve, reject) => {
       connector(providerPackage, opts)
