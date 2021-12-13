@@ -1,13 +1,21 @@
-export type NetworkParams = {
-        host?: string,
-        chainId?: number,
-        networkId?: number,
-        blockExplorer?: string,
-        ticker?: string,
-        tickerName?: string,
-        networkName?: string,
-        nodeUrl?: string
-  }
-export type NetworkParamsOptions = {
-    [key:string]: NetworkParams
-  }
+export type TorusNetworkParams = {
+  host: string,
+  chainId: number,
+  networkId: number,
+  blockExplorer: string,
+  ticker: string,
+  tickerName: string,
+  networkName: string,
+}
+
+export type PortisNetworkParams = {
+  chainId: number,
+  nodeUrl: string
+}
+
+export type NetworkParamsOptions<T> = {
+  [key:string]: T
+}
+
+export type NetworkParamsAllOptions = NetworkParamsOptions<TorusNetworkParams> | NetworkParamsOptions<PortisNetworkParams>
+export type NetworkParamsAll = TorusNetworkParams | PortisNetworkParams

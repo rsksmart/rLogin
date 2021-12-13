@@ -1,5 +1,5 @@
 import { DONT_SHOW_TUTORIAL_AGAIN_KEY_LEDGER, DONT_SHOW_TUTORIAL_AGAIN_KEY_TREZOR, DONT_SHOW_TUTORIAL_AGAIN_KEY_DCENT } from '../constants'
-import type { NetworkParamsOptions } from './networkOptionsTypes'
+import type { NetworkParamsAllOptions, NetworkParamsOptions, PortisNetworkParams, TorusNetworkParams } from './networkOptionsTypes'
 
 export const LEDGER_NAME = 'Ledger'
 export const TREZOR_NAME = 'Trezor'
@@ -44,7 +44,7 @@ export function requiresNetworkSelection (providerName: string) {
   return isHardwareWalletProvider(providerName) || isTorus(providerName) || isPortis(providerName)
 }
 
-const TORUS_NETWORK_PARAMS: NetworkParamsOptions = {
+const TORUS_NETWORK_PARAMS: NetworkParamsOptions<TorusNetworkParams> = {
   30: {
     host: 'https://public-node.rsk.co',
     chainId: 30,
@@ -65,7 +65,7 @@ const TORUS_NETWORK_PARAMS: NetworkParamsOptions = {
   }
 }
 
-const PORTIS_NETWORK_PARAMS: NetworkParamsOptions = {
+const PORTIS_NETWORK_PARAMS: NetworkParamsOptions<PortisNetworkParams> = {
   30: {
     chainId: 30,
     nodeUrl: 'https://public-node.rsk.co'
@@ -76,7 +76,7 @@ const PORTIS_NETWORK_PARAMS: NetworkParamsOptions = {
   }
 }
 
-export const PROVIDERS_NETWORK_PARAMS:{[key:string]:NetworkParamsOptions} = {
+export const PROVIDERS_NETWORK_PARAMS:{[key:string]:NetworkParamsAllOptions} = {
   [TORUS_NAME]: TORUS_NETWORK_PARAMS,
   [PORTIS_NAME]: PORTIS_NETWORK_PARAMS
 }
