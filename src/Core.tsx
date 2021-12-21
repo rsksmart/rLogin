@@ -28,7 +28,7 @@ import { ConfirmInformation } from './ux/confirmInformation/ConfirmInformation'
 import ChooseNetworkComponent from './ux/chooseNetwork/ChooseNetworkComponent'
 import TutorialComponent from './ux/tutorial/TutorialComponent'
 import disconnectFromProvider from './lib/providerDisconnect'
-import { NetworkParamsAll } from './lib/networkOptionsTypes'
+import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
 import { RLOGIN_SELECTED_PROVIDER } from './constants'
 
@@ -93,7 +93,7 @@ interface IAvailableLanguage {
   name: string
 }
 
-type NetworkConnectionConfig = { chainId: number, rpcUrl?: string, networkParams?:NetworkParamsAll }
+type NetworkConnectionConfig = { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }
 
 interface IModalState {
   show: boolean

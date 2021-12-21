@@ -6,12 +6,12 @@ import { Header2 } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
-import { NetworkParamsAll, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
+import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
   networkParamsOptions?: NetworkParamsAllOptions
-  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParamsAll }) => void
+  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }) => void
 }
 
 const ChooseNetworkComponent: React.FC<Interface> = ({

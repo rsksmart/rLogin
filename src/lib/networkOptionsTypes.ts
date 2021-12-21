@@ -18,4 +18,4 @@ export type NetworkParamsOptions<T> = {
 }
 
 export type NetworkParamsAllOptions = NetworkParamsOptions<TorusNetworkParams> | NetworkParamsOptions<PortisNetworkParams>
-export type NetworkParamsAll = TorusNetworkParams | PortisNetworkParams
+export type NetworkParams = TorusNetworkParams | PortisNetworkParams
