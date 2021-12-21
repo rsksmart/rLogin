@@ -143,6 +143,7 @@ export class RLoginProviderController {
       const provider = this.getProvider(id)
       if (typeof provider !== 'undefined') {
         const { id, name, logo, connector } = provider
+
         userOptions.push({
           name,
           logo,
@@ -188,10 +189,17 @@ export class RLoginProviderController {
     optionalOpts?: { chainId?: number, rpcUrl?: string, networkParams?: any }
   ) => {
     const providerPackage = this.getProviderOption(id, 'package')
-    const providerOptions = {
+    const providerOptions = id !== 'portis' ? {
       ...this.getProviderOption(id, 'options'),
       ...optionalOpts
+    } : {
+      ...this.getProviderOption(id, 'options'),
+      network: {
+        chainId: optionalOpts?.chainId,
+        nodeUrl: optionalOpts?.rpcUrl
+      }
     }
+    // ref: https://github.com/Web3Modal/web3modal/blob/72596699b97d231dfaa5ef04110b61b8dc77d57d/src/providers/connectors/portis.ts#L28
 
     const opts = { network: this.network || undefined, ...providerOptions }
 

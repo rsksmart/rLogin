@@ -6,11 +6,11 @@ import { Header2 } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
-import { NetworkParams, NetworkParamsOptions } from '../../lib/networkOptionsTypes'
+import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
-  networkParamsOptions?: NetworkParamsOptions
+  networkParamsOptions?: NetworkParamsAllOptions
   chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }) => void
 }
 
