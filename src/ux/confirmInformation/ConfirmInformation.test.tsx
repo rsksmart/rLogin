@@ -12,6 +12,7 @@ describe('Component: ConfirmInformation', () => {
     providerUserOption,
     sd: undefined,
     provider: undefined,
+    providerName: 'provider',
     onConfirm: jest.fn(),
     onCancel: jest.fn(),
     displayMode: false
@@ -118,5 +119,12 @@ describe('Component: ConfirmInformation', () => {
     expect(confirmButton).toBe(false)
     expect(cancelButton).toBe(false)
     expect(checkbox).toBe(false)
+  })
+
+  it('shows dpath for hardware provider', () => {
+    const wrapper = mount(<ConfirmInformation {...props} providerName='Ledger' provider={{ dPath: 'dpath' }} />)
+
+    expect(wrapper.find(`dt.${LIST_TITLE}`).at(3).text()).toBe('Derivation path:')
+    expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(3).text()).toBe('dpath')
   })
 })

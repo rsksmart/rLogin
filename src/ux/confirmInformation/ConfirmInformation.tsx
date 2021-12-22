@@ -21,11 +21,12 @@ interface ConfirmInformationProps {
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
   provider: any
+  providerName: string
   onConfirm: () => Promise<any>
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -49,6 +50,8 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
   const peerWallet = getPeerInfo(provider?.wc?.peerMeta)
 
+  const isHardwareWallet = provider.isLedger || provider.isTrezor || provider.isDCent
+
   return !isLoading
     ? <>
       <Header2><Trans>Information</Trans></Header2>
@@ -68,6 +71,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           <Title><Trans>Wallet address</Trans>:</Title>
           {peerWallet && <Title><Trans>Connected wallet</Trans>:</Title>}
           <Title><Trans>Network</Trans>:</Title>
+          {isHardwareWallet && <Title><Trans>Derivation path</Trans>:</Title>}
           {sd && Object.keys(sd.claims).map(key => <Title key={`claim-key-${key}`}>{key}:</Title>)}
           {sd && Object.keys(sd.credentials).map(key => <Title key={`credential-key-${key}`}>{key}:</Title>)}
         </Column>
@@ -75,6 +79,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           <Description>{shortAddress(address)}</Description>
           {peerWallet && <Description>{peerWallet.name}</Description>}
           <Description>{chainId && getChainName(chainId)}</Description>
+          {isHardwareWallet && <Description>{provider.dpath}</Description>}
           {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{data[key]}</Description>)}
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
         </Column>
