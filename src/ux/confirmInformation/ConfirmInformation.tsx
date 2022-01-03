@@ -50,7 +50,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
   const peerWallet = getPeerInfo(provider?.wc?.peerMeta)
 
-  const isHardwareWallet = provider.isLedger || provider.isTrezor || provider.isDCent
+  const isHardwareWallet = provider?.isLedger || provider?.isTrezor || provider?.isDCent
 
   return !isLoading
     ? <>

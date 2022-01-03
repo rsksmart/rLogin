@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Trans } from 'react-i18next'
 
 import { Header2, SmallSpan } from '../../ui/shared/Typography'
@@ -54,10 +54,10 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
           <SmallSpan><Trans>Change derivation path</Trans></SmallSpan>
         </label>
         {dpathEnabled && <ChooseDPath {...{ dPath, setDPath, providerName, selectedChainId }} />}
-        <p>
-          <Button onClick={handleSelect}>Choose</Button>
-        </p>
       </>}
+      <p>
+        <Button onClick={handleSelect}>Choose</Button>
+      </p>
     </div>
   )
 }
