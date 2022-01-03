@@ -16,7 +16,6 @@ export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: 
     setDPath(getDPathByChainId(parseInt(selectedChainId), 0, isLedger(providerName)))
   }, [selectedChainId])
 
-
   return <WideBox>
     <b>Using: <input type="text" className="final-dpath" value={dPath} onChange={e => setDPath(e.target.value)} /></b>
     <p>
@@ -28,7 +27,7 @@ export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: 
       <DpathRow i={3} />
       <DpathRow i={4} />
       <br />
-      Account <input type="number" className="dpath-custom-index" style={{ width: 40 }} value={customDpathIndex} onChange={e => setCustomDpathIndex(parseInt(e.target.value))}  /><br />
+      Account <input type="number" className="dpath-custom-index" style={{ width: 40 }} value={customDpathIndex} onChange={e => setCustomDpathIndex(parseInt(e.target.value))} /><br />
       <DpathRow i={customDpathIndex} />
     </p>
   </WideBox>
