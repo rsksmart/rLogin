@@ -273,7 +273,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
   private chooseNetwork = (network: NetworkConnectionConfig) => {
-    console.log(network)
     this.setState({ chosenNetwork: network }, () => {
       return this.preTutorialChecklist()
     })

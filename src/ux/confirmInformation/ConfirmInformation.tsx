@@ -79,7 +79,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           <Description>{shortAddress(address)}</Description>
           {peerWallet && <Description>{peerWallet.name}</Description>}
           <Description>{chainId && getChainName(chainId)}</Description>
-          {isHardwareWallet && <Description>{provider.dpath}</Description>}
+          {isHardwareWallet && <Description>{provider.dpath || provider.path}</Description>}
           {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{data[key]}</Description>)}
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
         </Column>

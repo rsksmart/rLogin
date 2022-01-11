@@ -32,9 +32,6 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
   const [dpathEnabled, setDpathEnabled] = useState(false)
   const [dPath, setDPath] = useState(initialDPath(selectedChainId, providerName))
 
-  console.log(dpathEnabled)
-  console.log(dPath)
-
   const handleSelect = () =>
     chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId], dPath: !dpathEnabled ? undefined : dPath, networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]) })
 
