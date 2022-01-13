@@ -10,7 +10,8 @@ describe('Component: ChooseNetworkComponent', () => {
       30: 'http://30',
       31: 'http://31'
     },
-    chooseNetwork: jest.fn()
+    chooseNetwork: jest.fn(),
+    providerName: 'provider'
   }
 
   it('renders the component', () => {

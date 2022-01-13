@@ -148,7 +148,7 @@ export class RLoginProviderController {
           name,
           logo,
           description: getProviderDescription(provider),
-          onClick: (opts?: { chainId: number, rpcUrl?: string, networkParams?: NetworkParams }) => this.connectTo(id, connector, opts)
+          onClick: (opts?: { chainId: number, rpcUrl?: string, dPath?: string, networkParams?: NetworkParams }) => this.connectTo(id, connector, opts)
         })
       }
     })
@@ -186,7 +186,7 @@ export class RLoginProviderController {
   public connectTo = (
     id: string,
     connector: (providerPackage: any, opts: any) => Promise<any>,
-    optionalOpts?: { chainId?: number, rpcUrl?: string, networkParams?: any }
+    optionalOpts?: { chainId?: number, rpcUrl?: string, dPath?: string, networkParams?: any }
   ) => {
     const providerPackage = this.getProviderOption(id, 'package')
     const providerOptions = id !== 'portis' ? {
