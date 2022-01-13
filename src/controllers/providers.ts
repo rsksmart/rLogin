@@ -203,7 +203,6 @@ export class RLoginProviderController {
 
     const opts = { network: this.network || undefined, ...providerOptions }
 
-    console.log(opts)
     return new Promise((resolve, reject) => {
       connector(providerPackage, opts)
         .then((provider: any) => {
