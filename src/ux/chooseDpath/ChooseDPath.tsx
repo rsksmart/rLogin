@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
-import { isLedger } from '../lib/hardware-wallets'
-import { WideBox } from '../ui/shared/Box'
-import { Paragraph } from '../ui/shared/Typography'
+import { isLedger } from '../../lib/hardware-wallets'
+import { WideBox } from '../../ui/shared/Box'
+import { Paragraph } from '../../ui/shared/Typography'
+import LoadingComponent from '../../ui/shared/Loading'
 
 interface DpathRowInterface {
-  i: number,
-  dpath: string,
+  path: {
+    path: string,
+    address: string
+  }
   onClick: () => void,
   selected: boolean
 }
@@ -35,15 +38,31 @@ const DPathInput = styled.input`
 }
 `
 
-const DpathRow = ({ i, dpath, selected, onClick }: DpathRowInterface) =>
+const DpathRow = ({ path, selected, onClick }: DpathRowInterface) =>
   <DpathRowStyles onClick={onClick} selected={selected}>
-    Account {i} : {dpath}
+    {path.path} : {path.address}
   </DpathRowStyles>
 
-export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: { dPath: string, setDPath: (dPpath: string) => void, providerName: string, selectedChainId: string }) => {
-  const [customDpathIndex, setCustomDpathIndex] = useState(5)
-  const customDpathPath = getDPathByChainId(parseInt(selectedChainId), customDpathIndex || 0, isLedger(providerName))
+interface Interface {
+  provider: any // RLoginEIP1193Provider
+}
 
+// export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: { dPath: string, setDPath: (dPpath: string) => void, providerName: string, selectedChainId: string }) => {
+export const ChooseDPathComponent: React.FC<Interface> = ({
+  provider
+}) => {
+  const [dPath, setDPath] = useState<string>('')
+  const [allPaths, setAllPaths] = useState<any[]>([])
+
+  useEffect(() => {
+    console.log('provider', provider)
+    setDPath(provider.dpath)
+    console.log('getting others...')
+    provider.getAddresses([1, 2, 3, 4, 50]).then((result: any) => setAllPaths(result))
+  }, [provider])
+  // const [customDpathIndex, setCustomDpathIndex] = useState(5)
+  // const customDpathPath = getDPathByChainId(parseInt(selectedChainId), customDpathIndex || 0, isLedger(providerName))
+  /*
   useEffect(() => {
     setDPath(getDPathByChainId(parseInt(selectedChainId), 0, isLedger(providerName)))
   }, [selectedChainId])
@@ -52,6 +71,10 @@ export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: 
     const customPath = parseInt(e.target.value)
     setCustomDpathIndex(customPath)
     customPath !== 0 && setDPath(getDPathByChainId(customPath, 0, isLedger(providerName)))
+  }
+  */
+  if (allPaths.length === 0) {
+    return <LoadingComponent text="retrieving addresses" />
   }
 
   return <WideBox>
@@ -65,34 +88,12 @@ export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: 
     </Paragraph>
 
     <Paragraph>
-      Standard base derivation path: {getDPathByChainId(parseInt(selectedChainId), 0, isLedger(providerName)).slice(0, -1)}
+      Standard base derivation path:
     </Paragraph>
-    {Array.from({ length: 4 }, (_, i) => {
-      const dpath = getDPathByChainId(parseInt(selectedChainId), i, isLedger(providerName))
-      return <DpathRow
-        key={i}
-        i={i}
-        dpath={dpath}
-        onClick={() => setDPath(dpath)}
-        selected={dpath === dPath}
-      />
-    })}
 
-    <Paragraph>
-      Custom Account:
-      <DPathInput
-        type="number"
-        className="dpath-custom-index"
-        value={customDpathIndex}
-        onChange={handleCustomChange}
-      />
-      <DpathRow
-        i={customDpathIndex || 0}
-        dpath={customDpathPath}
-        onClick={() => setDPath(customDpathPath)}
-        selected={customDpathPath === dPath}
-      />
-    </Paragraph>
+    {allPaths.map((path: any) =>
+      <DpathRow key={path.path} path={path} selected={false} onClick={() => console.log('click')} />
+    )}
   </WideBox>
 }
 
