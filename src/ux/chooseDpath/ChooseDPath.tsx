@@ -5,12 +5,16 @@ import { isLedger } from '../../lib/hardware-wallets'
 import { WideBox } from '../../ui/shared/Box'
 import { Paragraph } from '../../ui/shared/Typography'
 import LoadingComponent from '../../ui/shared/Loading'
+import { shortAddress } from '../confirmInformation/ConfirmInformation'
+import { Button } from '../../ui/shared/Button'
+
+interface AccountInterface {
+  dPath: string,
+  address: string
+}
 
 interface DpathRowInterface {
-  path: {
-    path: string,
-    address: string
-  }
+  account: AccountInterface
   onClick: () => void,
   selected: boolean
 }
@@ -38,42 +42,49 @@ const DPathInput = styled.input`
 }
 `
 
-const DpathRow = ({ path, selected, onClick }: DpathRowInterface) =>
+const DpathRow = ({ account, selected, onClick }: DpathRowInterface) =>
   <DpathRowStyles onClick={onClick} selected={selected}>
-    {path.path} : {path.address}
+    {account.dPath} : {shortAddress(account.address)}
   </DpathRowStyles>
 
 interface Interface {
   provider: any // RLoginEIP1193Provider
+  selectPath: (accountAndPath: AccountInterface) => void
 }
 
-// export const ChooseDPath = ({ dPath, setDPath, providerName, selectedChainId }: { dPath: string, setDPath: (dPpath: string) => void, providerName: string, selectedChainId: string }) => {
 export const ChooseDPathComponent: React.FC<Interface> = ({
-  provider
+  provider,
+  selectPath
 }) => {
-  const [dPath, setDPath] = useState<string>('')
-  const [allPaths, setAllPaths] = useState<any[]>([])
+  const [allAccounts, setAllAccounts] = useState<AccountInterface[]>([])
+  const [selectedAccount, setSelectedAccount] = useState<string>(provider.path)
 
   useEffect(() => {
-    console.log('provider', provider)
-    setDPath(provider.dpath)
-    console.log('getting others...')
-    provider.getAddresses([1, 2, 3, 4, 50]).then((result: any) => setAllPaths(result))
+    setSelectedAccount(provider.dpath)
+    provider.getAddresses([1, 2, 3, 4])
+      .then((result: AccountInterface[]) =>
+        setAllAccounts([
+          {
+            dPath: provider.dpath,
+            address: provider.selectedAddress
+          },
+          ...result
+        ]))
   }, [provider])
-  // const [customDpathIndex, setCustomDpathIndex] = useState(5)
-  // const customDpathPath = getDPathByChainId(parseInt(selectedChainId), customDpathIndex || 0, isLedger(providerName))
-  /*
-  useEffect(() => {
-    setDPath(getDPathByChainId(parseInt(selectedChainId), 0, isLedger(providerName)))
-  }, [selectedChainId])
 
-  const handleCustomChange = (e: any) => {
-    const customPath = parseInt(e.target.value)
-    setCustomDpathIndex(customPath)
-    customPath !== 0 && setDPath(getDPathByChainId(customPath, 0, isLedger(providerName)))
+  const handleSelectAccount = () => {
+    const account = allAccounts.filter((account: AccountInterface) => account.dPath === selectedAccount)
+
+    if (account[0].address) {
+      return provider.chooseAccount(selectedAccount)
+        .then(() => selectPath(account[0]))
+    }
+
+    console.log('no address, we need to find it ;-)')
+    // handle custom dpath, need to get the address...
   }
-  */
-  if (allPaths.length === 0) {
+
+  if (allAccounts.length === 0) {
     return <LoadingComponent text="retrieving addresses" />
   }
 
@@ -82,18 +93,24 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
       <DPathInput
         type="text"
         className="final-dpath"
-        value={dPath}
-        onChange={e => setDPath(e.target.value)}
+        value={selectedAccount}
+        onChange={e => setSelectedAccount(e.target.value)}
       />
     </Paragraph>
 
     <Paragraph>
-      Standard base derivation path:
+      Standard base derivation path: {provider.path}
     </Paragraph>
 
-    {allPaths.map((path: any) =>
-      <DpathRow key={path.path} path={path} selected={false} onClick={() => console.log('click')} />
+    {allAccounts.map((account: AccountInterface) =>
+      <DpathRow
+        key={account.dPath}
+        account={account}
+        selected={account.dPath === selectedAccount}
+        onClick={() => setSelectedAccount(account.dPath)}
+      />
     )}
+    <Button onClick={handleSelectAccount}>Select</Button>
   </WideBox>
 }
 

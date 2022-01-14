@@ -241,9 +241,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   })
 
-  private setHardwareDPath = (dPath: string) => {
-    console.log('dPath has been set up, detect flavor', dPath)
-    // const { selectedProviderUserOption } = this.state
+  private setHardwareDPath = ({ address, dPath }: { address: string, dPath: string }) => {
+    const { selectedProviderUserOption } = this.state
+
+    this.setState({
+      address,
+      // @ts-ignore - selectedProviderUserOption exists
+      selectedProviderUserOption: {
+        ...selectedProviderUserOption,
+        dPath
+      }
+    }, this.detectFlavor)
   }
 
   private validateCurrentChain ():boolean {
@@ -523,7 +531,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={network => this.chooseNetwork(network)} />}
-        {currentStep === 'choosePath' && <ChooseDPathComponent provider={provider} />}
+        {currentStep === 'choosePath' && <ChooseDPathComponent provider={provider} selectPath={this.setHardwareDPath} />}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
