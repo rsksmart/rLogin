@@ -50,11 +50,13 @@ const DpathRow = ({ account, selected, onClick }: DpathRowInterface) =>
 interface Interface {
   provider: any // RLoginEIP1193Provider
   selectPath: (address: string) => void
+  handleError: (error: any) => void
 }
 
 export const ChooseDPathComponent: React.FC<Interface> = ({
   provider,
-  selectPath
+  selectPath,
+  handleError
 }) => {
   const [allAccounts, setAllAccounts] = useState<AccountInterface[]>([])
   const [selectedAccount, setSelectedAccount] = useState<string>(provider.path)
@@ -70,10 +72,12 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
           },
           ...result
         ]))
+      .catch(handleError)
   }, [provider])
 
   const handleSelectAccount = () => provider.chooseAccount(selectedAccount)
     .then(() => selectPath(provider.selectedAddress))
+    .catch(handleError)
 
   if (allAccounts.length === 0) {
     return <LoadingComponent text="retrieving addresses" />

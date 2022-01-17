@@ -518,7 +518,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && <ChooseNetworkComponent providerName={provider.name} networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={this.chooseNetwork} />}
-        {currentStep === 'choosePath' && <ChooseDPathComponent provider={provider} selectPath={this.setHardwareDPath} />}
+        {currentStep === 'choosePath' && <ChooseDPathComponent provider={provider} selectPath={this.setHardwareDPath} handleError={(err: any) => this.setState({ currentStep: 'error', errorReason: { title: 'Error Selecting Path', description: err.toString() } })} />}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
