@@ -2,33 +2,35 @@
 import React, { useState } from 'react'
 import { Trans } from 'react-i18next'
 
-import { Header2 } from '../../ui/shared/Typography'
+import { Header2, SmallSpan } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
 import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
+import { isHardwareWalletProvider } from '../../lib/hardware-wallets'
+import Checkbox from '../../ui/shared/Checkbox'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
   networkParamsOptions?: NetworkParamsAllOptions
-  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }) => void
+  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }, configureDPath: boolean) => void,
+  providerName: string
 }
 
 const ChooseNetworkComponent: React.FC<Interface> = ({
   rpcUrls,
   networkParamsOptions,
-  chooseNetwork
+  chooseNetwork,
+  providerName
 }) => {
   if (!rpcUrls) {
     return <></>
   }
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
-
-  // const [dpathEnabled, setDpathEnabled] = useState(false)
-  // const [dPath, setDPath] = useState(initialDPath(selectedChainId, providerName))
+  const [dpathEnabled, setDpathEnabled] = useState(false)
 
   const handleSelect = () =>
-    chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId], networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]) })
+    chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId], networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]) }, dpathEnabled)
 
   return (
     <div>
@@ -40,6 +42,13 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
           )}
         </Select>
       </p>
+      {isHardwareWalletProvider(providerName) && <>
+        <label>
+          <Checkbox checked={dpathEnabled} onChange={() => setDpathEnabled(!dpathEnabled)} />
+          <SmallSpan><Trans>Change derivation path</Trans></SmallSpan>
+        </label>
+      </>
+      }
       <p>
         <Button onClick={handleSelect}>Choose</Button>
       </p>
