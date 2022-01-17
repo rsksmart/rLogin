@@ -72,17 +72,8 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
         ]))
   }, [provider])
 
-  const handleSelectAccount = () => {
-    const account = allAccounts.filter((account: AccountInterface) => account.dPath === selectedAccount)
-
-    if (account[0].address) {
-      return provider.chooseAccount(selectedAccount)
-        .then(() => selectPath(provider.selectedAddress))
-    }
-
-    console.log('no address, we need to find it ;-)')
-    // handle custom dpath, need to get the address...
-  }
+  const handleSelectAccount = () => provider.chooseAccount(selectedAccount)
+    .then(() => selectPath(provider.selectedAddress))
 
   if (allAccounts.length === 0) {
     return <LoadingComponent text="retrieving addresses" />
