@@ -237,7 +237,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   })
 
-  private setHardwareDPath = ({ address, dPath }: { address: string, dPath: string }) =>
+  private setHardwareDPath = (address: string) =>
     this.setState({ address }, this.detectFlavor)
 
   private validateCurrentChain ():boolean {

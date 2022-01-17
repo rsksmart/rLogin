@@ -49,7 +49,7 @@ const DpathRow = ({ account, selected, onClick }: DpathRowInterface) =>
 
 interface Interface {
   provider: any // RLoginEIP1193Provider
-  selectPath: (accountAndPath: AccountInterface) => void
+  selectPath: (address: string) => void
 }
 
 export const ChooseDPathComponent: React.FC<Interface> = ({
@@ -77,7 +77,7 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
 
     if (account[0].address) {
       return provider.chooseAccount(selectedAccount)
-        .then(() => selectPath(account[0]))
+        .then(() => selectPath(provider.selectedAddress))
     }
 
     console.log('no address, we need to find it ;-)')
