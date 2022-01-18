@@ -119,7 +119,6 @@ interface IModalState {
     chosenNetwork?: NetworkConnectionConfig
   }
   chosenNetwork?: NetworkConnectionConfig
-  setupDpath?: boolean
 }
 
 const INITIAL_STATE: IModalState = {
@@ -225,10 +224,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
   /**
    * ContinueSettingUp
    * After connecting to the provider but before detecting the flavor
-   * */
+   */
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => {
-    const { setupDpath } = this.state
-    if (setupDpath) {
+    if (provider.isLedger) {
       return this.setState({ currentStep: 'choosePath' })
     }
 
@@ -289,11 +287,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
      })
    }
 
-  private chooseNetwork = (network: NetworkConnectionConfig, setupDpath: boolean) => {
-    this.setState({
-      chosenNetwork: network,
-      setupDpath
-    }, this.preTutorialChecklist)
+  private chooseNetwork = (network: NetworkConnectionConfig) => {
+    this.setState({ chosenNetwork: network }, this.preTutorialChecklist)
   }
 
   /**
@@ -517,8 +512,18 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerName={provider.name} providerUserOption={selectedProviderUserOption!.provider} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent providerName={provider.name} networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={this.chooseNetwork} />}
-        {currentStep === 'choosePath' && <ChooseDPathComponent provider={provider} selectPath={this.setHardwareDPath} handleError={(err: any) => this.setState({ currentStep: 'error', errorReason: { title: 'Error Selecting Path', description: err.toString() } })} />}
+        {currentStep === 'chooseNetwork' && (
+          <ChooseNetworkComponent
+            networkParamsOptions={networkParamsOptions}
+            rpcUrls={rpcUrls}
+            chooseNetwork={this.chooseNetwork} />
+        )}
+        {currentStep === 'choosePath' && (
+          <ChooseDPathComponent
+            provider={provider}
+            selectPath={this.setHardwareDPath}
+            handleError={(err: any) => this.setState({ currentStep: 'error', errorReason: { title: 'Error Selecting Path', description: err.toString() } })} />
+        )}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>

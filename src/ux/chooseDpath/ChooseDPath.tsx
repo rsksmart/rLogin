@@ -5,31 +5,14 @@ import { isLedger } from '../../lib/hardware-wallets'
 import { WideBox } from '../../ui/shared/Box'
 import { Paragraph } from '../../ui/shared/Typography'
 import LoadingComponent from '../../ui/shared/Loading'
-import { shortAddress } from '../confirmInformation/ConfirmInformation'
 import { Button } from '../../ui/shared/Button'
+import AccountRow from './AccountRow'
 
-interface AccountInterface {
+export interface AccountInterface {
   dPath: string,
   address: string
+  balance?: string
 }
-
-interface DpathRowInterface {
-  account: AccountInterface
-  onClick: () => void,
-  selected: boolean
-}
-
-const DpathRowStyles = styled.button<{ selected: boolean }>`
-  background: ${(props) => props.selected ? props.theme.overlay : props.theme.primaryText};
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  font-weight: 400 !important;
-  font-size: 12px;
-  color: ${(props) => props.selected ? props.theme.primaryText : props.theme.p};
-  width: 100%;
-  cursor: pointer
-`
 
 const DPathInput = styled.input`
   border: none;
@@ -41,11 +24,6 @@ const DPathInput = styled.input`
     outline: none;
 }
 `
-
-const DpathRow = ({ account, selected, onClick }: DpathRowInterface) =>
-  <DpathRowStyles onClick={onClick} selected={selected}>
-    {account.dPath} : {shortAddress(account.address)}
-  </DpathRowStyles>
 
 interface Interface {
   provider: any // RLoginEIP1193Provider
@@ -63,15 +41,22 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
 
   useEffect(() => {
     setSelectedAccount(provider.dpath)
-    provider.getAddresses([1, 2, 3, 4])
-      .then((result: AccountInterface[]) =>
-        setAllAccounts([
-          {
-            dPath: provider.dpath,
-            address: provider.selectedAddress
-          },
-          ...result
-        ]))
+    const accountIds = [0, 1, 2, 3, 4]
+    provider.getAddresses(accountIds)
+      .then((accounts: AccountInterface[]) => {
+        const balanceRequests = accountIds.map((id) =>
+          provider.request({ method: 'eth_getBalance', params: [accounts[id].address, 'latest'] }))
+
+        // get the balances
+        Promise.all(balanceRequests)
+          .then((balances: string[]) =>
+            setAllAccounts(
+              // add balances to the account objects
+              accountIds.map((id: number) => (
+                { ...accounts[id], balance: balances[id] }
+              )))
+          )
+      })
       .catch(handleError)
   }, [provider])
 
@@ -98,7 +83,7 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     </Paragraph>
 
     {allAccounts.map((account: AccountInterface) =>
-      <DpathRow
+      <AccountRow
         key={account.dPath}
         account={account}
         selected={account.dPath === selectedAccount}
