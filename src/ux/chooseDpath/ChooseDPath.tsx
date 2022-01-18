@@ -79,6 +79,15 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     .then(() => selectPath(provider.selectedAddress))
     .catch(handleError)
 
+  const getGasNameFromChain = (chainId: number) => {
+    switch (chainId) {
+      case 1: return 'ETH'
+      case 30: return 'RBTC'
+      case 31: return 'tRBTC'
+      default: return ''
+    }
+  }
+
   if (allAccounts.length === 0) {
     return <LoadingComponent text="retrieving addresses and balances" />
   }
@@ -98,6 +107,7 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
         account={account}
         selected={account.dPath === selectedAccount}
         onClick={() => setSelectedAccount(account.dPath)}
+        balancePrefix={getGasNameFromChain(provider.chainId)}
       />
     )}
 

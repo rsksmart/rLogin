@@ -8,6 +8,7 @@ interface Interface {
   account: AccountInterface
   onClick: () => void,
   selected: boolean
+  balancePrefix?: string
 }
 
 const DpathRowStyles = styled.button<{ selected: boolean }>`
@@ -30,7 +31,7 @@ const Column = styled.div`
   padding: 0 5px;
 `
 
-const AccountRow: React.FC<Interface> = ({ account, selected, onClick }: Interface) => {
+const AccountRow: React.FC<Interface> = ({ account, selected, onClick, balancePrefix}: Interface) => {
   const balance = account.balance && account.balance.startsWith('0x')
     ? new BN(account.balance.substring(2), 16)
     : new BN(account.balance || 0, 16)
@@ -41,7 +42,7 @@ const AccountRow: React.FC<Interface> = ({ account, selected, onClick }: Interfa
   return <DpathRowStyles onClick={onClick} selected={selected}>
     <Column>{account.dPath}</Column>
     <Column>{shortAddress(account.address)}</Column>
-    <Column>{niceBalance.toString().substring(0, 10)} RBTC</Column>
+    <Column>{`${niceBalance.toString().substring(0, 10)} ${balancePrefix}`} </Column>
   </DpathRowStyles>
 }
 
