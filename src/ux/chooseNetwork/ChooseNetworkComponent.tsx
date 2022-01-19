@@ -23,22 +23,25 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
     return <></>
   }
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const handleSelect = () =>
+  const handleSelect = () => {
+    setIsLoading(true)
     chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId], networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]) })
+  }
 
   return (
     <div>
       <Header2><Trans>Choose Network</Trans></Header2>
       <p>
-        <Select value={selectedChainId} onChange={evt => setSelectedChainId(evt.target.value)}>
+        <Select disabled={isLoading} value={selectedChainId} onChange={evt => setSelectedChainId(evt.target.value)}>
           {Object.keys(rpcUrls).map((chainId: string) =>
             <option key={chainId} value={chainId}>{getChainName(parseInt(chainId))}</option>
           )}
         </Select>
       </p>
       <p>
-        <Button onClick={handleSelect}>Choose</Button>
+        <Button disabled={isLoading} onClick={handleSelect}>Choose</Button>
       </p>
     </div>
   )
