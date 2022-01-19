@@ -68,7 +68,6 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
 
   const getAccountsAndBalance = (startingIndex: number) => {
     setIsLoading(true)
-    setViewableIndex(startingIndex)
     setViewAbleAccounts([])
 
     const currentIndexes = Array.from({ length: 5 }, (_, i) => i + startingIndex)
@@ -89,6 +88,7 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
             ))
             setAllAccounts([...allAccounts, ...newAccounts])
             setViewAbleAccounts(newAccounts)
+            setSelectedAccount(newAccounts[0].dPath)
           })
       })
       .catch(handleError)
@@ -105,7 +105,12 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     const newAccounts = allAccounts.filter((account) =>
       account.index >= newIndex && account.index < newIndex + 5)
 
-    return (newAccounts.length === 0) ? getAccountsAndBalance(newIndex) : setViewAbleAccounts(newAccounts)
+    if (newAccounts.length === 0) {
+      return getAccountsAndBalance(newIndex)
+    }
+
+    setViewAbleAccounts(newAccounts)
+    setSelectedAccount(newAccounts[0].dPath)
   }
 
   const getGasNameFromChain = (chainId: number) => {
