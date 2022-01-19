@@ -235,9 +235,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   })
 
-  private setHardwareDPath = (address: string) =>
-    this.setState({ address }, this.detectFlavor)
-
   private validateCurrentChain ():boolean {
     const { supportedChains, showModal, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
@@ -287,9 +284,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
      })
    }
 
-  private chooseNetwork = (network: NetworkConnectionConfig) => {
+  private chooseNetwork = (network: NetworkConnectionConfig) =>
     this.setState({ chosenNetwork: network }, this.preTutorialChecklist)
-  }
 
   /**
    * Checklist before sending the connect method
@@ -521,7 +517,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {currentStep === 'choosePath' && (
           <ChooseDPathComponent
             provider={provider}
-            selectPath={this.setHardwareDPath}
+            selectPath={(address: string) => this.setState({ address }, this.detectFlavor)}
             handleError={(err: any) => this.setState({ currentStep: 'error', errorReason: { title: 'Error Selecting Path', description: err.toString() } })} />
         )}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}

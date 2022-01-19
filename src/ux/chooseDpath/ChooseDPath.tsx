@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
 import { isLedger } from '../../lib/hardware-wallets'
-import { Header2, Header3, Paragraph } from '../../ui/shared/Typography'
+import { Header2, Paragraph } from '../../ui/shared/Typography'
 import LoadingComponent from '../../ui/shared/Loading'
 import { Button } from '../../ui/shared/Button'
 import AccountRow from './AccountRow'
 
 export interface AccountInterface {
+  index: number
   dPath: string,
   address: string
   balance?: string
@@ -22,6 +23,10 @@ const DPathInput = styled.input`
   &:focus {
     outline: none;
 }
+`
+
+const AccountWrapper = styled.div`
+  margin-bottom: 10px;
 `
 
 const Row = styled.div`
@@ -50,34 +55,58 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
   handleError
 }) => {
   const [allAccounts, setAllAccounts] = useState<AccountInterface[]>([])
+  const [viewableAccounts, setViewAbleAccounts] = useState<AccountInterface[]>([])
+  const [viewableIndex, setViewableIndex] = useState<number>(0)
+
   const [selectedAccount, setSelectedAccount] = useState<string>(provider.path)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     setSelectedAccount(provider.dpath)
-    const accountIds = [0, 1, 2, 3, 4]
-    provider.getAddresses(accountIds)
+    getAccountsAndBalance(0)
+  }, [provider])
+
+  const getAccountsAndBalance = (startingIndex: number) => {
+    setIsLoading(true)
+    setViewableIndex(startingIndex)
+    setViewAbleAccounts([])
+
+    const currentIndexes = Array.from({ length: 5 }, (_, i) => i + startingIndex)
+
+    provider.getAddresses(currentIndexes)
       .then((accounts: AccountInterface[]) => {
-        const balanceRequests = accountIds.map((id) =>
+        const balanceRequests = accounts.map((account) =>
           provider.request({
             method: 'eth_getBalance',
-            params: [accounts[id].address.toLowerCase(), 'latest']
+            params: [account.address.toLowerCase(), 'latest']
           }))
 
         // get the balances
         Promise.all(balanceRequests)
-          .then((balances: string[]) =>
-            setAllAccounts(
-              // add balances to the account objects
-              accountIds.map((id: number) => (
-                { ...accounts[id], balance: balances[id] }
-              ))))
+          .then((balances: string[]) => {
+            const newAccounts = accounts.map((account, index) => (
+              { ...account, balance: balances[index], index: index + startingIndex }
+            ))
+            setAllAccounts([...allAccounts, ...newAccounts])
+            setViewAbleAccounts(newAccounts)
+          })
       })
       .catch(handleError)
-  }, [provider])
+      .finally(() => setIsLoading(false))
+  }
 
   const handleSelectAccount = () => provider.chooseAccount(selectedAccount)
     .then(() => selectPath(provider.selectedAddress))
     .catch(handleError)
+
+  const showMoreAccounts = (newIndex: number) => {
+    setViewableIndex(newIndex)
+
+    const newAccounts = allAccounts.filter((account) =>
+      account.index >= newIndex && account.index < newIndex + 5)
+
+    return (newAccounts.length === 0) ? getAccountsAndBalance(newIndex) : setViewAbleAccounts(newAccounts)
+  }
 
   const getGasNameFromChain = (chainId: number) => {
     switch (chainId) {
@@ -88,40 +117,55 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     }
   }
 
-  if (allAccounts.length === 0) {
+  if (viewableAccounts.length === 0) {
     return <LoadingComponent text="retrieving addresses and balances" />
   }
 
   return <>
     <Header2>Select an account</Header2>
 
-    <Row>
-      <Column>Path</Column>
-      <Column>Address</Column>
-      <Column>Balance</Column>
-    </Row>
+    <AccountWrapper>
+      <Row>
+        <Column>Path</Column>
+        <Column>Address</Column>
+        <Column>Balance</Column>
+      </Row>
 
-    {allAccounts.map((account: AccountInterface) =>
-      <AccountRow
-        key={account.dPath}
-        account={account}
-        selected={account.dPath === selectedAccount}
-        onClick={() => setSelectedAccount(account.dPath)}
-        balancePrefix={getGasNameFromChain(provider.chainId)}
-      />
-    )}
+      {viewableAccounts.map((account: AccountInterface) =>
+        <AccountRow
+          key={account.index}
+          account={account}
+          selected={account.dPath === selectedAccount}
+          onClick={() => setSelectedAccount(account.dPath)}
+          balancePrefix={getGasNameFromChain(provider.chainId)}
+        />)
+      }
+    </AccountWrapper>
 
-    <Header3>Or choose a specific path</Header3>
-    <Paragraph>Current Path:
+    <Button
+      onClick={() => showMoreAccounts(viewableIndex - 5)}
+      variant="secondary"
+      disabled={isLoading || viewableIndex === 0}
+    >&lt;</Button>
+
+    <Button
+      onClick={() => showMoreAccounts(viewableIndex + 5)}
+      variant="secondary"
+      disabled={isLoading}
+    >&gt;</Button>
+
+    <Paragraph>
+      Or use the textbox to choose a specific path:
       <DPathInput
         type="text"
         className="final-dpath"
         value={selectedAccount}
         onChange={e => setSelectedAccount(e.target.value)}
+        disabled={isLoading}
       />
     </Paragraph>
 
-    <Button onClick={handleSelectAccount}>Select</Button>
+    <Button onClick={handleSelectAccount} disabled={isLoading}>Select</Button>
   </>
 }
 

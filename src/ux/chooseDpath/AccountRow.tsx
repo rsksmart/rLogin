@@ -31,7 +31,7 @@ const Column = styled.div`
   padding: 0 5px;
 `
 
-const AccountRow: React.FC<Interface> = ({ account, selected, onClick, balancePrefix}: Interface) => {
+const AccountRow: React.FC<Interface> = ({ account, selected, onClick, balancePrefix }: Interface) => {
   const balance = account.balance && account.balance.startsWith('0x')
     ? new BN(account.balance.substring(2), 16)
     : new BN(account.balance || 0, 16)
