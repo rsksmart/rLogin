@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
-import { isLedger } from '../../lib/hardware-wallets'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import LoadingComponent from '../../ui/shared/Loading'
 import { Button } from '../../ui/shared/Button'
 import AccountRow from './AccountRow'
+import { Trans } from 'react-i18next'
 
 export interface AccountInterface {
   index: number
@@ -127,13 +126,13 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
   }
 
   return <>
-    <Header2>Select an account</Header2>
+    <Header2><Trans>Select an account</Trans></Header2>
 
     <AccountWrapper>
       <Row>
-        <Column>Path</Column>
-        <Column>Address</Column>
-        <Column>Balance</Column>
+        <Column><Trans>Path</Trans></Column>
+        <Column><Trans>Address</Trans></Column>
+        <Column><Trans>Balance</Trans></Column>
       </Row>
 
       {viewableAccounts.map((account: AccountInterface) =>
@@ -160,7 +159,7 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     >&gt;</Button>
 
     <Paragraph>
-      Or use the textbox to choose a specific path:
+      <Trans>Or use the textbox to choose a specific path:</Trans>
       <DPathInput
         type="text"
         className="final-dpath"
@@ -170,8 +169,6 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
       />
     </Paragraph>
 
-    <Button onClick={handleSelectAccount} disabled={isLoading}>Select</Button>
+    <Button onClick={handleSelectAccount} disabled={isLoading}><Trans>Confirm</Trans></Button>
   </>
 }
-
-export const initialDPath = (selectedChainId: string, providerName: string) => getDPathByChainId(parseInt(selectedChainId), 0, isLedger(providerName)).slice(2)

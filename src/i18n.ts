@@ -61,7 +61,12 @@ const resources = {
       'Trezor Bridge': 'Trezor Bridge',
       // DCent tutorial
       'Plug in your D\'Cent device': 'Plug in your D\'Cent device',
-      'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.': 'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.'
+      'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.': 'D\'Cent Bridge will pop up. Follow the insttructions to connect your device.',
+      'Select an account': 'Select an account',
+      Path: 'Path',
+      Address: 'Address',
+      Balance: 'Balance',
+      'Or use the textbox to choose a specific path:': 'Or use the textbox to choose a specific path:'
     }
   },
   es: {
