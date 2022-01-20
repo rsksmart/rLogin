@@ -44,6 +44,10 @@ export function requiresNetworkSelection (providerName: string) {
   return isHardwareWalletProvider(providerName) || isTorus(providerName) || isPortis(providerName)
 }
 
+export function requiresAccountSelection (provider: any) {
+  return (provider.isLedger || provider.isTrezor) && provider.chooseAccount
+}
+
 const TORUS_NETWORK_PARAMS: NetworkParamsOptions<TorusNetworkParams> = {
   30: {
     host: 'https://public-node.rsk.co',

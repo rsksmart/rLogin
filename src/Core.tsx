@@ -12,7 +12,7 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
-import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS } from './lib/hardware-wallets'
+import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS, requiresAccountSelection } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
@@ -31,6 +31,7 @@ import disconnectFromProvider from './lib/providerDisconnect'
 import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
 import { RLOGIN_SELECTED_PROVIDER } from './constants'
+import { ChooseDPathComponent } from './ux/chooseDpath/ChooseDPath'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -80,7 +81,7 @@ interface IModalProps {
   rpcUrls?: {[key: string]: string}
 }
 
-type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'loading' | 'tutorial'
+type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -96,7 +97,6 @@ interface IAvailableLanguage {
 type NetworkConnectionConfig = {
   chainId: number
   rpcUrl?: string
-  dPath?: string
   networkParams?:NetworkParams
 }
 
@@ -221,7 +221,19 @@ export class Core extends React.Component<IModalProps, IModalState> {
     return this.validateCurrentChain()
   }
 
-  private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => { if (success) { return this.detectFlavor() } })
+  /**
+   * ContinueSettingUp
+   * After connecting to the provider but before detecting the flavor
+   */
+  private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => {
+    if (requiresAccountSelection(provider)) {
+      return this.setState({ currentStep: 'choosePath' })
+    }
+
+    if (success) {
+      return this.detectFlavor()
+    }
+  })
 
   private validateCurrentChain ():boolean {
     const { supportedChains, showModal, keepModalHidden, onError } = this.props
@@ -272,11 +284,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
      })
    }
 
-  private chooseNetwork = (network: NetworkConnectionConfig) => {
-    this.setState({ chosenNetwork: network }, () => {
-      return this.preTutorialChecklist()
-    })
-  }
+  private chooseNetwork = (network: NetworkConnectionConfig) =>
+    this.setState({ chosenNetwork: network }, this.preTutorialChecklist)
 
   /**
    * Checklist before sending the connect method
@@ -296,7 +305,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
    /** Pre-Step 1 - user picked a wallet, and network and waiting to connect */
    private connectToWallet () {
-     const { provider, chosenNetwork } = this.state
+     const { provider, chosenNetwork, selectedProviderUserOption } = this.state
      const { providerController } = this.props
 
      const providerName = provider.name || 'Provider'
@@ -306,7 +315,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
          this.setState({
            currentStep: 'loading',
            loadingReason: `Connecting to ${providerName}`,
-           selectedProviderUserOption: { provider }
+           selectedProviderUserOption: { ...selectedProviderUserOption, provider }
          })
 
          if (providerController?.shouldCacheProvider) {
@@ -499,7 +508,18 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerName={provider.name} providerUserOption={selectedProviderUserOption!.provider} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} />}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
-        {currentStep === 'chooseNetwork' && <ChooseNetworkComponent providerName={provider.name} networkParamsOptions ={ networkParamsOptions } rpcUrls={rpcUrls} chooseNetwork={network => this.chooseNetwork(network)} />}
+        {currentStep === 'chooseNetwork' && (
+          <ChooseNetworkComponent
+            networkParamsOptions={networkParamsOptions}
+            rpcUrls={rpcUrls}
+            chooseNetwork={this.chooseNetwork} />
+        )}
+        {currentStep === 'choosePath' && (
+          <ChooseDPathComponent
+            provider={provider}
+            selectPath={(address: string) => this.setState({ address }, this.detectFlavor)}
+            handleError={(err: any) => this.setState({ currentStep: 'error', errorReason: { title: 'Error Selecting Path', description: err.toString() } })} />
+        )}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
         {currentStep === 'loading' && <Loading text={loadingReason} />}
       </Modal>
