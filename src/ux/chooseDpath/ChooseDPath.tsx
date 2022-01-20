@@ -97,9 +97,12 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
       .catch(handleError)
   }
 
-  const handleSelectAccount = () => provider.chooseAccount(selectedAccount)
-    .then(() => selectPath(provider.selectedAddress))
-    .catch(handleError)
+  const handleSelectAccount = () => {
+    setIsLoading(true)
+    provider.chooseAccount(selectedAccount)
+      .then(() => selectPath(provider.selectedAddress))
+      .catch(handleError)
+  }
 
   const showMoreAccounts = (newIndex: number) => {
     setViewableIndex(newIndex)
