@@ -12,7 +12,7 @@ import { ErrorMessage } from './ui/shared/ErrorMessage'
 import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './constants/events'
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
-import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS } from './lib/hardware-wallets'
+import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS, requiresAccountSelection } from './lib/hardware-wallets'
 import { confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
@@ -226,7 +226,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * After connecting to the provider but before detecting the flavor
    */
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => {
-    if (provider.chooseAccount) {
+    if (requiresAccountSelection(provider)) {
       return this.setState({ currentStep: 'choosePath' })
     }
 
