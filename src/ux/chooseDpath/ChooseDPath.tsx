@@ -38,8 +38,10 @@ const Row = styled.div`
 `
 
 export const Column = styled.div`
-  width: 33%;
-  text-align: left;
+  width: ${(props: { width?: number }) => props.width ? `${props.width}%` : '33%'};
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 0 5px 0 10px;
 `
 
@@ -110,12 +112,11 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     const newAccounts = allAccounts.filter((account) =>
       account.index >= newIndex && account.index < newIndex + 5)
 
-    setSelectedAccount(newAccounts[0].dPath)
-
     if (newAccounts.length === 0) {
       return getAccountsAndBalance(newIndex)
     }
 
+    setSelectedAccount(newAccounts[0].dPath)
     setViewAbleAccounts(newAccounts)
   }
 
