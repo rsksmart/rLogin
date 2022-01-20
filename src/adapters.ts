@@ -23,4 +23,13 @@ export function getChainName (chainId: number) {
   }
 }
 
+export const getGasNameFromChain = (chainId: number) => {
+  switch (chainId) {
+    case 1: return 'ETH'
+    case 30: return 'RBTC'
+    case 31: return 'tRBTC'
+    default: return ''
+  }
+}
+
 export const getChainId = (chainId: string) => parseInt(chainId)
