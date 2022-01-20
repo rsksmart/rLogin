@@ -5,6 +5,7 @@ import LoadingComponent from '../../ui/shared/Loading'
 import { Button } from '../../ui/shared/Button'
 import AccountRow from './AccountRow'
 import { Trans } from 'react-i18next'
+import { getGasNameFromChain } from '../../adapters'
 
 export interface AccountInterface {
   index: number
@@ -43,7 +44,7 @@ export const Column = styled.div`
 `
 
 interface Interface {
-  provider: any // RLoginEIP1193Provider
+  provider: any
   selectPath: (address: string) => void
   handleError: (error: any) => void
 }
@@ -79,19 +80,21 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
             params: [account.address.toLowerCase(), 'latest']
           }))
 
+        setSelectedAccount(accounts[0].dPath)
+
         // get the balances
         Promise.all(balanceRequests)
           .then((balances: string[]) => {
             const newAccounts = accounts.map((account, index) => (
               { ...account, balance: balances[index], index: index + startingIndex }
             ))
+
             setAllAccounts([...allAccounts, ...newAccounts])
             setViewAbleAccounts(newAccounts)
-            setSelectedAccount(newAccounts[0].dPath)
+            setIsLoading(false)
           })
       })
       .catch(handleError)
-      .finally(() => setIsLoading(false))
   }
 
   const handleSelectAccount = () => provider.chooseAccount(selectedAccount)
@@ -104,21 +107,13 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     const newAccounts = allAccounts.filter((account) =>
       account.index >= newIndex && account.index < newIndex + 5)
 
+    setSelectedAccount(newAccounts[0].dPath)
+
     if (newAccounts.length === 0) {
       return getAccountsAndBalance(newIndex)
     }
 
     setViewAbleAccounts(newAccounts)
-    setSelectedAccount(newAccounts[0].dPath)
-  }
-
-  const getGasNameFromChain = (chainId: number) => {
-    switch (chainId) {
-      case 1: return 'ETH'
-      case 30: return 'RBTC'
-      case 31: return 'tRBTC'
-      default: return ''
-    }
   }
 
   if (viewableAccounts.length === 0) {
@@ -165,7 +160,6 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
         className="final-dpath"
         value={selectedAccount}
         onChange={e => setSelectedAccount(e.target.value)}
-        disabled={isLoading}
       />
     </Paragraph>
 

@@ -226,7 +226,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * After connecting to the provider but before detecting the flavor
    */
   private continueSettingUp = (provider: any) => this.setupProvider(provider).then((success) => {
-    if (provider.isLedger) {
+    if (provider.chooseAccount) {
       return this.setState({ currentStep: 'choosePath' })
     }
 
