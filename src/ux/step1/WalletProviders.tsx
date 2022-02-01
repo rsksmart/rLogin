@@ -80,7 +80,6 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
   // handle connect
   const handleConnect = (provider: IProviderUserOptions) => connectToWallet(provider)
 
-  console.log({ providers, userProviders })
   return <>
     <Header2>
       {Object.keys(userProviders).length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
