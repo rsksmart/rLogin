@@ -1,4 +1,7 @@
 import { IProviderInfo } from 'web3modal'
+// @ts-ignore
+import * as TallyWalletLogo from '../../providers/logos/tallyLogo.svg'
+
 // this providers are addded because they are not still passed from the configuration
 // we need to find a better strategy for this
 // for now, works :)
@@ -39,8 +42,8 @@ export const DCENT: IProviderInfo = {
 
 export const TALLYWALLET: IProviderInfo = {
   id: 'tally-wallet',
-  logo: '',
-  name: 'Tally Wallet',
+  logo: TallyWalletLogo.default,
+  name: 'Tally',
   type: 'web',
   check: 'isTally'
 }

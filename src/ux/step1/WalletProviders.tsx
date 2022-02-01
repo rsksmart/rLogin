@@ -90,7 +90,7 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
         <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[TALLYWALLET.name]} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[TALLYWALLET.name] || TALLYWALLET} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow className="wallet-connect" hideMobile={true}>
         <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} />

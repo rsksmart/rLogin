@@ -6,8 +6,7 @@ import * as RWalletLogo from './logos/rWalletlogo.svg'
 import * as MathWalletLogo from './logos/mathWalletLogo.png'
 // @ts-ignore
 import * as DcentWalletLogo from './logos/dcentLogo.png'
-// @ts-ignore
-import * as TallyWalletLogo from './logos/tallyLogo.svg'
+
 import { TALLYWALLET } from '../ux/step1/extraProviders'
 
 /**
@@ -32,7 +31,7 @@ const injectedProviders = [
   {
     name: TALLYWALLET.name,
     check: TALLYWALLET.check,
-    logo: TallyWalletLogo.default
+    logo: TALLYWALLET.logo
   }
 ]
 
