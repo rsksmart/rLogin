@@ -7,7 +7,7 @@ import { PROVIDERS_WRAPPER_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../.
 import { Trans } from 'react-i18next'
 import { themesOptions } from '../../theme'
 
-import { TREZOR, LEDGER, DCENT } from './extraProviders'
+import { TREZOR, LEDGER, DCENT, TALLYWALLET } from './extraProviders'
 import WalletProvidersFooter from './WalletProvidersFooter'
 
 interface IWalletProvidersProps {
@@ -65,7 +65,7 @@ export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
 export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => {
   // the providers that are hardcoded into the layout below
   const hardCodedProviderNames = [
-    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, // browser
+    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, TALLYWALLET.name, // browser
     providers.WALLETCONNECT.name, // mobile
     providers.PORTIS.name, providers.TORUS.name, // custodial
     LEDGER.name, TREZOR.name, DCENT.name // hardware
@@ -89,6 +89,7 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
         <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[TALLYWALLET.name] || TALLYWALLET} handleConnect={handleConnect} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
         <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} />
