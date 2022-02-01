@@ -6,6 +6,9 @@ import * as RWalletLogo from './logos/rWalletlogo.svg'
 import * as MathWalletLogo from './logos/mathWalletLogo.png'
 // @ts-ignore
 import * as DcentWalletLogo from './logos/dcentLogo.png'
+// @ts-ignore
+import * as TallyWalletLogo from './logos/tallyLogo.svg'
+import { TALLYWALLET } from '../ux/step1/extraProviders'
 
 /**
  * A list of injected Providers that have not been implemented into Web3Modal yet
@@ -25,6 +28,11 @@ const injectedProviders = [
     name: "D'cent",
     check: 'isDcentWallet',
     logo: DcentWalletLogo.default
+  },
+  {
+    name: TALLYWALLET.name,
+    check: TALLYWALLET.check,
+    logo: TallyWalletLogo.default
   }
 ]
 

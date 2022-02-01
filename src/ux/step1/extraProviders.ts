@@ -36,3 +36,11 @@ export const DCENT: IProviderInfo = {
   type: 'hardware',
   check: 'isDCent'
 }
+
+export const TALLYWALLET: IProviderInfo = {
+  id: 'tally-wallet',
+  logo: '',
+  name: 'Tally Wallet',
+  type: 'web',
+  check: 'isTally'
+}
