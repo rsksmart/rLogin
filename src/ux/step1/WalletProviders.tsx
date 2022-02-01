@@ -86,20 +86,20 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
       {Object.keys(userProviders).length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
     </Header2>
     <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
-      <ProviderRow className="mobile-wallet-providers">
+      <ProviderRow>
         <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[TALLYWALLET.name] || TALLYWALLET} handleConnect={handleConnect} />
       </ProviderRow>
-      <ProviderRow className="wallet-connect" hideMobile={true}>
+      <ProviderRow hideMobile={true}>
         <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} />
       </ProviderRow>
-      <ProviderRow className="custodial-wallets">
+      <ProviderRow>
         <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[providers.TORUS.name] || providers.TORUS} handleConnect={handleConnect} />
       </ProviderRow>
-      <ProviderRow className="hardware-wallets" hideMobile={true}>
+      <ProviderRow hideMobile={true}>
         <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[TREZOR.name] || TREZOR} handleConnect={handleConnect} />
         <UserProvider userProvider={providersByName[DCENT.name] || DCENT} handleConnect={handleConnect} />
