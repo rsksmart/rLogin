@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Provider } from './Provider'
 import { IProviderUserOptions, providers } from 'web3modal'
@@ -44,8 +44,14 @@ const ProviderRow = styled.div<{ hideMobile?: boolean }>`
   }
 `
 
-const UserProvider = ({ userProvider, handleConnect }: { userProvider: IProviderUserOptions, handleConnect: (provider: any) => void }) =>
-  <Provider
+interface UserProviderInterface {
+  userProvider: IProviderUserOptions,
+  handleConnect: (provider: any) => void
+  hideIfDisabled: boolean
+}
+
+const UserProvider = ({ userProvider, handleConnect, hideIfDisabled }: UserProviderInterface) =>
+  (!userProvider.onClick && hideIfDisabled) ? <></> : <Provider
     key={userProvider.name}
     name={userProvider.name}
     logo={userProvider.logo}
@@ -63,6 +69,8 @@ export const userProvidersByName = (userProviders: IProviderUserOptions[]) => {
 }
 
 export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage, changeTheme, availableLanguages, selectedLanguageCode, selectedTheme }: IWalletProvidersProps) => {
+  const [providersByName, setProvidersByName] = useState(userProvidersByName(userProviders))
+
   // the providers that are hardcoded into the layout below
   const hardCodedProviderNames = [
     providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, TALLYWALLET.name, // browser
@@ -71,7 +79,10 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
     LEDGER.name, TREZOR.name, DCENT.name // hardware
   ]
 
-  const providersByName = userProvidersByName(userProviders)
+  // Handle a update in the userProviders after the state has loaded.
+  useEffect(() => {
+    setProvidersByName(userProvidersByName(userProviders))
+  }, [userProviders])
 
   // additional providers that the developer wants to use
   const developerProviders = Object.keys(providersByName).filter((providerName: string) =>
@@ -86,22 +97,22 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
     </Header2>
     <ProvidersWrapper className={PROVIDERS_WRAPPER_CLASSNAME}>
       <ProviderRow>
-        <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[TALLYWALLET.name] || TALLYWALLET} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[providers.METAMASK.name] || providers.METAMASK} handleConnect={handleConnect} hideIfDisabled={false} />
+        <UserProvider userProvider={providersByName[providers.NIFTY.name] || providers.NIFTY} handleConnect={handleConnect} hideIfDisabled={false} />
+        <UserProvider userProvider={providersByName[providers.LIQUALITY.name] || providers.LIQUALITY} handleConnect={handleConnect} hideIfDisabled={false} />
+        <UserProvider userProvider={providersByName[TALLYWALLET.name] || TALLYWALLET} handleConnect={handleConnect} hideIfDisabled={true} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
-        <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} hideIfDisabled={true} />
       </ProviderRow>
       <ProviderRow>
-        <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[providers.TORUS.name] || providers.TORUS} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[providers.PORTIS.name] || providers.PORTIS} handleConnect={handleConnect} hideIfDisabled={true} />
+        <UserProvider userProvider={providersByName[providers.TORUS.name] || providers.TORUS} handleConnect={handleConnect} hideIfDisabled={true} />
       </ProviderRow>
       <ProviderRow hideMobile={true}>
-        <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[TREZOR.name] || TREZOR} handleConnect={handleConnect} />
-        <UserProvider userProvider={providersByName[DCENT.name] || DCENT} handleConnect={handleConnect} />
+        <UserProvider userProvider={providersByName[LEDGER.name] || LEDGER} handleConnect={handleConnect} hideIfDisabled={true} />
+        <UserProvider userProvider={providersByName[TREZOR.name] || TREZOR} handleConnect={handleConnect} hideIfDisabled={true} />
+        <UserProvider userProvider={providersByName[DCENT.name] || DCENT} handleConnect={handleConnect} hideIfDisabled={true} />
       </ProviderRow>
       {developerProviders.length !== 0 && (
         <ProviderRow className={PROVIDERS_DEVELOPER_CLASSNAME}>
@@ -109,7 +120,8 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
             <UserProvider
               key={providerName}
               userProvider={providersByName[providerName]}
-              handleConnect={handleConnect} />
+              handleConnect={handleConnect}
+              hideIfDisabled={false} />
           )}
         </ProviderRow>
       )}
