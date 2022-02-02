@@ -84,7 +84,10 @@ export function Provider (props: IProviderProps) {
 
   return (hideIfDisabled && disabled) ? <></> : (
     <ProviderContainer disabled={disabled}>
-      <ProviderBox disabled={disabled} className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`} onClick={userProvider.onClick || undefined} {...otherProps}>
+      <ProviderBox
+        disabled={disabled}
+        className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`}
+        onClick={disabled ? undefined : () => handleConnect(userProvider)} {...otherProps}>
         <HeaderRow>
           <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
             <img src={userProvider.logo} alt={userProvider.name} />
