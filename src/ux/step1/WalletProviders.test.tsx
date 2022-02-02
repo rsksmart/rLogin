@@ -1,7 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { WalletProviders } from './WalletProviders'
-import { PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME } from '../../constants/cssSelectors'
+import { PROVIDERS_FOOTER_TEXT_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME, PROVIDERS_HARDWARE } from '../../constants/cssSelectors'
 import { themesOptions } from '../../theme'
 
 describe('Component: WalletProviders', () => {
@@ -55,5 +55,20 @@ describe('Component: WalletProviders', () => {
   it('does not show language selector when only one language available', () => {
     const wrapper = mount(<WalletProviders {...propsWithOneLanguage} userProviders={[]} />)
     expect(wrapper.find('select').children()).toHaveLength(0)
+  })
+
+  it('shows/hides providers when they are disabled', () => {
+    const providerProps = { logo: 'test1.jpg', description: 'description1', onClick: jest.fn() }
+    const userProviders = [
+      { ...providerProps, name: 'Tally' },
+      { ...providerProps, name: 'Wallet Connect' }
+    ]
+
+    const wrapper = mount(<WalletProviders {...props} userProviders={userProviders} />)
+    const children = wrapper.find(`.${PROVIDERS_HARDWARE}`).children()
+
+    expect(children.first()).toMatchObject({})
+    expect(children.at(2)).toMatchObject({})
+    expect(children.at(3)).toMatchObject({})
   })
 })
