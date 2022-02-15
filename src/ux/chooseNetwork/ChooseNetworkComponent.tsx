@@ -8,7 +8,6 @@ import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
 import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
 import Checkbox from '../../ui/shared/Checkbox'
-import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
@@ -26,7 +25,6 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
   if (!rpcUrls) {
     return <></>
   }
-  console.log('@jesse', providerName)
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [customPath, setCustomPath] = useState<boolean>(false)
