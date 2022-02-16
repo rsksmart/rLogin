@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import LoadingComponent from '../../ui/shared/Loading'
 import { Button } from '../../ui/shared/Button'
 import AccountRow from './AccountRow'
 import { Trans } from 'react-i18next'
 import { getGasNameFromChain } from '../../adapters'
+import { ETHEREUM_DPATH } from '../..'
 
 export interface AccountInterface {
   index: number
@@ -72,9 +74,11 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     setIsLoading(true)
     setViewAbleAccounts([])
 
-    const currentIndexes = Array.from({ length: 5 }, (_, i) => i + startingIndex)
+    // if the provider's path is set to Ethereum, use that, else use the ChainIds:
+    const chainId = (provider.path === ETHEREUM_DPATH || provider.dpath === ETHEREUM_DPATH) ? 1 : provider.chainId
+    const nextPaths = [0, 1, 2, 3, 4].map(int => getDPathByChainId(chainId, int))
 
-    provider.getAddresses(currentIndexes)
+    provider.getAddresses(nextPaths)
       .then((accounts: AccountInterface[]) => {
         const balanceRequests = accounts.map((account) =>
           provider.request({

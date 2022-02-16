@@ -8,6 +8,7 @@ import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
 import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
 import Checkbox from '../../ui/shared/Checkbox'
+import { ETHEREUM_DPATH } from '../..'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
@@ -35,7 +36,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
       chainId: parseInt(selectedChainId),
       rpcUrl: rpcUrls[selectedChainId],
       networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]),
-      dPath: customPath ? "m/44'/60'/0'/0" : undefined
+      dPath: customPath ? ETHEREUM_DPATH : undefined
     })
   }
 
