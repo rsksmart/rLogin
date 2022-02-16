@@ -2,6 +2,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import ChooseNetworkComponent from './ChooseNetworkComponent'
+import { ETHEREUM_DPATH } from '../..'
 
 describe('Component: ChooseNetworkComponent', () => {
   const sharedProps = {
@@ -11,7 +12,7 @@ describe('Component: ChooseNetworkComponent', () => {
       31: 'http://31'
     },
     chooseNetwork: jest.fn(),
-    providerName: 'provider'
+    providerName: 'Metamask'
   }
 
   it('renders the component', () => {
@@ -35,5 +36,25 @@ describe('Component: ChooseNetworkComponent', () => {
 
     wrapper.find('button').simulate('click')
     expect(localProps.chooseNetwork).toBeCalledWith({ chainId: 1, rpcUrl: 'http://1' })
+  })
+
+  it('handles the ethereum/metamask checkbox', () => {
+    const localProps = {
+      ...sharedProps,
+      chooseNetwork: jest.fn(),
+      providerName: 'Ledger'
+    }
+    const wrapper = mount(<ChooseNetworkComponent {...localProps} />)
+
+    wrapper.find('select').at(0).simulate('change', {
+      target: { value: '30', name: 'RSK Mainnet' }
+    })
+
+    wrapper.find('input[type="checkbox"]').simulate('change', { target: { checked: true } })
+
+    wrapper.find('button').simulate('click')
+    expect(localProps.chooseNetwork).toBeCalledWith({
+      chainId: 30, rpcUrl: 'http://30', dPath: ETHEREUM_DPATH
+    })
   })
 })

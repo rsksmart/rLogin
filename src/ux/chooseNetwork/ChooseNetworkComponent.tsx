@@ -57,15 +57,17 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
         </Select>
       </p>
       {showMigrationMessage && (
-        <div>
+        <>
           <Checkbox checked={customPath} onChange={toggleCheckBox} />
           {' '}
-          <label onClick={toggleCheckBox}>
+          <label onClick={toggleCheckBox} className="checkbox-label">
             <SmallSpan>
-            Use the Ethereum path if migrating from Metamask.
+              <Trans>
+              Use Ethereum path (check this if you used to connect with Metamask)
+              </Trans>
             </SmallSpan>
           </label>
-        </div>
+        </>
       )}
       <p>
         <Button disabled={isLoading} onClick={handleSelect}>Choose</Button>
