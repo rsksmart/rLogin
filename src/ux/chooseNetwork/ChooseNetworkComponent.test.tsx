@@ -12,7 +12,7 @@ describe('Component: ChooseNetworkComponent', () => {
       31: 'http://31'
     },
     chooseNetwork: jest.fn(),
-    providerName: 'Metamask'
+    providerName: 'provider'
   }
 
   it('renders the component', () => {
