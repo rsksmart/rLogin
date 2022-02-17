@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
 import { Header2, Paragraph } from '../../ui/shared/Typography'
 import LoadingComponent from '../../ui/shared/Loading'
 import { Button } from '../../ui/shared/Button'
 import AccountRow from './AccountRow'
 import { Trans } from 'react-i18next'
 import { getGasNameFromChain } from '../../adapters'
-import { ETHEREUM_DPATH } from '../..'
 
 export interface AccountInterface {
   index: number

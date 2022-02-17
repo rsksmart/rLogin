@@ -11,5 +11,3 @@ export const DONT_SHOW_TUTORIAL_AGAIN_KEY_DCENT = 'RLogin:DontShowTutorialAgain:
 export const RLOGIN_SELECTED_PROVIDER = 'RLOGIN_SELECTED_PROVIDER'
 
 export const DONT_SHOW_AGAIN_KEY = 'RLogin:DontShowAgain'
-
-export const ETHEREUM_DPATH = "m/44'/60'/0'/0/0"

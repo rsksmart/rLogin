@@ -2,7 +2,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import ChooseNetworkComponent from './ChooseNetworkComponent'
-import { ETHEREUM_DPATH } from '../..'
 
 describe('Component: ChooseNetworkComponent', () => {
   const sharedProps = {
@@ -54,7 +53,7 @@ describe('Component: ChooseNetworkComponent', () => {
 
     wrapper.find('button').simulate('click')
     expect(localProps.chooseNetwork).toBeCalledWith({
-      chainId: 30, rpcUrl: 'http://30', dPath: ETHEREUM_DPATH
+      chainId: 30, rpcUrl: 'http://30', dPath: "m/44'/60'/0'/0/0"
     })
   })
 })
