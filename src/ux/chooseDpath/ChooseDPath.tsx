@@ -75,8 +75,8 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
     setViewAbleAccounts([])
 
     // if the provider's path is set to Ethereum, use that, else use the ChainIds:
-    const chainId = (provider.path === ETHEREUM_DPATH || provider.dpath === ETHEREUM_DPATH) ? 1 : provider.chainId
-    const nextPaths = [0, 1, 2, 3, 4].map(int => getDPathByChainId(chainId, int))
+    const baseDpath = (provider.path || provider.dpath).split('/').slice(0, -1).join('/')
+    const nextPaths = [0, 1, 2, 3, 4].map(index => `${baseDpath}/${index}`)
 
     provider.getAddresses(nextPaths)
       .then((accounts: AccountInterface[]) => {
