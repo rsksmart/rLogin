@@ -8,7 +8,7 @@ import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
 import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
 import Checkbox from '../../ui/shared/Checkbox'
-import { ETHEREUM_DPATH } from '../..'
+import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
@@ -28,7 +28,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
   }
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [customPath, setCustomPath] = useState<boolean>(false)
+  const [useEthereumDpath, setUseEthereumDpath] = useState<boolean>(false)
 
   const handleSelect = () => {
     setIsLoading(true)
@@ -36,11 +36,11 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
       chainId: parseInt(selectedChainId),
       rpcUrl: rpcUrls[selectedChainId],
       networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]),
-      dPath: customPath ? ETHEREUM_DPATH : undefined
+      dPath: useEthereumDpath ? getDPathByChainId(1, 0) : undefined
     })
   }
 
-  const toggleCheckBox = () => setCustomPath(!customPath)
+  const toggleCheckBox = () => setUseEthereumDpath(!useEthereumDpath)
 
   const showMigrationMessage =
     (providerName === 'Ledger' || providerName === 'Trezor') &&
@@ -58,7 +58,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
       </p>
       {showMigrationMessage && (
         <>
-          <Checkbox checked={customPath} onChange={toggleCheckBox} />
+          <Checkbox checked={useEthereumDpath} onChange={toggleCheckBox} />
           {' '}
           <label onClick={toggleCheckBox} className="checkbox-label">
             <SmallSpan>
