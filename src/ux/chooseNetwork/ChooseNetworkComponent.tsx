@@ -2,21 +2,25 @@
 import React, { useState } from 'react'
 import { Trans } from 'react-i18next'
 
-import { Header2 } from '../../ui/shared/Typography'
+import { Header2, SmallSpan } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
 import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
+import Checkbox from '../../ui/shared/Checkbox'
+import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
   networkParamsOptions?: NetworkParamsAllOptions
-  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams }) => void,
+  providerName?: string,
+  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams, dPath?: string }) => void
 }
 
 const ChooseNetworkComponent: React.FC<Interface> = ({
   rpcUrls,
   networkParamsOptions,
+  providerName,
   chooseNetwork
 }) => {
   if (!rpcUrls) {
@@ -24,11 +28,23 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
   }
   const [selectedChainId, setSelectedChainId] = useState<string>(Object.keys(rpcUrls)[0])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [useEthereumDpath, setUseEthereumDpath] = useState<boolean>(false)
 
   const handleSelect = () => {
     setIsLoading(true)
-    chooseNetwork({ chainId: parseInt(selectedChainId), rpcUrl: rpcUrls[selectedChainId], networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]) })
+    chooseNetwork({
+      chainId: parseInt(selectedChainId),
+      rpcUrl: rpcUrls[selectedChainId],
+      networkParams: (networkParamsOptions && networkParamsOptions[selectedChainId]),
+      dPath: useEthereumDpath ? getDPathByChainId(1, 0) : undefined
+    })
   }
+
+  const toggleCheckBox = () => setUseEthereumDpath(!useEthereumDpath)
+
+  const showMigrationMessage =
+    (providerName === 'Ledger' || providerName === 'Trezor') &&
+    selectedChainId !== '1'
 
   return (
     <div>
@@ -40,6 +56,19 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
           )}
         </Select>
       </p>
+      {showMigrationMessage && (
+        <>
+          <Checkbox checked={useEthereumDpath} onChange={toggleCheckBox} />
+          {' '}
+          <label onClick={toggleCheckBox} className="checkbox-label">
+            <SmallSpan>
+              <Trans>
+              Use Ethereum path (check this if you used to connect with Metamask)
+              </Trans>
+            </SmallSpan>
+          </label>
+        </>
+      )}
       <p>
         <Button disabled={isLoading} onClick={handleSelect}>Choose</Button>
       </p>
