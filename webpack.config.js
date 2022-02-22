@@ -1,5 +1,5 @@
 module.exports = env => ({
-  mode: env,
+  mode: env.production ? 'production' : 'development',
   entry: "./src/index.ts",
   output: {
     libraryTarget: "umd",
