@@ -260,3 +260,7 @@ npm run cypress:run
 - `develop` has latest approved PR. PRs need to pass `ci`. Do squash & merge.
 - Use branches pointing to `develop` to add new PRs.
 - Do external PRs against latest commit in `develop`.
+
+## Disclaimer
+
+Gas price calculation includes multiplication on 1.01 based on [RSKIP09](https://github.com/rsksmart/RSKIPs/blob/master/IPs/RSKIP09.md). While this is true for RSK, this operation may be unexpected if rLogin is used with other networks.
