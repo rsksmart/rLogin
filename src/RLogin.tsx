@@ -20,6 +20,7 @@ import { IIPFSCpinnerClient as DataVault } from '@rsksmart/ipfs-cpinner-client-t
 import { checkRLoginInjectedProviders } from './providers/injectedProviders'
 import { defaultTheme as defaultThemeConfig, themes as themesConfig, themesOptions } from './theme'
 import { RLoginStorage } from './lib/storage'
+import { AuthKeys } from './lib/did-auth'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -139,7 +140,7 @@ export class RLogin {
     this.handleOnAndTrigger(CLOSE_EVENT)
   }
 
-  private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: DataVault) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, selectedTheme, dataVault })
+  private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: DataVault, authKeys?: AuthKeys) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, selectedTheme, dataVault, authKeys })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
   private onAccountsChange = (accounts: string[]) => this.eventController.trigger(ACCOUNTS_CHANGED, accounts)
   private onChainChange = (chainId: string | number) => this.eventController.trigger(CHAIN_CHANGED, chainId)
