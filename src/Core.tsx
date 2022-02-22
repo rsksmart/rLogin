@@ -510,6 +510,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && (
           <ChooseNetworkComponent
+            providerName={provider.name}
             networkParamsOptions={networkParamsOptions}
             rpcUrls={rpcUrls}
             chooseNetwork={this.chooseNetwork} />

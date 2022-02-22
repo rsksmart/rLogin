@@ -63,30 +63,36 @@ const HeaderRow = styled.div`
 `
 
 interface IProviderProps {
-  name: string;
-  logo: string;
-  description: string;
-  onClick: () => void;
-  disabled?: boolean;
+  userProvider: {
+    name: string;
+    logo: string;
+    description: string;
+    onClick?: () => Promise<void>;
+  },
+  handleConnect: (provider: any) => void
+  hideIfDisabled: boolean
 }
 
 export function Provider (props: IProviderProps) {
   const {
-    name,
-    logo,
-    description,
-    onClick,
-    disabled = true,
+    userProvider,
+    handleConnect,
+    hideIfDisabled,
     ...otherProps
   } = props
-  return (
+  const disabled = !userProvider.onClick
+
+  return (hideIfDisabled && disabled) ? <></> : (
     <ProviderContainer disabled={disabled}>
-      <ProviderBox disabled={disabled} className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`} onClick={disabled ? undefined : onClick} {...otherProps}>
+      <ProviderBox
+        disabled={disabled}
+        className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`}
+        onClick={disabled ? undefined : () => handleConnect(userProvider)} {...otherProps}>
         <HeaderRow>
           <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
-            <img src={logo} alt={name} />
+            <img src={userProvider.logo} alt={userProvider.name} />
           </ProviderIcon>
-          <Header3>{name}</Header3>
+          <Header3>{userProvider.name}</Header3>
         </HeaderRow>
       </ProviderBox>
     </ProviderContainer>
