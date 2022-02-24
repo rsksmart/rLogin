@@ -200,9 +200,11 @@
         getAccounts(provider).then(displayAccounts)
         getChainId(provider).then(displayChainId)
 
-        // did auth
-        displayRefreshToken(localStorage.getItem(window.RLogin.RLOGIN_REFRESH_TOKEN))
-        displayAccessToken(localStorage.getItem(window.RLogin.RLOGIN_ACCESS_TOKEN))
+        if (rLoginResponse.authKeys) {
+          // did auth
+          displayRefreshToken(rLoginResponse.authKeys.refreshToken)
+          displayAccessToken(rLoginResponse.authKeys.accessToken)
+        }
 
         // setup actions
 

@@ -13,7 +13,7 @@ import { ACCOUNTS_CHANGED, CHAIN_CHANGED, CONNECT_EVENT, ERROR_EVENT } from './c
 import { getDID, getChainId } from './adapters'
 import { addEthereumChain, ethAccounts, ethChainId, isMetamask } from './lib/provider'
 import { isHardwareWalletProvider, requiresNetworkSelection, getTutorialLocalStorageKey, PROVIDERS_NETWORK_PARAMS, requiresAccountSelection } from './lib/hardware-wallets'
-import { confirmAuth, requestSignup } from './lib/did-auth'
+import { AuthKeys, confirmAuth, requestSignup } from './lib/did-auth'
 import { createDataVault } from './lib/data-vault'
 import { fetchSelectiveDisclosureRequest } from './lib/sdr'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
@@ -64,7 +64,7 @@ interface IModalProps {
   showModal: SimpleFunction;
   resetState: SimpleFunction;
   providerController: any
-  onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: IDataVault) => Promise<void>
+  onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: IDataVault, authKeys?: AuthKeys) => Promise<void>
   onError: (error: any) => Promise<void>
   onAccountsChange: (accounts: string[]) => void
   onChainChange: (chainId : string | number) => void
@@ -417,7 +417,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
        return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
      }
 
-     const handleConnect = (provider: any) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
+     const handleConnect = (provider: any, authKeys: AuthKeys) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault, authKeys)
 
      return confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
        .catch((error: Error | AxiosError) => {
