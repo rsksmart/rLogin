@@ -1,9 +1,9 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { EIP1193Provider, personalSign } from './provider'
 import { verifyDidJwt } from './jwt'
 import { SD } from './sdr'
 
-import { RLOGIN_REFRESH_TOKEN, RLOGIN_ACCESS_TOKEN } from '../constants'
+export type AuthKeys = { refreshToken: string, accessToken: string }
 
 export const requestSignup = async (backendUrl: string, did: string) => {
   const { data: { challenge, sdr } } = await axios.get(backendUrl + `/request-signup/${did}`)
@@ -24,10 +24,6 @@ export const requestSignup = async (backendUrl: string, did: string) => {
 }
 
 const buildMessage = (backendUrl: string, challenge: string) => `URL: ${backendUrl}\nVerification code: ${challenge}`
-const storeAuthData = ({ data }: { data: { refreshToken: string, accessToken: string } }) => {
-  localStorage.setItem(RLOGIN_REFRESH_TOKEN, data.refreshToken)
-  localStorage.setItem(RLOGIN_ACCESS_TOKEN, data.accessToken)
-}
 
 export const confirmAuth = (
   provider: EIP1193Provider,
@@ -35,9 +31,8 @@ export const confirmAuth = (
   backendUrl: string,
   did: string,
   challenge: string,
-  onConnect: (provider: any) => Promise<void>,
+  onConnect: (provider: any, authKeys: AuthKeys) => Promise<void>,
   sd?: SD
 ) => personalSign(provider, address, buildMessage(backendUrl, challenge))
   .then((sig: any) => axios.post(backendUrl + '/signup', { response: { sig, did, sd } }))
-  .then(storeAuthData)
-  .then(() => onConnect(provider))
+  .then((response: AxiosResponse<AuthKeys>) => onConnect(provider, response.data))

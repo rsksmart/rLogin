@@ -1,5 +1,10 @@
 import currentProvider from '@rsksmart/mock-web3-provider'
 
+const testHasNoAuthKeys = () => {
+  cy.get('#access-token').should('be.empty')
+  cy.get('#refresh-token').should('be.empty')
+}
+
 describe('permissioned e2e testing', () => {
   const address = '0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D'
   const privateKey = 'de926db3012af759b4f24b5a51ef6afa397f04670f634aa4f48d4480417007f3'
@@ -53,6 +58,9 @@ describe('permissioned e2e testing', () => {
 
     cy.get('.rlogin-button.confirm').click()
     cy.get('#connected').should('have.text', 'Yes')
+
+    cy.get('#access-token').should('not.be.empty')
+    cy.get('#refresh-token').should('not.be.empty')
   })
 
   it('Login into the datavault without Name (required by backend)', () => {
@@ -76,6 +84,8 @@ describe('permissioned e2e testing', () => {
     cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Name is required.')
 
     cy.get('#connected').should('have.text', 'No')
+
+    testHasNoAuthKeys()
   })
 
   it('Login into the datavault without Email (required by backend)', () => {
@@ -100,6 +110,8 @@ describe('permissioned e2e testing', () => {
     cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Email is required.')
 
     cy.get('#connected').should('have.text', 'No')
+
+    testHasNoAuthKeys()
   })
 
   it('Login into the datavault without Name and Email (required by backend)', () => {
@@ -122,6 +134,8 @@ describe('permissioned e2e testing', () => {
     cy.get('.rlogin-paragraph').eq(0).should('have.text', 'The Email is required.')
 
     cy.get('#connected').should('have.text', 'No')
+
+    testHasNoAuthKeys()
   })
 
   it('No credential', () => {
@@ -132,6 +146,8 @@ describe('permissioned e2e testing', () => {
 
     // continue with the content
     cy.get('.rlogin-button').should('have.text', 'Retry')
+
+    testHasNoAuthKeys()
   })
 
   it('No claims', () => {
@@ -142,5 +158,7 @@ describe('permissioned e2e testing', () => {
 
     // continue with the content
     cy.get('.rlogin-button').should('have.text', 'Retry')
+
+    testHasNoAuthKeys()
   })
 })

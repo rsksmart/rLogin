@@ -1,5 +1,7 @@
+const webpack = require('webpack')
+
 module.exports = env => ({
-  mode: env,
+  mode: env.production ? 'production' : 'development',
   entry: "./src/index.ts",
   output: {
     libraryTarget: "umd",
@@ -12,6 +14,11 @@ module.exports = env => ({
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer']
+    })
+  ],
   devtool: "source-map",
   module: {
     rules: [

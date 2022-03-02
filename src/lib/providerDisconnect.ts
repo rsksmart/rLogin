@@ -1,4 +1,4 @@
-import { RLOGIN_ACCESS_TOKEN, RLOGIN_REFRESH_TOKEN, WALLETCONNECT } from '..'
+import { WALLETCONNECT } from '..'
 
 const disconnectProvider = async (provider: any): Promise<void> => {
   if (!provider) {
@@ -17,8 +17,6 @@ const disconnectProvider = async (provider: any): Promise<void> => {
 }
 
 const disconnectFromDataVault = () => {
-  localStorage.removeItem(RLOGIN_ACCESS_TOKEN)
-  localStorage.removeItem(RLOGIN_REFRESH_TOKEN)
   localStorage.removeItem('x-csrf-token')
 }
 
