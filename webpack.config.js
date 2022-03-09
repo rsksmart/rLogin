@@ -22,6 +22,11 @@ module.exports = env => ({
   devtool: "source-map",
   module: {
     rules: [
+      {test: /\.css$/,
+      use: [
+        'style-loader',
+        'css-loader'
+      ]},
       { test: /\.tsx?$/, loader: "ts-loader" },
       {
         test: /\.(png|svg|jpg|gif)$/,

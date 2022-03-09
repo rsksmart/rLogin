@@ -27,22 +27,24 @@ const DPathInput = styled.input`
 
 const AccountWrapper = styled.div`
   margin-bottom: 10px;
+  margin-left: -10px;
+  margin-right: -10px;
 `
 
 const Row = styled.div`
   display: flex;
   font-size: 14px;
   color: ${props => props.theme.h3};
-  border-bottom: ${(props) => `1px solid ${props.theme.p}`};
+  border-bottom: ${(props) => `2px solid ${props.theme.p}`};
   padding-bottom: 5px;
 `
 
 export const Column = styled.div`
-  width: ${(props: { width?: number }) => props.width ? `${props.width}%` : '33%'};
-  display: flex;
+  width: ${(props: { width?: number, textAlign?: string }) => props.width ? `${props.width}%` : '33%'};
   flex-direction: column;
   align-items: flex-start;
-  padding: 0 5px 0 10px;
+  text-align: ${(props) => props.textAlign ? `${props.textAlign}` : 'center'};
+  padding: 0 5px 0 5px;
 `
 
 interface Interface {
@@ -131,9 +133,9 @@ export const ChooseDPathComponent: React.FC<Interface> = ({
 
     <AccountWrapper>
       <Row>
-        <Column><Trans>Path</Trans></Column>
-        <Column><Trans>Address</Trans></Column>
-        <Column><Trans>Balance</Trans></Column>
+        <Column width={5}><Trans>#</Trans></Column>
+        <Column width={70}><Trans>Address</Trans></Column>
+        <Column textAlign={'left'} width={25}><Trans>Balance</Trans></Column>
       </Row>
 
       {viewableAccounts.map((account: AccountInterface) =>
