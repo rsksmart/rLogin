@@ -90,7 +90,7 @@ export class RLogin {
       this.themes.light = { ...this.themes.light, ...opts.customThemes.light }
     }
     if (opts && opts.customThemes && opts.customThemes.dark) {
-      this.themes.light = { ...this.themes.light, ...opts.customThemes.dark }
+      this.themes.dark = { ...this.themes.dark, ...opts.customThemes.dark }
     }
     this.defaultTheme = (opts && opts.defaultTheme) ? opts.defaultTheme : defaultThemeConfig
     this.renderModal()
