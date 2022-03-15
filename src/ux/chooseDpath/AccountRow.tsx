@@ -28,7 +28,7 @@ const DpathRowStyles = styled.button<{ selected: boolean }>`
 const Column = styled.div`
   width: ${(props: { width?: number }) => props.width ? `${props.width}%` : '33%'};
   text-align: left;
-  padding: 0 5px 0 10px;
+  padding: 0 5px 0 5px;
 `
 
 const AccountRow: React.FC<Interface> = ({ account, selected, onClick, balancePrefix }: Interface) => {
@@ -37,9 +37,9 @@ const AccountRow: React.FC<Interface> = ({ account, selected, onClick, balancePr
   const niceBalance = stringBalance.substring(0, 11)
 
   return <DpathRowStyles onClick={onClick} selected={selected}>
-    <Column>{account.dPath}</Column>
-    <Column>{shortAddress(account.address)}</Column>
-    <Column title={`${stringBalance} ${balancePrefix}`}>
+    <Column width={5}>{account.index}</Column>
+    <Column width={70}>{account.address}</Column>
+    <Column width={25} title={`${stringBalance} ${balancePrefix}`}>
       {`${niceBalance} ${balancePrefix}`}
     </Column>
   </DpathRowStyles>
