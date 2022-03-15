@@ -67,8 +67,6 @@ export class RLogin {
       ...opts
     }
 
-    console.log('@JESSE constructor', 6)
-
     // setup provider controller
     this.providerController = new RLoginProviderController({
       disableInjectedProvider: options.disableInjectedProvider,
