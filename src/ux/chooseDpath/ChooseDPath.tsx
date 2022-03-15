@@ -35,6 +35,7 @@ const Row = styled.div`
   color: ${props => props.theme.h3};
   border-bottom: ${(props) => `1px solid ${props.theme.p}`};
   padding-bottom: 5px;
+  margin-bottom: 5px;
 `
 
 export const Column = styled.div`
