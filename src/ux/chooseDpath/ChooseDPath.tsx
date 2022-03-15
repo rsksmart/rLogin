@@ -18,6 +18,8 @@ const DPathInput = styled.input`
   border: none;
   border-bottom: ${(props) => `1px solid ${props.theme.p}`};
   color: ${props => props.theme.p};
+  background-color: transparent;
+  margin: 5px 0;
   padding: 5px;
   margin-left: 10px;
   &:focus {
