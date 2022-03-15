@@ -67,7 +67,8 @@ const resources = {
       Address: 'Address',
       Balance: 'Balance',
       'Or use the textbox to choose a specific path:': 'Or use the textbox to choose a specific path:',
-      'Use Ethereum path (check this if you used to connect with Metamask)': 'Use Ethereum path (check this if you used to connect with Metamask)'
+      'Use Ethereum path (check this if you used to connect with Metamask)': 'Use Ethereum path (check this if you used to connect with Metamask)',
+      'Please open your wallet': 'Please open your wallet'
     }
   },
   es: {
@@ -98,7 +99,8 @@ const resources = {
       'Wallet address': 'Billetera',
       Network: 'Red',
       'Do not show again': 'No mostrar de nuevo',
-      'Connected wallet': 'Billetera conectada'
+      'Connected wallet': 'Billetera conectada',
+      'Please open your wallet': 'Por favor revisa tu wallet'
     }
   },
   ja: {
