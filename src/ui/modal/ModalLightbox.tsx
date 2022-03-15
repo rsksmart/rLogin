@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { typeShared } from '../shared/Typography';
+import { typeShared } from '../shared/Typography'
 
 interface ModalLightboxProps {
   show: boolean;
