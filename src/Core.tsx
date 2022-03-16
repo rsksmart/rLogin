@@ -42,7 +42,7 @@ declare global {
   interface Window {
     ethereum: any;
     web3: any;
-    showRLoginModal: () => void;
+    showRLoginModal: (step?: Step) => void;
   }
 }
 
@@ -141,9 +141,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
     super(props)
 
     // @JESSE using this method for now...
-    window.showRLoginModal = async () => {
-      console.log('[Core.tsx] showRLoginModal called')
-      return this.setState({ show: true })
+    window.showRLoginModal = async (step?: Step) => {
+      console.log('[Core.tsx] showRLoginModal called', step)
+      return this.setState({ show: true, currentStep: step || 'Step1' })
     }
 
     const { providerController, onError } = props
@@ -420,12 +420,14 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const did = this.did()
 
      if (!backendUrl) {
+       this.setState({ show: false })
        return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
      }
 
      const handleConnect = (provider: any, authKeys: AuthKeys) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault, authKeys)
 
      return confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+       .then(() => this.setState({ show: false }))
        .catch((error: Error | AxiosError) => {
          // this error handling is added to help user when challenge expired. in that
          // case we ask for a new challenge and ask again the user to sign
