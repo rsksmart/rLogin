@@ -42,7 +42,7 @@ declare global {
   interface Window {
     ethereum: any;
     web3: any;
-    updateWeb3Modal: any;
+    showRLoginModal: () => void;
   }
 }
 
@@ -61,8 +61,6 @@ export interface DataVaultOptions {
 interface IModalProps {
   userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
-  showModal: SimpleFunction;
-  resetState: SimpleFunction;
   providerController: any
   onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: IDataVault, authKeys?: AuthKeys) => Promise<void>
   onError: (error: any) => Promise<void>
@@ -142,7 +140,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
 
-    window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
+    // @JESSE using this method for now...
+    window.showRLoginModal = async () => {
+      console.log('[Core.tsx] showRLoginModal called')
+      return this.setState({ show: true })
+    }
 
     const { providerController, onError } = props
 
@@ -159,6 +161,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.closeModal = this.closeModal.bind(this)
+    this.showModal = this.showModal.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
     this.chooseNetwork = this.chooseNetwork.bind(this)
@@ -236,7 +239,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   })
 
   private validateCurrentChain ():boolean {
-    const { supportedChains, showModal, keepModalHidden, onError } = this.props
+    const { supportedChains, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
 
     if (!Array.isArray(supportedChains) || supportedChains.length === 0) return true
@@ -250,7 +253,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         return false
       }
 
-      showModal()
+      this.showModal()
       this.setState({ currentStep: 'wrongNetwork' })
     }
 
@@ -477,19 +480,24 @@ export class Core extends React.Component<IModalProps, IModalState> {
      onClose()
    }
 
+   private showModal () {
+     console.log('[Core] show()')
+     this.setState({ show: true })
+   }
+
   public changeLanguage = (language: string) => {
-    const { showModal, onLanguageChanged } = this.props
+    const { onLanguageChanged } = this.props
 
     i18n.changeLanguage(language)
     onLanguageChanged(language)
-    showModal()
+    this.showModal() // @jesse - is this needed?
   }
 
   public changeTheme = (theme: themesOptions) => {
-    const { showModal, onThemeChanged } = this.props
+    const { onThemeChanged } = this.props
     this.setState({ currentTheme: theme })
     onThemeChanged(theme)
-    showModal()
+    this.showModal() // @jesse - is this needed?
   }
 
   public render = () => {

@@ -24,8 +24,6 @@ import { AuthKeys } from './lib/did-auth'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
-const INITIAL_STATE = { show: false }
-
 const defaultOpts: IProviderControllerOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
@@ -47,7 +45,6 @@ interface RLoginOptions {
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
 
 export class RLogin {
-  private show: boolean = INITIAL_STATE.show;
   private eventController: EventController = new EventController();
   private rLoginStorage: RLoginStorage = new RLoginStorage();
   private providerController: RLoginProviderController;
@@ -93,6 +90,7 @@ export class RLogin {
       this.themes.dark = { ...this.themes.dark, ...opts.customThemes.dark }
     }
     this.defaultTheme = (opts && opts.defaultTheme) ? opts.defaultTheme : defaultThemeConfig
+
     this.renderModal()
   }
 
@@ -100,43 +98,27 @@ export class RLogin {
     return this.providerController.cachedProvider
   }
 
-  /** opens or closes modal */
-  private toggleModal = () => {
-    const d = typeof window !== 'undefined' ? document : ''
-    const body = d ? d.body || d.getElementsByTagName('body')[0] : ''
-
-    if (body) {
-      body.style.overflow = this.show ? '' : 'hidden'
-    }
-
-    return this.updateState({ show: !this.show })
-  };
-
-  private closeModalIfOpen = async () => {
-    if (this.show) {
-      await this.toggleModal()
-    }
-  }
-
   private showModal = () => {
-    this.updateState({ show: true })
+    console.log('[RLogin] showModal')
+    // call the window elemenet showRLoginModal() // refactor this later??
+    window.showRLoginModal()
   }
 
   public showWalletInfo = () => {
-    this.updateState({ show: true, currentStep: 'walletInfo' })
+    // this.updateState({ show: true, currentStep: 'walletInfo' })
   }
 
   public showChangeNetwork = () => {
-    this.updateState({ show: true, currentStep: 'changeNetwork' })
+    // this.updateState({ show: true, currentStep: 'changeNetwork' })
   }
 
   /** handles an event and closes modal if open */
-  private handleOnAndTrigger = async (event: string, ...args: any) => this.closeModalIfOpen()
-    .then(() => this.eventController.trigger(event, ...args))
+  private handleOnAndTrigger = async (event: string, ...args: any) =>
+    this.eventController.trigger(event, ...args)
 
   /** event handlers */
   private onClose = () => {
-    this.resetState()
+    // this.resetState()
     this.handleOnAndTrigger(CLOSE_EVENT)
   }
 
@@ -157,16 +139,6 @@ export class RLogin {
     this.on(CLOSE_EVENT, () => reject('Modal closed by user'))
   }
 
-  /** dangerous! gives responsibility to update modal state */
-  private updateState = async (state: any) => {
-    Object.keys(state).forEach(key => {
-      (this as any)[key] = state[key]
-    })
-    await window.updateWeb3Modal(state)
-  }
-
-  private resetState = () => this.updateState({ ...INITIAL_STATE });
-
   /** renders the modal in DOM */
   private renderModal () {
     const el = document.createElement('div')
@@ -179,8 +151,6 @@ export class RLogin {
         onThemeChanged={this.onThemeChanged}
         userProviders={this.userProviders}
         onClose={this.onClose}
-        showModal={this.showModal}
-        resetState={this.resetState}
         providerController={this.providerController}
         onConnect={this.onConnect}
         onError={this.onError}
@@ -209,8 +179,11 @@ export class RLogin {
       this.setupHandlers(resolve, reject)
 
       if (this.cachedProvider) {
-        await this.providerController.connectToCachedProvider()
-          .catch(reject)
+        return await this.providerController.connectToCachedProvider()
+          .catch(err => {
+            console.log('error on the cached provider!', err)
+            reject(err)
+          })
       }
 
       this.showModal()
