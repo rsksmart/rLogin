@@ -377,7 +377,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
      if (!backendUrl) {
        this.setState({
-         currentStep: 'confirmInformation'
+         currentStep: 'confirmInformation',
+         show: true
        })
      } else {
        const loadingReason = i18next.t('Connecting to server')
