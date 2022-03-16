@@ -96,7 +96,7 @@ export class RLogin {
     this.renderModal()
   }
 
-  get cachedProvider (): string {
+  get cachedProvider (): any {
     return this.providerController.cachedProvider
   }
 
@@ -206,8 +206,10 @@ export class RLogin {
   public connect = (): Promise<any> =>
     // eslint-disable-next-line
     new Promise(async (resolve, reject) => { // weird async, to be refactored
+      console.log('uno')
       this.setupHandlers(resolve, reject)
-
+      console.log('dos')
+      console.log(this.cachedProvider)
       if (this.cachedProvider) {
         await this.providerController.connectToCachedProvider()
           .catch(reject)

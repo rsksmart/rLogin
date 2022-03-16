@@ -1,11 +1,15 @@
 import { NetworkParams } from '../lib/networkOptionsTypes'
-import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, CACHED_PROVIDER_KEY, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, connectors, injected, providers } from 'web3modal'
+import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, connectors, injected, providers } from 'web3modal'
 
 import { RLoginIProviderUserOptions } from '../Core'
 import { RLOGIN_SELECTED_PROVIDER } from '../constants'
 
 export class RLoginProviderController {
-  public cachedProvider: string = '';
+  public cachedProvider: {description: string,
+    logo: string,
+    name:string,
+  }
+
   public shouldCacheProvider: boolean = false;
   public disableInjectedProvider: boolean = false;
 
@@ -16,7 +20,11 @@ export class RLoginProviderController {
   private network: string = '';
 
   constructor (opts: IProviderControllerOptions) {
-    this.cachedProvider = getLocal(CACHED_PROVIDER_KEY) || ''
+    console.log('debugger')
+    // this.cachedProvider = getLocal(CACHED_PROVIDER_KEY) || ''
+    this.cachedProvider = getLocal(RLOGIN_SELECTED_PROVIDER) || ''
+    console.log('this.cachedProvider')
+    console.log(this.cachedProvider)
 
     this.disableInjectedProvider = opts.disableInjectedProvider
     this.shouldCacheProvider = opts.cacheProvider
@@ -142,13 +150,13 @@ export class RLoginProviderController {
     providerList.forEach((id: string) => {
       const provider = this.getProvider(id)
       if (typeof provider !== 'undefined') {
-        const { id, name, logo, connector } = provider
+        const { name, logo, connector } = provider
 
         userOptions.push({
           name,
           logo,
           description: getProviderDescription(provider),
-          onClick: (opts?: { chainId: number, rpcUrl?: string, dPath?: string, networkParams?: NetworkParams }) => this.connectTo(id, connector, opts)
+          onClick: (opts?: { chainId: number, rpcUrl?: string, dPath?: string, networkParams?: NetworkParams }) => this.connectTo(name, connector, opts)
         })
       }
     })
@@ -157,6 +165,8 @@ export class RLoginProviderController {
   };
 
   public getProvider (id: string) {
+    console.log('this.providers')
+    console.log(providers)
     return filterMatches<IProviderDisplayWithConnector>(
       this.providers,
       (x: { id: string; }) => x.id === id,
@@ -164,36 +174,49 @@ export class RLoginProviderController {
     )
   }
 
-  public getProviderOption (id: string, key: 'package' | 'options') {
+  public getProviderByName (name: string) {
+    console.log({ name })
+    console.log('this.providers')
+    console.log(name)
+    console.log(this.providers)
+    return filterMatches<IProviderDisplayWithConnector>(
+      this.providers,
+      (x: { name: string; }) => x.name === name,
+      undefined
+    )
+  }
+
+  public getProviderOption (name: string, key: 'package' | 'options') {
     return this.providerOptions &&
-      this.providerOptions[id] &&
-      this.providerOptions[id][key]
-      ? this.providerOptions[id][key]
+      this.providerOptions[name] &&
+      this.providerOptions[name][key]
+      ? this.providerOptions[name][key]
       : {}
   }
 
   public clearCachedProvider () {
-    this.cachedProvider = ''
-    removeLocal(CACHED_PROVIDER_KEY)
+    /* this.cachedProvider */
+    // removeLocal(CACHED_PROVIDER_KEY)
     removeLocal(RLOGIN_SELECTED_PROVIDER)
   }
 
-  public setCachedProvider (id: string) {
+  public setCachedProvider (id: any) {
     this.cachedProvider = id
-    setLocal(CACHED_PROVIDER_KEY, id)
+    console.log('Debugger')
+    setLocal(RLOGIN_SELECTED_PROVIDER, id)
   }
 
   public connectTo = (
-    id: string,
+    provider: any,
     connector: (providerPackage: any, opts: any) => Promise<any>,
     optionalOpts?: { chainId?: number, rpcUrl?: string, dPath?: string, networkParams?: any }
   ) => {
-    const providerPackage = this.getProviderOption(id, 'package')
-    const providerOptions = id !== 'portis' ? {
-      ...this.getProviderOption(id, 'options'),
+    const providerPackage = this.getProviderOption(provider.name, 'package')
+    const providerOptions = provider.name !== 'portis' ? {
+      ...this.getProviderOption(provider.name, 'options'),
       ...optionalOpts
     } : {
-      ...this.getProviderOption(id, 'options'),
+      ...this.getProviderOption(provider.name, 'options'),
       network: {
         chainId: optionalOpts?.chainId,
         nodeUrl: optionalOpts?.rpcUrl
@@ -207,8 +230,8 @@ export class RLoginProviderController {
       connector(providerPackage, opts)
         .then((provider: any) => {
           this.eventController.trigger(CONNECT_EVENT, provider)
-          if (this.shouldCacheProvider && this.cachedProvider !== id) {
-            this.setCachedProvider(id)
+          if (this.shouldCacheProvider && this.cachedProvider.name !== provider.name) {
+            this.setCachedProvider(provider.provider)
           }
           resolve(true)
         })
@@ -220,11 +243,13 @@ export class RLoginProviderController {
     return new Promise((resolve, reject) => {
       // get the optional options to be passed to the provider from localStorage
       const cachedOptions = getLocal(RLOGIN_SELECTED_PROVIDER)
+      console.log({ cachedOptions })
       const optionalOpts = cachedOptions ? cachedOptions.chosenNetwork : {}
-
-      const provider = this.getProvider(this.cachedProvider)
+      console.log('this.cachedProvider: ', this.cachedProvider)
+      const provider = this.getProviderByName(this.cachedProvider.name)
+      console.log('selected provider:', provider)
       typeof provider !== 'undefined'
-        ? resolve(this.connectTo(provider.id, provider.connector, optionalOpts))
+        ? resolve(this.connectTo(provider, provider.connector, optionalOpts))
         : reject(new Error('Provider not found'))
     })
   }
