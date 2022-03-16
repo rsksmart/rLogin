@@ -311,8 +311,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const providerName = provider.name || 'Provider'
      this.setState({
        currentStep: 'loading',
-       loadingReason: i18next.t('Please open your wallet'),
-       selectedProviderUserOption: { ...selectedProviderUserOption, provider }
+       loadingReason: i18next.t('Please open your wallet')
      })
      provider.onClick(chosenNetwork)
        .then(() => {
