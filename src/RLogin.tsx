@@ -98,19 +98,10 @@ export class RLogin {
     return this.providerController.cachedProvider
   }
 
-  private showModal = () => {
-    console.log('[RLogin] showModal')
-    // call the window elemenet showRLoginModal() // refactor this later??
-    window.showRLoginModal()
-  }
-
-  public showWalletInfo = () => {
-    // this.updateState({ show: true, currentStep: 'walletInfo' })
-  }
-
-  public showChangeNetwork = () => {
-    // this.updateState({ show: true, currentStep: 'changeNetwork' })
-  }
+  // show/hide modal functions
+  private showModal = () => window.showRLoginModal()
+  public showWalletInfo = () => window.showRLoginModal('walletInfo')
+  public showChangeNetwork = () => window.showRLoginModal('chooseNetwork')
 
   /** handles an event and closes modal if open */
   private handleOnAndTrigger = async (event: string, ...args: any) =>
