@@ -4,7 +4,6 @@ import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProvide
 import { RLoginIProviderUserOptions } from '../Core'
 import { RLOGIN_SELECTED_PROVIDER, CACHED_PROVIDER_KEY } from '../constants'
 
-
 export class RLoginProviderController {
   public cachedProvider: string = '';
   public shouldCacheProvider: boolean = false;
