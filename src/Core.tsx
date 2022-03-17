@@ -382,7 +382,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
        })
      } else {
        const loadingReason = i18next.t('Connecting to server')
-       this.setState({ loadingReason })
+       this.setState({ show: true, loadingReason })
        // request schema to back end
        return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
          this.setState({
@@ -411,7 +411,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private onConfirmSelectiveDisclosure (sd: SD) {
-     this.setState({ sd, currentStep: 'confirmInformation' })
+     this.setState({ sd, currentStep: 'confirmInformation', show: true })
    }
 
    /** Step 3 */
