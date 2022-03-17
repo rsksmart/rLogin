@@ -37,7 +37,7 @@ describe('cache provider tests', () => {
     it('logs in with localStorage set to injected', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
         }
       })
@@ -51,7 +51,7 @@ describe('cache provider tests', () => {
     it('attempts to login in to a junk provider', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', 'tacos')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', 'tacos')
         }
       })
 
@@ -62,7 +62,7 @@ describe('cache provider tests', () => {
     it('logs in with localStorage set to injected, and do not show set true', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
           window.localStorage.setItem('RLogin:DontShowAgain', 'true')
         }
@@ -75,7 +75,7 @@ describe('cache provider tests', () => {
     it('provider throws an error when connecting', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.ethereum.request = (_props) => Promise.reject(new Error('rejected'))
         }
       })
@@ -89,7 +89,7 @@ describe('cache provider tests', () => {
     it('logs in with injected', () => {
       cy.visit('/?cache=yes&backend=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
         }
       })
@@ -101,7 +101,7 @@ describe('cache provider tests', () => {
     it('resets with a junk provider', () => {
       cy.visit('/?cache=yes&backend=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"tacos"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"tacos"')
         }
       })
 
