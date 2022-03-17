@@ -1,8 +1,9 @@
 import { NetworkParams } from '../lib/networkOptionsTypes'
-import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, CACHED_PROVIDER_KEY, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, connectors, injected, providers } from 'web3modal'
+import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProviderOptions, IProviderControllerOptions, getLocal, getInjectedProvider, INJECTED_PROVIDER_ID, getProviderInfoById, findMatchingRequiredOptions, isMobile, getProviderDescription, filterMatches, removeLocal, setLocal, CONNECT_EVENT, connectors, injected, providers } from 'web3modal'
 
 import { RLoginIProviderUserOptions } from '../Core'
-import { RLOGIN_SELECTED_PROVIDER } from '../constants'
+import { RLOGIN_SELECTED_PROVIDER, CACHED_PROVIDER_KEY } from '../constants'
+
 
 export class RLoginProviderController {
   public cachedProvider: string = '';
