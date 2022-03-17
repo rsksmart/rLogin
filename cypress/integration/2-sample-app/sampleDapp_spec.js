@@ -196,7 +196,6 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('#connected').should('have.text', 'Yes')
     cy.get('#changeNetwork').click()
 
-    cy.get('.rlogin-header2').should('have.text', 'Select Network')
-    cy.get('.changeNetwork').should('be.visible')
+    cy.get('.rlogin-header2').should('have.text', 'Choose Network')
   })
 })
