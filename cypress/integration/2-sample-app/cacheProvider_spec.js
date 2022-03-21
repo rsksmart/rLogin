@@ -106,7 +106,7 @@ describe('cache provider tests', () => {
             debug: true
           })
 
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.ethereum = localProvider
         }
       })
