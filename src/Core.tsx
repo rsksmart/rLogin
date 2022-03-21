@@ -159,7 +159,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
     this.onConfirmAuth = this.onConfirmAuth.bind(this)
     this.disconnect = this.disconnect.bind(this)
     this.closeModal = this.closeModal.bind(this)
-    this.showModal = this.showModal.bind(this)
     this.preConnectChecklist = this.preConnectChecklist.bind(this)
     this.preTutorialChecklist = this.preTutorialChecklist.bind(this)
     this.chooseNetwork = this.chooseNetwork.bind(this)
@@ -251,8 +250,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         return false
       }
 
-      this.showModal()
-      this.setState({ currentStep: 'wrongNetwork' })
+      this.setState({ currentStep: 'wrongNetwork', show: true })
     }
 
     return isCurrentChainSupported
@@ -491,23 +489,19 @@ export class Core extends React.Component<IModalProps, IModalState> {
      onClose()
    }
 
-   private showModal () {
-     this.setState({ show: true })
-   }
-
   public changeLanguage = (language: string) => {
     const { onLanguageChanged } = this.props
 
     i18n.changeLanguage(language)
     onLanguageChanged(language)
-    this.showModal() // @jesse - is this needed?
+    this.setState({ show: true })
   }
 
   public changeTheme = (theme: themesOptions) => {
     const { onThemeChanged } = this.props
     this.setState({ currentTheme: theme })
     onThemeChanged(theme)
-    this.showModal() // @jesse - is this needed?
+    this.setState({ show: true })
   }
 
   public render = () => {
