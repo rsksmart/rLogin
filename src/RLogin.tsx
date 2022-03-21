@@ -90,7 +90,6 @@ export class RLogin {
       this.themes.dark = { ...this.themes.dark, ...opts.customThemes.dark }
     }
     this.defaultTheme = (opts && opts.defaultTheme) ? opts.defaultTheme : defaultThemeConfig
-
     this.renderModal()
   }
 
@@ -103,15 +102,12 @@ export class RLogin {
   public showWalletInfo = () => window.showRLoginModal('walletInfo')
   public showChangeNetwork = () => window.showRLoginModal('chooseNetwork')
 
-  /** handles an event and closes modal if open */
+  /** handles an event */
   private handleOnAndTrigger = async (event: string, ...args: any) =>
     this.eventController.trigger(event, ...args)
 
   /** event handlers */
-  private onClose = () => {
-    // this.resetState()
-    this.handleOnAndTrigger(CLOSE_EVENT)
-  }
+  private onClose = () => this.handleOnAndTrigger(CLOSE_EVENT)
 
   private onConnect = (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: DataVault, authKeys?: AuthKeys) => this.handleOnAndTrigger(CONNECT_EVENT, { provider, disconnect, selectedLanguage, selectedTheme, dataVault, authKeys })
   private onError = (error: any) => this.handleOnAndTrigger(ERROR_EVENT, error) // TODO: add a default error page
