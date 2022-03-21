@@ -30,7 +30,7 @@ import TutorialComponent from './ux/tutorial/TutorialComponent'
 import disconnectFromProvider from './lib/providerDisconnect'
 import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
-import { RLOGIN_SELECTED_PROVIDER } from './constants'
+import { DONT_SHOW_AGAIN_KEY, RLOGIN_SELECTED_PROVIDER } from './constants'
 import { ChooseDPathComponent } from './ux/chooseDpath/ChooseDPath'
 
 // copy-pasted and adapted
@@ -140,11 +140,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
 
-    // @JESSE using this method for now...
-    window.showRLoginModal = async (step?: Step) => {
-      console.log('[Core.tsx] showRLoginModal called', step)
-      return this.setState({ show: true, currentStep: step || 'Step1' })
-    }
+    // Allows RLogin to hide/show the modal state
+    window.showRLoginModal = async (step?: Step) =>
+      this.setState({ show: true, currentStep: step || 'Step1' })
 
     const { providerController, onError } = props
 
@@ -376,10 +374,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const { backendUrl } = this.props
 
      if (!backendUrl) {
-       this.setState({
-         currentStep: 'confirmInformation',
-         show: true
-       })
+       this.shouldShowConfirmStep()
      } else {
        const loadingReason = i18next.t('Connecting to server')
        this.setState({ show: true, loadingReason })
@@ -388,10 +383,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
          this.setState({
            challenge,
            sdr,
-           sd: undefined,
-           currentStep: sdr ? 'Step2' : 'confirmInformation'
+           sd: undefined
            // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
          })
+
+         sdr ? this.setState({ currentStep: 'Step2' }) : this.shouldShowConfirmStep()
        })
      }
    }
@@ -411,7 +407,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private onConfirmSelectiveDisclosure (sd: SD) {
-     this.setState({ sd, currentStep: 'confirmInformation', show: true })
+     this.setState({ sd })
+     this.shouldShowConfirmStep()
    }
 
    /** Step 3 */
@@ -450,6 +447,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
        })
    }
 
+   /**
+    * Helper function to see if the confirm information step should be shown or not.
+    * If true, sets the currentStep and turns on the modal, if false, then continues
+    * to ConfirmAuth which will detect the flavor.
+    */
+   private shouldShowConfirmStep = () => {
+     !localStorage.getItem(DONT_SHOW_AGAIN_KEY)
+       ? this.setState({ currentStep: 'confirmInformation', show: true })
+       : this.onConfirmAuth()
+   }
+
    private setLightboxRef (c: HTMLDivElement | null) {
      this.lightboxRef = c
    }
@@ -484,7 +492,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private showModal () {
-     console.log('[Core] show()')
      this.setState({ show: true })
    }
 
@@ -519,7 +526,18 @@ export class Core extends React.Component<IModalProps, IModalState> {
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.provider.name} />}
-        {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerName={provider.name} providerUserOption={selectedProviderUserOption!.provider} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} />}
+        {['confirmInformation', 'walletInfo'].includes(currentStep) && (
+          <ConfirmInformation
+            displayMode={currentStep === 'walletInfo'}
+            chainId={chainId}
+            address={address}
+            provider={provider}
+            providerUserOption={selectedProviderUserOption!.provider}
+            sd={sd}
+            onConfirm={this.onConfirmAuth}
+            onCancel={this.closeModal}
+          />
+        )}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && (

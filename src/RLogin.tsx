@@ -171,10 +171,7 @@ export class RLogin {
 
       if (this.cachedProvider) {
         await this.providerController.connectToCachedProvider()
-          .catch(err => {
-            console.log('error on the cached provider!', err)
-            reject(err)
-          })
+          .catch(reject)
       } else {
         this.showModal()
       }
