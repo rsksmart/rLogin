@@ -6,9 +6,9 @@ describe('cache provider tests', () => {
 
   const rLoginCached = JSON.stringify({
     provider: {
-      "name": "MetaMask",
-      "logo": "data:image/svg+xml;",
-      "description": "Connect to your MetaMask Wallet"
+      name: 'MetaMask',
+      logo: 'data:image/svg+xml;',
+      description: 'Connect to your MetaMask Wallet'
     }
   })
 
@@ -37,7 +37,7 @@ describe('cache provider tests', () => {
     it('logs in with localStorage set to injected', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
         }
       })
@@ -48,10 +48,21 @@ describe('cache provider tests', () => {
       cy.get('#connected').should('have.text', 'Yes')
     })
 
+    it('attempts to login when legacy web3modal local storage is set', () => {
+      cy.visit('/?cache=yes', {
+        onBeforeLoad: function (window) {
+          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+        }
+      })
+
+      cy.get('#login').click()
+      cy.get('.rlogin-header2').should('have.text', 'Connect your wallet')
+    })
+
     it('attempts to login in to a junk provider', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', 'tacos')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', 'tacos')
         }
       })
 
@@ -62,7 +73,7 @@ describe('cache provider tests', () => {
     it('logs in with localStorage set to injected, and do not show set true', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
           window.localStorage.setItem('RLogin:DontShowAgain', 'true')
         }
@@ -75,7 +86,7 @@ describe('cache provider tests', () => {
     it('provider throws an error when connecting', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.ethereum.request = (_props) => Promise.reject(new Error('rejected'))
         }
       })
@@ -89,7 +100,7 @@ describe('cache provider tests', () => {
     it('logs in with injected', () => {
       cy.visit('/?cache=yes&backend=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
           window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
         }
       })
@@ -101,7 +112,7 @@ describe('cache provider tests', () => {
     it('resets with a junk provider', () => {
       cy.visit('/?cache=yes&backend=yes', {
         onBeforeLoad: function (window) {
-          window.localStorage.setItem('WEB3_CONNECT_CACHED_PROVIDER', '"tacos"')
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"tacos"')
         }
       })
 
