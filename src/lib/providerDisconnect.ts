@@ -13,7 +13,7 @@ const disconnectProvider = async (provider: any): Promise<void> => {
 
   // LocalStorage cleanup missed with the disconnect method
   localStorage.removeItem(WALLETCONNECT)
-  localStorage.removeItem('WEB3_CONNECT_CACHED_PROVIDER')
+  localStorage.removeItem('RLOGIN_CACHED_PROVIDER')
 }
 
 const disconnectFromDataVault = () => {
