@@ -56,4 +56,18 @@ describe('Component: ChooseNetworkComponent', () => {
       chainId: 30, rpcUrl: 'http://30', dPath: "m/44'/60'/0'/0/0"
     })
   })
+
+  it('does not show a dropdown when it is a single network', () => {
+    const localProps = {
+      ...sharedProps,
+      rpcUrls: {
+        31: 'http://31'
+      }
+    }
+
+    const wrapper = mount(<ChooseNetworkComponent {...localProps} />)
+
+    expect(wrapper.find('h2').text()).toBe('Connecting to:')
+    expect(wrapper.find('h3').text()).toBe('RSK Testnet')
+  })
 })
