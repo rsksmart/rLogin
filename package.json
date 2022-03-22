@@ -16,7 +16,7 @@
     "lint": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts",
     "lint:fix": "npx eslint 'src/**/*.{js,ts,tsx}' 'test/**/*.{js,ts,tsx}' --ext .json,.js,.ts --fix",
     "build": "webpack --env=production",
-    "build:dev": "webpack --env=development",
+    "build:dev": "webpack --env=development --watch",
     "sample:dapp": "concurrently \"npm run build:dev\" \"node sample/launcher.js\" \"serve dist -l 3005\" \"serve sample/front -l 3006\"",
     "sample:open": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js\"",
     "sample:permissioned": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js permissioned\"",
