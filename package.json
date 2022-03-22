@@ -88,7 +88,7 @@
     "url-loader": "^1.1.2",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.0.0-rc.1"
+    "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
     "@rsksmart/ipfs-cpinner-client-types": "^0.1.3",
