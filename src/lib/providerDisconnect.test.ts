@@ -1,6 +1,6 @@
 import disconnectFromProvider from './providerDisconnect'
 
-describe('Portis EIP1193 wrapper', () => {
+describe('Provider disconnect', () => {
   const dummyProvider = { disconnect: jest.fn() }
 
   it('disconnects provider', async () => {
