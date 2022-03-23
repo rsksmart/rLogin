@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Trans } from 'react-i18next'
 
-import { Header2, SmallSpan } from '../../ui/shared/Typography'
+import { Header2, Header3, Paragraph, SmallSpan } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
 import Select from '../../ui/shared/SelectDropdown'
 import { getChainName } from '../../adapters'
@@ -46,16 +46,30 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
     (providerName === 'Ledger' || providerName === 'Trezor') &&
     selectedChainId !== '1'
 
+  const rpcUrlsArray = Object.keys(rpcUrls)
+
   return (
     <div>
-      <Header2><Trans>Choose Network</Trans></Header2>
-      <p>
-        <Select disabled={isLoading} value={selectedChainId} onChange={evt => setSelectedChainId(evt.target.value)}>
-          {Object.keys(rpcUrls).map((chainId: string) =>
-            <option key={chainId} value={chainId}>{getChainName(parseInt(chainId))}</option>
-          )}
-        </Select>
-      </p>
+      {rpcUrlsArray.length > 1
+        ? (
+          <>
+            <Header2><Trans>Choose Network</Trans></Header2>
+            <Paragraph className="chainSelect">
+              <Select disabled={isLoading} value={selectedChainId} onChange={evt => setSelectedChainId(evt.target.value)}>
+                {rpcUrlsArray.map((chainId: string) =>
+                  <option key={chainId} value={chainId}>{getChainName(parseInt(chainId))}</option>
+                )}
+              </Select>
+            </Paragraph>
+          </>
+        )
+        : (
+          <>
+            <Header2><Trans>Connect to:</Trans></Header2>
+            <Header3>{getChainName(parseInt(rpcUrlsArray[0]))}</Header3>
+          </>
+        )
+      }
       {showMigrationMessage && (
         <div style={{ display: 'flex' }}>
           <label className="checkbox-label">
