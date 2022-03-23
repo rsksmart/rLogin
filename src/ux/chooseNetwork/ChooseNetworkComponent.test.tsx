@@ -67,7 +67,7 @@ describe('Component: ChooseNetworkComponent', () => {
 
     const wrapper = mount(<ChooseNetworkComponent {...localProps} />)
 
-    expect(wrapper.find('h2').text()).toBe('Connecting to:')
+    expect(wrapper.find('h2').text()).toBe('Connect to:')
     expect(wrapper.find('h3').text()).toBe('RSK Testnet')
   })
 })
