@@ -1,4 +1,4 @@
-import currentProvider from '@rsksmart/mock-web3-provider'
+import { MockProvider } from '@rsksmart/mock-web3-provider'
 
 describe('modal - chose metamask fails, then walletconnect works', () => {
   const address = '0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D'
@@ -6,12 +6,13 @@ describe('modal - chose metamask fails, then walletconnect works', () => {
 
   beforeEach(() => {
     cy.on('window:before:load', (win) => {
-      win.ethereum = currentProvider({
+      win.ethereum = new MockProvider({
         address,
         privateKey,
-        chainId: 31,
+        networkVersion: 31,
         debug: true
       })
+      win.ethereum.isMetaMask = true
       win.ethereum.request = () => Promise.reject(new Error('an error'))
     })
   })

@@ -1,4 +1,4 @@
-import currentProvider from '@rsksmart/mock-web3-provider'
+import { MockProvider } from '@rsksmart/mock-web3-provider'
 
 describe('show Select Network modal when trying to connect with a unsupported chainId', () => {
   const address = '0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D'
@@ -6,12 +6,13 @@ describe('show Select Network modal when trying to connect with a unsupported ch
 
   beforeEach(() => {
     cy.on('window:before:load', (win) => {
-      win.ethereum = currentProvider({
+      win.ethereum = new MockProvider({
         address,
         privateKey,
-        chainId: 2,
+        networkVersion: 2,
         debug: true
       })
+      win.ethereum.isMetaMask = true
     })
   })
 
