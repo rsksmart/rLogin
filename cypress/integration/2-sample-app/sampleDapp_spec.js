@@ -10,7 +10,8 @@ describe('sample:dapp testing, no backend', () => {
         address,
         privateKey,
         chainId: 31,
-        debug: true
+        debug: true,
+        manualConfirmEnable: true
       })
     })
   })
