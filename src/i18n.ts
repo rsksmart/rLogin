@@ -68,7 +68,8 @@ const resources = {
       Balance: 'Balance',
       'Or use the textbox to choose a specific path:': 'Or use the textbox to choose a specific path:',
       'Use Ethereum path (check this if you used to connect with Metamask)': 'Use Ethereum path (check this if you used to connect with Metamask)',
-      'Please confirm in your wallet': 'Please confirm in your wallet'
+      'Please confirm in your wallet': 'Please confirm in your wallet',
+      'Connect to:': 'Connect to:'
     }
   },
   es: {

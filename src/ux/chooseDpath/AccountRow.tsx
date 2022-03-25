@@ -13,16 +13,19 @@ interface Interface {
 
 const DpathRowStyles = styled.button<{ selected: boolean }>`
   display: flex;
-  background: ${(props) => props.selected ? props.theme.overlay : props.theme.primaryText};
+  background: ${(props) => props.selected ? props.theme.secondaryBackground : 'none'};
   border: none;
   border-radius: 5px;
   padding: 5px;
   margin-bottom: 5px;
   font-weight: 400 !important;
   font-size: 12px;
-  color: ${(props) => props.selected ? props.theme.primaryText : props.theme.p};
+  color: ${(props) => props.theme.p};
   width: 100%;
-  cursor: pointer
+  cursor: pointer;
+  &:hover {
+    background: ${(props) => props.theme.secondaryHoverBackground};
+  }
 `
 
 const Column = styled.div`

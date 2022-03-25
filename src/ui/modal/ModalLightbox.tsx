@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { typeShared } from '../shared/Typography'
 
 interface ModalLightboxProps {
   show: boolean;
@@ -6,7 +7,7 @@ interface ModalLightboxProps {
 }
 
 export const ModalLightbox = styled.div<ModalLightboxProps>`
-font-family: Rubik;
+${typeShared}
 transition: opacity 0.1s ease-in-out;
 text-align: center;
 position: fixed;
