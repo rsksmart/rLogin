@@ -1,4 +1,4 @@
-import currentProvider from '@rsksmart/mock-web3-provider'
+import { MockProvider } from '@rsksmart/mock-web3-provider'
 
 describe('hardware provider tests', () => {
   const address = '0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D'
@@ -18,10 +18,10 @@ describe('hardware provider tests', () => {
 
   beforeEach(() => {
     cy.on('window:before:load', (win) => {
-      const provider = currentProvider({
+      const provider = new MockProvider({
         address,
         privateKey,
-        chainId: 31,
+        networkVersion: 31,
         debug: true
       })
 
