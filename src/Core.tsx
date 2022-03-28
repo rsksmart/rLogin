@@ -309,7 +309,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const { providerController } = this.props
 
      const providerName = provider.name || 'Provider'
-
+     this.setState({
+       currentStep: 'loading',
+       loadingReason: i18next.t('Please confirm in your wallet')
+     })
      provider.onClick(chosenNetwork)
        .then(() => {
          this.setState({
