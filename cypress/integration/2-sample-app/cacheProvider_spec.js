@@ -99,14 +99,15 @@ describe('cache provider tests', () => {
     it('shows the change network prompt', () => {
       cy.visit('/?cache=yes', {
         onBeforeLoad: function (window) {
-          const localProvider = currentProvider({
+          const localProvider = new MockProvider({
             address,
             privateKey,
-            chainId: 1000,
+            networkVersion: 1000,
             debug: true
           })
 
           window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
           window.ethereum = localProvider
         }
       })
