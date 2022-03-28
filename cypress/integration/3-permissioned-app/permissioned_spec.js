@@ -162,4 +162,25 @@ describe('permissioned e2e testing', () => {
 
     testHasNoAuthKeys()
   })
+
+  it('shows connection window with cache provider set true', () => {
+    cy.visit('/?backend=yes', {
+      onBeforeLoad: function (window) {
+        window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
+        window.localStorage.setItem('RLogin:DontShowAgain', 'true')
+      }
+    })
+
+    cy.get('#login').click()
+
+    // rLogin makes 3 post requests to this URL, we will wait but not mock as they need to increment.
+    cy.intercept('POST', 'https://did.rsk.co:4444/').as('didRsk')
+    cy.wait('@didRsk')
+
+    // mock response from the app
+    cy.intercept('GET', 'http(.+)request-signup(.+)', { fixture: 'request-signup.json' }).as('requestSignup')
+
+    // expect statement:
+    cy.get('.rlogin-header2').should('have.text', 'Would you like to give us access to info in your data vault?')
+  })
 })
