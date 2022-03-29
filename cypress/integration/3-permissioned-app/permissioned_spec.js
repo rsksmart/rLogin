@@ -21,19 +21,30 @@ describe('permissioned e2e testing', () => {
     })
   })
 
-  const requestAuth = () => {
+  const connectToMetamask = () => {
     cy.visit('/?backend=yes')
     cy.get('#login').click()
     cy.contains('MetaMask').click()
+  }
 
+  const interceptNodePost = () => {
     // rLogin makes 3 post requests to this URL, we will wait but not mock as they need to increment.
     cy.intercept('POST', 'https://did.rsk.co:4444/').as('didRsk')
     cy.wait('@didRsk')
+  }
 
+  const requestSignupApp = () => {
     // mock response from the app
     cy.intercept('GET', 'http(.+)request-signup(.+)', { fixture: 'request-signup.json' }).as('requestSignup')
     cy.get('.rlogin-header2').should('have.text', 'Would you like to give us access to info in your data vault?')
     cy.contains('Access Data Vault').click()
+  }
+
+  const requestAuth = () => {
+    connectToMetamask()
+    interceptNodePost()
+    requestSignupApp()
+
     // mock response exchange to and from the Data Vault
     cy.intercept('GET', 'http(.+)request-auth(.+)', { fixture: 'request-auth.json' }).as('requestAuth')
     cy.intercept('GET', '**auth', { fixture: 'auth.json' }).as('auth')
@@ -62,6 +73,24 @@ describe('permissioned e2e testing', () => {
 
     cy.get('#access-token').should('not.be.empty')
     cy.get('#refresh-token').should('not.be.empty')
+  })
+
+  it('attempts to relogin into the datavault if failed.', () => {
+    connectToMetamask()
+    interceptNodePost()
+    requestSignupApp()
+
+    // fail the authentication
+    cy.intercept('GET', 'http(.+)refresh-token(.+)', {
+      statusCode: 403,
+      body: 'DID Auth tampered with'
+    })
+    cy.intercept('GET', '**/content/EmailVerifiableCredential', {
+      statusCode: 401,
+      body: 'NO_ACCESS_TOKEN'
+    })
+
+    cy.get('.rlogin-paragraph').last().should('have.text', 'Authentication error')
   })
 
   it('Login into the datavault without Name (required by backend)', () => {
