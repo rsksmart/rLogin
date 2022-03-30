@@ -95,6 +95,26 @@ describe('cache provider tests', () => {
       cy.get('#login').click()
       cy.get('.rlogin-header2').should('have.text', 'Connect your wallet')
     })
+
+    it('shows the change network prompt', () => {
+      cy.visit('/?cache=yes', {
+        onBeforeLoad: function (window) {
+          const localProvider = new MockProvider({
+            address,
+            privateKey,
+            networkVersion: 1000,
+            debug: true
+          })
+
+          window.localStorage.setItem('RLOGIN_CACHED_PROVIDER', '"injected"')
+          window.localStorage.setItem('RLOGIN_SELECTED_PROVIDER', rLoginCached)
+          window.ethereum = localProvider
+        }
+      })
+
+      cy.get('#login').click()
+      cy.get('h2.rlogin-header2').should('have.text', 'Select Network')
+    })
   })
 
   describe('sample:permissioned', () => {

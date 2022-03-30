@@ -122,7 +122,7 @@ describe('Component: ConfirmInformation', () => {
   })
 
   it('shows dpath for hardware provider', () => {
-    const wrapper = mount(<ConfirmInformation {...props} providerName='Ledger' provider={{ dpath: 'dpath', isLedger: true }} />)
+    const wrapper = mount(<ConfirmInformation {...props} provider={{ dpath: 'dpath', isLedger: true }} />)
 
     expect(wrapper.find(`dt.${LIST_TITLE}`).at(2).text()).toBe('Derivation path:')
     expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(2).text()).toBe('dpath')
