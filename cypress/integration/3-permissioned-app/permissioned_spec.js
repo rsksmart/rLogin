@@ -212,4 +212,38 @@ describe('permissioned e2e testing', () => {
     // expect statement:
     cy.get('.rlogin-header2').should('have.text', 'Would you like to give us access to info in your data vault?')
   })
+
+  it('the server receives the claim and credential', () => {
+    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
+    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+
+    requestAuth()
+
+    // select the claim and credential
+    cy.get('label').eq(0).click()
+    cy.get('label').eq(1).click()
+
+    cy.contains('Confirm').click()
+
+    cy.intercept({
+      method: 'POST',
+      path: 'signup'
+    }, (req) => {
+      const { claims, credentials } = req.body.response.sd
+
+      // expect the server gets the credential and claim:
+      expect(claims.Name).to.equal('CI Testing')
+      expect(credentials.Email).to.equal('eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NksifQ.eyJ2YyI6eyJAY29udGV4dCI6WyJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy92MSJdLCJ0eXBlIjpbIlZlcmlmaWFibGVDcmVkZW50aWFsIiwiRW1haWwiXSwiY3JlZGVudGlhbFNjaGVtYSI6eyJpZCI6ImRpZDpldGhyOnJzazoweDhhMzJkYTYyNGRkOWZhZDhiZjRmMzJkOTQ1NmYzNzRiNjBkOWFkMjg7aWQ9MWViMmFmNmItMGRlZS02MDkwLWNiNTUtMGVkMDkzZjliMDI2O3ZlcnNpb249MS4wIiwidHlwZSI6Ikpzb25TY2hlbWFWYWxpZGF0b3IyMDE4In0sImNyZWRlbnRpYWxTdWJqZWN0Ijp7ImVtYWlsQWRkcmVzcyI6Implc3NlQGlvdmxhYnMub3JnIn19LCJzdWIiOiJkaWQ6ZXRocjpyc2s6dGVzdG5ldDoweGI5OGJkN2M3ZjY1NjI5MDA3MWU1MmQxYWE2MTdkOWNiNDQ2N2ZkNmQiLCJuYmYiOjE2MTM2NDY4ODcsImlzcyI6ImRpZDpldGhyOnJzazoweEZjYzdlNjkxYjNiNjMxODI5Qzk2NDkwNTY5YWE1RjFFMzFlRkFmOGYifQ.3F6eoOXl4rZS9G8joSRfEjNIymsxJAMFuGhp4qT0KlCo1H_JT9yx--zgYqpvKKlrpLjsHhnLmCsv2OW_1dKJlw')
+
+      req.reply({ accessToken: 'accessTokenJWT', refreshToken: 'refreshTokenJWW' })
+    }).as('serverSignup')
+
+    cy.get('.rlogin-button.confirm').click()
+    cy.get('#connected').should('have.text', 'Yes')
+
+    cy.wait('@serverSignup')
+
+    cy.get('#access-token').should('have.text', 'accessTokenJWT')
+    cy.get('#refresh-token').should('have.text', 'refreshTokenJWW')
+  })
 })
