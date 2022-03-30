@@ -55,6 +55,8 @@ describe('permissioned e2e testing', () => {
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
   }
 
+  const expectModalToBeHidden = () => cy.get('.rlogin-modal-lightbox').should('not.be.visible')
+
   it('Login into the datavault', () => {
     mockClaimAndCredential()
     requestAuth()
@@ -240,6 +242,8 @@ describe('permissioned e2e testing', () => {
 
     cy.get('#access-token').should('have.text', 'accessTokenJWT')
     cy.get('#refresh-token').should('have.text', 'refreshTokenJWW')
+
+    expectModalToBeHidden()
   })
 
   it('receives INVALID_CHALLENGE_RESPONSE and tries again', () => {
@@ -274,5 +278,32 @@ describe('permissioned e2e testing', () => {
 
     cy.get('#access-token').should('have.text', 'accessTokenJWT')
     cy.get('#refresh-token').should('have.text', 'refreshTokenJWW')
+
+    expectModalToBeHidden()
+  })
+
+  it('passed credentials and claims with DO NOT SHOW', () => {
+    mockClaimAndCredential()
+    cy.visit('/?backend=yes', {
+      onBeforeLoad: function (window) {
+        window.localStorage.setItem('RLogin:DontShowAgain', 'true')
+      }
+    })
+    cy.get('#login').click()
+    cy.contains('MetaMask').click()
+
+    cy.intercept('GET', 'http(.+)request-auth(.+)', { fixture: 'request-auth.json' }).as('requestAuth')
+    cy.intercept('GET', '**auth', { fixture: 'auth.json' }).as('auth')
+
+    interceptNodePost()
+    requestSignupApp()
+
+    // select the claim and credential
+    cy.get('label').eq(0).click()
+    cy.get('label').eq(1).click()
+
+    cy.contains('Confirm').click().as('confirmSelectionScreen')
+
+    cy.get('.rlogin-modal-lightbox').should('not.be.visible')
   })
 })

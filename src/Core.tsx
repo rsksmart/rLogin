@@ -405,8 +405,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private onConfirmSelectiveDisclosure (sd: SD) {
-     this.setState({ sd })
-     this.shouldShowConfirmStep()
+     this.setState({ sd }, () => this.shouldShowConfirmStep())
    }
 
    /** Step 3 */
