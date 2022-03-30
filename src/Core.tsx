@@ -429,6 +429,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
          if ((error as AxiosError).response && (error as AxiosError).response?.data === 'INVALID_CHALLENGE_RESPONSE') {
            return requestSignup(backendUrl!, this.did()).then(({ challenge }) =>
              confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+               .then(() => this.setState({ show: false }))
            )
          }
          throw error

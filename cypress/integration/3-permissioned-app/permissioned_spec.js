@@ -10,6 +10,8 @@ describe('permissioned e2e testing', () => {
   const privateKey = 'de926db3012af759b4f24b5a51ef6afa397f04670f634aa4f48d4480417007f3'
 
   beforeEach(() => {
+    cy.clearLocalStorage('RLogin:DontShowAgain')
+
     cy.on('window:before:load', (win) => {
       win.ethereum = new MockProvider({
         address,
@@ -78,6 +80,7 @@ describe('permissioned e2e testing', () => {
 
     cy.get('#access-token').should('not.be.empty')
     cy.get('#refresh-token').should('not.be.empty')
+    expectModalToBeHidden()
   })
 
   it('attempts to relogin into the datavault if failed.', () => {
@@ -273,8 +276,6 @@ describe('permissioned e2e testing', () => {
 
     cy.wait('@signup').its('response.statusCode').should('equal', 401)
     cy.wait('@signup').its('response.statusCode').should('equal', 200)
-
-    cy.contains('Confirm').click()
 
     cy.get('#access-token').should('have.text', 'accessTokenJWT')
     cy.get('#refresh-token').should('have.text', 'refreshTokenJWW')
