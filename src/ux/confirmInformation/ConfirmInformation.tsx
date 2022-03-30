@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SD } from '../../lib/sdr'
 import { Header2, SmallSpan, typeShared } from '../../ui/shared/Typography'
 import { Button } from '../../ui/shared/Button'
@@ -21,12 +21,11 @@ interface ConfirmInformationProps {
   sd: SD | undefined
   providerUserOption: IProviderUserOptions
   provider: any
-  providerName: string
   onConfirm: () => Promise<any>
   onCancel: () => void
 }
 
-export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, providerName, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -38,15 +37,6 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
     setIsLoading(false)
   }
-
-  useEffect(() => {
-    const DONT_SHOW_AGAIN_DEFAULT: boolean =
-      localStorage.getItem(DONT_SHOW_AGAIN_KEY) ? JSON.parse(localStorage.getItem(DONT_SHOW_AGAIN_KEY)!) : false
-
-    if (DONT_SHOW_AGAIN_DEFAULT && !displayMode) {
-      handleSubmit()
-    }
-  }, [displayMode])
 
   const peerWallet = getPeerInfo(provider?.wc?.peerMeta)
 

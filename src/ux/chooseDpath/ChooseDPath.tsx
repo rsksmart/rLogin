@@ -18,6 +18,8 @@ const DPathInput = styled.input`
   border: none;
   border-bottom: ${(props) => `1px solid ${props.theme.p}`};
   color: ${props => props.theme.p};
+  background-color: transparent;
+  margin: 5px 0;
   padding: 5px;
   margin-left: 10px;
   &:focus {
@@ -35,6 +37,7 @@ const Row = styled.div`
   color: ${props => props.theme.h3};
   border-bottom: ${(props) => `1px solid ${props.theme.p}`};
   padding-bottom: 5px;
+  margin-bottom: 5px;
 `
 
 export const Column = styled.div`

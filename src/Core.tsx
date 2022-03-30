@@ -30,7 +30,7 @@ import TutorialComponent from './ux/tutorial/TutorialComponent'
 import disconnectFromProvider from './lib/providerDisconnect'
 import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
-import { RLOGIN_SELECTED_PROVIDER } from './constants'
+import { DONT_SHOW_AGAIN_KEY, RLOGIN_SELECTED_PROVIDER } from './constants'
 import { ChooseDPathComponent } from './ux/chooseDpath/ChooseDPath'
 
 // copy-pasted and adapted
@@ -42,7 +42,7 @@ declare global {
   interface Window {
     ethereum: any;
     web3: any;
-    updateWeb3Modal: any;
+    showRLoginModal: (step?: Step) => void;
   }
 }
 
@@ -61,8 +61,6 @@ export interface DataVaultOptions {
 interface IModalProps {
   userProviders: IProviderUserOptions[];
   onClose: SimpleFunction;
-  showModal: SimpleFunction;
-  resetState: SimpleFunction;
   providerController: any
   onConnect: (provider: any, disconnect: () => void, selectedLanguage:string, selectedTheme:themesOptions, dataVault?: IDataVault, authKeys?: AuthKeys) => Promise<void>
   onError: (error: any) => Promise<void>
@@ -142,7 +140,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
 
-    window.updateWeb3Modal = async (state: IModalState) => this.setState(state)
+    // Allows RLogin to hide/show the modal state
+    window.showRLoginModal = async (step?: Step) =>
+      this.setState({ show: true, currentStep: step || 'Step1' })
 
     const { providerController, onError } = props
 
@@ -236,7 +236,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   })
 
   private validateCurrentChain ():boolean {
-    const { supportedChains, showModal, keepModalHidden, onError } = this.props
+    const { supportedChains, keepModalHidden, onError } = this.props
     const { chainId, provider } = this.state
 
     if (!Array.isArray(supportedChains) || supportedChains.length === 0) return true
@@ -250,8 +250,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         return false
       }
 
-      showModal()
-      this.setState({ currentStep: 'wrongNetwork' })
+      this.setState({ currentStep: 'wrongNetwork', show: true })
     }
 
     return isCurrentChainSupported
@@ -309,7 +308,10 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const { providerController } = this.props
 
      const providerName = provider.name || 'Provider'
-
+     this.setState({
+       currentStep: 'loading',
+       loadingReason: i18next.t('Please confirm in your wallet')
+     })
      provider.onClick(chosenNetwork)
        .then(() => {
          this.setState({
@@ -370,21 +372,20 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const { backendUrl } = this.props
 
      if (!backendUrl) {
-       this.setState({
-         currentStep: 'confirmInformation'
-       })
+       this.shouldShowConfirmStep()
      } else {
        const loadingReason = i18next.t('Connecting to server')
-       this.setState({ loadingReason })
+       this.setState({ show: true, loadingReason })
        // request schema to back end
        return requestSignup(backendUrl!, this.did()).then(({ challenge, sdr }) => {
          this.setState({
            challenge,
            sdr,
-           sd: undefined,
-           currentStep: sdr ? 'Step2' : 'confirmInformation'
+           sd: undefined
            // if response has selective disclosure request, permissioned app flavor. otherwise, open app flavor
          })
+
+         sdr ? this.setState({ currentStep: 'Step2' }) : this.shouldShowConfirmStep()
        })
      }
    }
@@ -404,7 +405,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
    private onConfirmSelectiveDisclosure (sd: SD) {
-     this.setState({ sd, currentStep: 'confirmInformation' })
+     this.setState({ sd }, () => this.shouldShowConfirmStep())
    }
 
    /** Step 3 */
@@ -414,18 +415,21 @@ export class Core extends React.Component<IModalProps, IModalState> {
      const did = this.did()
 
      if (!backendUrl) {
+       this.setState({ show: false })
        return onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault)
      }
 
      const handleConnect = (provider: any, authKeys: AuthKeys) => onConnect(provider, this.disconnect, this.selectedLanguageCode, this.selectedTheme, dataVault, authKeys)
 
      return confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+       .then(() => this.setState({ show: false }))
        .catch((error: Error | AxiosError) => {
          // this error handling is added to help user when challenge expired. in that
          // case we ask for a new challenge and ask again the user to sign
          if ((error as AxiosError).response && (error as AxiosError).response?.data === 'INVALID_CHALLENGE_RESPONSE') {
            return requestSignup(backendUrl!, this.did()).then(({ challenge }) =>
              confirmAuth(provider, address!, backendUrl!, did, challenge!, handleConnect, sd)
+               .then(() => this.setState({ show: false }))
            )
          }
          throw error
@@ -439,6 +443,17 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
          this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: error.message } })
        })
+   }
+
+   /**
+    * Helper function to see if the confirm information step should be shown or not.
+    * If true, sets the currentStep and turns on the modal, if false, then continues
+    * to ConfirmAuth which will detect the flavor.
+    */
+   private shouldShowConfirmStep = () => {
+     !localStorage.getItem(DONT_SHOW_AGAIN_KEY)
+       ? this.setState({ currentStep: 'confirmInformation', show: true })
+       : this.onConfirmAuth()
    }
 
    private setLightboxRef (c: HTMLDivElement | null) {
@@ -475,18 +490,18 @@ export class Core extends React.Component<IModalProps, IModalState> {
    }
 
   public changeLanguage = (language: string) => {
-    const { showModal, onLanguageChanged } = this.props
+    const { onLanguageChanged } = this.props
 
     i18n.changeLanguage(language)
     onLanguageChanged(language)
-    showModal()
+    this.setState({ show: true })
   }
 
   public changeTheme = (theme: themesOptions) => {
-    const { showModal, onThemeChanged } = this.props
+    const { onThemeChanged } = this.props
     this.setState({ currentTheme: theme })
     onThemeChanged(theme)
-    showModal()
+    this.setState({ show: true })
   }
 
   public render = () => {
@@ -505,7 +520,18 @@ export class Core extends React.Component<IModalProps, IModalState> {
       >
         {currentStep === 'Step1' && <WalletProviders userProviders={userProviders} connectToWallet={this.preConnectChecklist} changeLanguage={this.changeLanguage} availableLanguages={this.availableLanguages} selectedLanguageCode={this.selectedLanguageCode} changeTheme={this.changeTheme} selectedTheme={this.selectedTheme} />}
         {currentStep === 'Step2' && <SelectiveDisclosure sdr={sdr!} backendUrl={backendUrl!} fetchSelectiveDisclosureRequest={this.fetchSelectiveDisclosureRequest} onConfirm={this.onConfirmSelectiveDisclosure} providerName={selectedProviderUserOption?.provider.name} />}
-        {['confirmInformation', 'walletInfo'].includes(currentStep) && <ConfirmInformation displayMode={currentStep === 'walletInfo'} chainId={chainId} address={address} provider={provider} providerName={provider.name} providerUserOption={selectedProviderUserOption!.provider} sd={sd} onConfirm={this.onConfirmAuth} onCancel={this.closeModal} />}
+        {['confirmInformation', 'walletInfo'].includes(currentStep) && (
+          <ConfirmInformation
+            displayMode={currentStep === 'walletInfo'}
+            chainId={chainId}
+            address={address}
+            provider={provider}
+            providerUserOption={selectedProviderUserOption!.provider}
+            sd={sd}
+            onConfirm={this.onConfirmAuth}
+            onCancel={this.closeModal}
+          />
+        )}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
         {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
         {currentStep === 'chooseNetwork' && (

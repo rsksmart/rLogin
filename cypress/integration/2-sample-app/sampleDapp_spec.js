@@ -1,4 +1,4 @@
-import currentProvider from '@rsksmart/mock-web3-provider'
+import { MockProvider } from '@rsksmart/mock-web3-provider'
 
 describe('sample:dapp testing, no backend', () => {
   const address = '0xB98bD7C7f656290071E52D1aA617D9cB4467Fd6D'
@@ -6,12 +6,13 @@ describe('sample:dapp testing, no backend', () => {
 
   beforeEach(() => {
     cy.on('window:before:load', (win) => {
-      win.ethereum = currentProvider({
+      win.ethereum = new MockProvider({
         address,
         privateKey,
-        chainId: 31,
+        networkVersion: 31,
         debug: true
       })
+      win.ethereum.isMetaMask = true
     })
   })
 
@@ -195,7 +196,6 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('#connected').should('have.text', 'Yes')
     cy.get('#changeNetwork').click()
 
-    cy.get('.rlogin-header2').should('have.text', 'Select Network')
-    cy.get('.changeNetwork').should('be.visible')
+    cy.get('.rlogin-header2').should('have.text', 'Choose Network')
   })
 })

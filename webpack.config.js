@@ -10,7 +10,6 @@ module.exports = env => ({
     globalObject: "this",
     filename: "index.js"
   },
-  watch: env === 'development',
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
   },
