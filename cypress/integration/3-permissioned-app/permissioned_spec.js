@@ -50,10 +50,13 @@ describe('permissioned e2e testing', () => {
     cy.intercept('GET', '**auth', { fixture: 'auth.json' }).as('auth')
   }
 
-  it('Login into the datavault', () => {
+  const mockClaimAndCredential = () => {
     cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
     cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
+  }
 
+  it('Login into the datavault', () => {
+    mockClaimAndCredential()
     requestAuth()
 
     // continue with the content
@@ -94,9 +97,7 @@ describe('permissioned e2e testing', () => {
   })
 
   it('Login into the datavault without Name (required by backend)', () => {
-    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
-    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
-
+    mockClaimAndCredential()
     requestAuth()
 
     // continue with the content
@@ -119,9 +120,7 @@ describe('permissioned e2e testing', () => {
   })
 
   it('Login into the datavault without Email (required by backend)', () => {
-    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
-    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
-
+    mockClaimAndCredential()
     requestAuth()
 
     // continue with the content
@@ -145,9 +144,7 @@ describe('permissioned e2e testing', () => {
   })
 
   it('Login into the datavault without Name and Email (required by backend)', () => {
-    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
-    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
-
+    mockClaimAndCredential()
     requestAuth()
 
     // continue with the content
@@ -214,9 +211,7 @@ describe('permissioned e2e testing', () => {
   })
 
   it('the server receives the claim and credential', () => {
-    cy.intercept('GET', '**/content/EmailVerifiableCredential', { fixture: 'content-email.json' }).as('emailCred')
-    cy.intercept('GET', '**/content/DD_NAME', { fixture: 'content-name.json' }).as('name')
-
+    mockClaimAndCredential()
     requestAuth()
 
     // select the claim and credential
@@ -242,6 +237,40 @@ describe('permissioned e2e testing', () => {
     cy.get('#connected').should('have.text', 'Yes')
 
     cy.wait('@serverSignup')
+
+    cy.get('#access-token').should('have.text', 'accessTokenJWT')
+    cy.get('#refresh-token').should('have.text', 'refreshTokenJWW')
+  })
+
+  it('receives INVALID_CHALLENGE_RESPONSE and tries again', () => {
+    mockClaimAndCredential()
+    requestAuth()
+
+    let firstTry = true
+
+    // select the claim and credential
+    cy.get('label').eq(0).click()
+    cy.get('label').eq(1).click()
+
+    cy.intercept({
+      method: 'POST',
+      path: '/signup'
+    }, (req) => {
+      if (firstTry) {
+        firstTry = false
+        return req.reply({ statusCode: 401, body: 'INVALID_CHALLENGE_RESPONSE' })
+      }
+      // second time:
+      req.reply({ accessToken: 'accessTokenJWT', refreshToken: 'refreshTokenJWW' })
+    }).as('signup')
+
+    cy.contains('Confirm').click().as('confirmSelectionScreen')
+    cy.contains('Confirm').click().as('confirmInformationScreen')
+
+    cy.wait('@signup').its('response.statusCode').should('equal', 401)
+    cy.wait('@signup').its('response.statusCode').should('equal', 200)
+
+    cy.contains('Confirm').click()
 
     cy.get('#access-token').should('have.text', 'accessTokenJWT')
     cy.get('#refresh-token').should('have.text', 'refreshTokenJWW')
