@@ -58,7 +58,7 @@ export class RLogin {
   private defaultTheme: themesOptions
   private rpcUrls?: {[key: string]: string}
 
-  private coreRef: any
+  private coreRef: React.RefObject<Core>
 
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
@@ -104,9 +104,9 @@ export class RLogin {
   }
 
   // show/hide modal functions
-  private showModal = () => this.coreRef.current.showModalWithStep('Step1')
-  public showWalletInfo = () => this.coreRef.current.showModalWithStep('walletInfo')
-  public showChangeNetwork = () => this.coreRef.current.showModalWithStep('chooseNetwork')
+  private showModal = () => this.coreRef.current?.showModalWithStep('Step1')
+  public showWalletInfo = () => this.coreRef.current?.showModalWithStep('walletInfo')
+  public showChangeNetwork = () => this.coreRef.current?.showModalWithStep('chooseNetwork')
 
   /** handles an event */
   private handleOnAndTrigger = async (event: string, ...args: any) =>

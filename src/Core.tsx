@@ -199,7 +199,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
-  // Interacts with RLogin to expose hide/show modal functions to the steps listed below:
+  // Interacts with RLogin to expose hide/show modal functions to the steps listed below
   public showModalWithStep (step: 'Step1' | 'chooseNetwork' | 'walletInfo') {
     this.setState({ show: true, currentStep: step })
   }
