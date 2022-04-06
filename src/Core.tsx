@@ -199,6 +199,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
     }
   }
 
+  // Interacts with RLogin to expose hide/show modal functions to the steps listed below:
+  public showModalWithStep (step: 'Step1' | 'chooseNetwork' | 'walletInfo') {
+    this.setState({ show: true, currentStep: step })
+  }
+
   private setupLanguages () {
     // this fetches all available languages in this form [{en:english},...]
     this.availableLanguages = Object.entries(i18next.services.resourceStore.data).map(keyValueLanguage => { return { code: keyValueLanguage[0], name: keyValueLanguage[1].name.toString() } })
