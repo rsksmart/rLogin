@@ -140,10 +140,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
 
-    // Allows RLogin to hide/show the modal state
-    window.showRLoginModal = async (step?: Step) =>
-      this.setState({ show: true, currentStep: step || 'Step1' })
-
     const { providerController, onError } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => this.continueSettingUp(provider))
