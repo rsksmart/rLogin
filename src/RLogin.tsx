@@ -58,6 +58,8 @@ export class RLogin {
   private defaultTheme: themesOptions
   private rpcUrls?: {[key: string]: string}
 
+  private coreRef: React.RefObject<Core>
+
   constructor (opts?: Options) {
     const options: IProviderControllerOptions = {
       ...defaultOpts,
@@ -90,6 +92,10 @@ export class RLogin {
       this.themes.dark = { ...this.themes.dark, ...opts.customThemes.dark }
     }
     this.defaultTheme = (opts && opts.defaultTheme) ? opts.defaultTheme : defaultThemeConfig
+
+    // create reference to core to be used with hiding/showing modal
+    this.coreRef = React.createRef()
+
     this.renderModal()
   }
 
@@ -98,9 +104,9 @@ export class RLogin {
   }
 
   // show/hide modal functions
-  private showModal = () => window.showRLoginModal()
-  public showWalletInfo = () => window.showRLoginModal('walletInfo')
-  public showChangeNetwork = () => window.showRLoginModal('chooseNetwork')
+  private showModal = () => this.coreRef.current?.showModalWithStep('Step1')
+  public showWalletInfo = () => this.coreRef.current?.showModalWithStep('walletInfo')
+  public showChangeNetwork = () => this.coreRef.current?.showModalWithStep('chooseNetwork')
 
   /** handles an event */
   private handleOnAndTrigger = async (event: string, ...args: any) =>
@@ -134,6 +140,7 @@ export class RLogin {
 
     ReactDOM.render(
       <Core
+        ref={this.coreRef}
         onLanguageChanged={this.onLanguageChanged}
         onThemeChanged={this.onThemeChanged}
         userProviders={this.userProviders}

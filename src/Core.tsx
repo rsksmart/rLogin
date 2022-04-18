@@ -140,10 +140,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
   constructor (props: IModalProps) {
     super(props)
 
-    // Allows RLogin to hide/show the modal state
-    window.showRLoginModal = async (step?: Step) =>
-      this.setState({ show: true, currentStep: step || 'Step1' })
-
     const { providerController, onError } = props
 
     providerController.on(CONNECT_EVENT, (provider: any) => this.continueSettingUp(provider))
@@ -197,6 +193,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
         this.setState({ lightboxOffset })
       }
     }
+  }
+
+  // Interacts with RLogin to expose hide/show modal functions to the steps listed below
+  public showModalWithStep (step: 'Step1' | 'chooseNetwork' | 'walletInfo') {
+    this.setState({ show: true, currentStep: step })
   }
 
   private setupLanguages () {
