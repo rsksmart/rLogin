@@ -17,6 +17,7 @@ jobs:
           start: npm run sample:cypress
           record: false
           wait-on-timeout: 120
+          wait-on: 'http://localhost:3005, http://localhost:3006, http://localhost:3007'
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
