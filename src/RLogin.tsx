@@ -21,6 +21,7 @@ import { checkRLoginInjectedProviders } from './providers/injectedProviders'
 import { defaultTheme as defaultThemeConfig, themes as themesConfig, themesOptions } from './theme'
 import { RLoginStorage } from './lib/storage'
 import { AuthKeys } from './lib/did-auth'
+import { InfoOptions } from './ux/confirmInformation/InfoOptions'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -40,6 +41,7 @@ interface RLoginOptions {
   customThemes?: any
   defaultTheme?: themesOptions
   rpcUrls?: {[key: string]: string}
+  infoOptions?: InfoOptions
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -57,6 +59,7 @@ export class RLogin {
   private themes = { ...themesConfig }
   private defaultTheme: themesOptions
   private rpcUrls?: {[key: string]: string}
+  private infoOptions: InfoOptions
 
   private coreRef: React.RefObject<Core>
 
@@ -77,6 +80,7 @@ export class RLogin {
     this.supportedChains = opts && opts.supportedChains
     this.supportedLanguages = opts && opts.supportedLanguages
     this.rpcUrls = opts && opts.rpcUrls
+    this.infoOptions = opts?.infoOptions ? opts.infoOptions : {}
 
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
@@ -158,6 +162,8 @@ export class RLogin {
         themes = {this.themes}
         defaultTheme = {this.defaultTheme}
         rpcUrls={this.rpcUrls}
+        infoOptions={this.infoOptions}
+        afterDisconnnect={() => this.eventController.trigger('disconnected')}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

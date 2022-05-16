@@ -37,6 +37,8 @@ describe('Component: Core', () => {
         onChainChange={jest.fn()}
         themes={themes}
         defaultTheme={defaultTheme}
+        infoOptions={{}}
+        afterDisconnnect={jest.fn()}
       />
     )
     expect(wrapper).toBeDefined()

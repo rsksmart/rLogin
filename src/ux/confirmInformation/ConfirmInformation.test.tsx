@@ -15,7 +15,10 @@ describe('Component: ConfirmInformation', () => {
     providerName: 'provider',
     onConfirm: jest.fn(),
     onCancel: jest.fn(),
-    displayMode: false
+    displayMode: false,
+    infoOptions: {},
+    showChangeNetwork: jest.fn(),
+    disconnect: jest.fn()
   }
 
   beforeEach(() => {

@@ -11,8 +11,11 @@ import { getPeerInfo } from './getPeerLogo'
 import ConfirmInWallet from '../../ui/shared/ConfirmInWallet'
 import styled from 'styled-components'
 
+import { SuccessIcon, CopyIcon, LinkIcon } from './icons'
+
 import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
 import { DONT_SHOW_AGAIN_KEY } from '../../constants'
+import { InfoOptions } from './InfoOptions'
 
 interface ConfirmInformationProps {
   chainId: number | undefined
@@ -23,9 +26,12 @@ interface ConfirmInformationProps {
   provider: any
   onConfirm: () => Promise<any>
   onCancel: () => void
+  infoOptions: InfoOptions
+  disconnect: () => void
+  showChangeNetwork: () => void
 }
 
-export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel, infoOptions, disconnect, showChangeNetwork }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
   const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
@@ -44,7 +50,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
   return !isLoading
     ? <>
-      <Header2><Trans>Information</Trans></Header2>
+      {!displayMode && <Header2><img src={SuccessIcon} alt="success" /> <Trans>Successfully connected</Trans></Header2>}
       <CenterContent>
         {providerUserOption && (
           <LogoWrapper>
@@ -58,7 +64,8 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
       <List>
         <Column>
-          <Title><Trans>Wallet address</Trans>:</Title>
+          <Description>{shortAddress(address)}</Description>
+          <Title><Trans>Wallet</Trans>:</Title>
           {peerWallet && <Title><Trans>Connected wallet</Trans>:</Title>}
           <Title><Trans>Network</Trans>:</Title>
           {isHardwareWallet && <Title><Trans>Derivation path</Trans>:</Title>}
@@ -66,15 +73,27 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           {sd && Object.keys(sd.credentials).map(key => <Title key={`credential-key-${key}`}>{key}:</Title>)}
         </Column>
         <Column>
-          <Description>{shortAddress(address)}</Description>
+          <Title>
+            <Clickable onClick={() => navigator.clipboard.writeText(address!)}><Trans>copy</Trans> <img src={CopyIcon} alt="copy" /></Clickable>
+            {infoOptions[chainId!] && <>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Clickable onClick={() => window.open(`${infoOptions[chainId!].addressBaseURL}${address}`, '_blank')!.focus()}><Trans>explorer</Trans> <img src={LinkIcon} alt="explorer" /></Clickable>
+            </>}
+          </Title>
           {peerWallet && <Description>{peerWallet.name}</Description>}
-          <Description>{chainId && getChainName(chainId)}</Description>
+          <Description>{providerUserOption.name}</Description>
+          <NetworkWrapper>{chainId && getChainName(chainId)}</NetworkWrapper>
           {isHardwareWallet && <Description>{provider.dpath || provider.path}</Description>}
           {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{data[key]}</Description>)}
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
         </Column>
       </List>
-      {!displayMode && (
+      <CenterContent>
+        <Disclaimer>
+          You are sharing this information with {window.location.href}
+        </Disclaimer>
+      </CenterContent>
+      {!displayMode ? (
         <>
           <CenterContent>
             <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
@@ -90,7 +109,12 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
             </label>
           </CenterContent>
         </>
-      )}
+      ) : <>
+        <CenterContent>
+          <Button variant="secondary" onClick={disconnect} disabled={isLoading} className="cancel"><Trans>Disconnect</Trans></Button>
+          <Button variant="secondary" onClick={showChangeNetwork} disabled={isLoading} className="cancel"><Trans>Change network</Trans></Button>
+        </CenterContent>
+      </>}
     </>
     : <ConfirmInWallet providerName={providerUserOption ? providerUserOption.name : ''} />
 }
@@ -103,7 +127,7 @@ const Column = styled.div`
 
 const List = styled.dl`
   display: flex;
-  padding: 50px 0;
+  padding: 50px 0 0 0;
   justify-content: center;
   gap: 30px;
 `
@@ -143,6 +167,53 @@ const Description: React.FC<{ className?: string; }> = ({ children, className })
     {children}
   </DescriptionWrapper>
 )
+
+const NetworkWrapper = styled.span`
+  ${typeShared}
+  font-weight: 400 !important;
+  font-size: 16px;
+  color: ${props => props.theme.secondaryText};
+  margin: 6px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  text-align: left;
+  position: relative;
+  padding-left: 14px;
+
+  &:after {
+    position: absolute;
+    top: 9;
+    left: 5;
+    -webkit-transform: translate(-5px,-50%);
+    transform: translate(-5px,-50%);
+    content: "";
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #40d512;
+  }
+`
+
+const Disclaimer = styled.dt`
+  ${typeShared}
+  font-weight: 500 !important;
+  font-size: 16px;
+  color: ${props => props.theme.p};
+  margin: 6px 0;
+  padding: 5px  0 15px 0;
+  overflow: hidden;
+  max-width: 300px;
+  text-align: center;
+`
+
+const Clickable = styled.span`
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 const CenterContent = styled.div`
   display: flex; 

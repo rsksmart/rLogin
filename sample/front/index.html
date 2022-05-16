@@ -142,9 +142,12 @@
           1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
           30: 'https://public-node.rsk.co',
           31: 'https://public-node.testnet.rsk.co'
-        }
+        },
         // customThemes: {light:{modalBackground:'#ff0000'}},
-        // defaultTheme: 'dark'
+        // defaultTheme: 'dark',
+        infoOptions: {
+          31: { addressBaseURL: 'https://explorer.testnet.rsk.co/address/' }
+        }
       })
 
       window.rLogin=rLogin;
@@ -154,8 +157,35 @@
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
       document.getElementById('showInfo').addEventListener('click', () => rLogin.showWalletInfo());
       document.getElementById('changeNetwork').addEventListener('click', () => rLogin.showChangeNetwork());
+
       rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
       rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
+
+      rLogin.on('disconnected', () => {
+        // clean up all HTML elements (top to bottom):
+        setElementInnerText('error', '')
+        setElementInnerText('connected', '')
+        setElementInnerText('accounts', '')
+        setElementInnerText('chain-id', '')
+        setElementInnerText('access-token', '')
+        setElementInnerText('refresh-token', '')
+        setElementInnerText('accounts', '')
+        setElementInnerText('signature', '')
+        setElementInnerText('recovery', '')
+        setElementInnerText('typed-signature', '')
+        setElementInnerText('typed-recovery', '')
+
+        // reset button states:
+        document.getElementById('login').removeAttribute('disabled')
+        document.getElementById('loginMetamask').removeAttribute('disabled')
+        document.getElementById('showInfo').setAttribute('disabled', true)
+        document.getElementById('changeNetwork').setAttribute('disabled', true)
+        document.getElementById('send-tx').setAttribute('disabled', true)
+        document.getElementById('sign').setAttribute('disabled', true)
+        document.getElementById('sign-typed-data-v1').setAttribute('disabled', true)
+        document.getElementById('sign-typed-data').setAttribute('disabled', true)
+      })
+
       // ui - display handlers
       const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
       const displayAccounts = (accounts) => setElementInnerText('accounts', accounts.join(', '))
@@ -311,34 +341,6 @@
           })
         })
 
-        const disconnect = () => {
-          rLoginResponse.disconnect()
-          provider.removeAllListeners()
-
-          // clean up all HTML elements (top to bottom):
-          setElementInnerText('error', '')
-          setElementInnerText('connected', '')
-          setElementInnerText('accounts', '')
-          setElementInnerText('chain-id', '')
-          setElementInnerText('access-token', '')
-          setElementInnerText('refresh-token', '')
-          setElementInnerText('accounts', '')
-          setElementInnerText('signature', '')
-          setElementInnerText('recovery', '')
-          setElementInnerText('typed-signature', '')
-          setElementInnerText('typed-recovery', '')
-
-          // reset button states:
-          document.getElementById('login').removeAttribute('disabled')
-          document.getElementById('loginMetamask').removeAttribute('disabled')
-          document.getElementById('showInfo').setAttribute('disabled', true)
-          document.getElementById('changeNetwork').setAttribute('disabled', true)
-          document.getElementById('send-tx').setAttribute('disabled', true)
-          document.getElementById('sign').setAttribute('disabled', true)
-          document.getElementById('sign-typed-data').setAttribute('disabled', true)
-        }
-
-        provider.on('disconnect', disconnect)
         document.getElementById('reset').addEventListener('click', disconnect)
       }
     </script>
