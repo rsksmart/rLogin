@@ -42,7 +42,8 @@
       <p id="typed-signature"></p>
       <p id="typed-recovery"></p>
       <hr />
-      <button id="reset" disabled>Reset</button>
+      <button id="disconnect" disabled>Disconnect</button>
+      <button id="reset">Reset</button>
     </div>
 
     <script src="http://localhost:3005/index.js"></script>
@@ -220,7 +221,7 @@
         document.getElementById('loginMetamask').setAttribute('disabled', true)
         document.getElementById('showInfo').removeAttribute('disabled')
         document.getElementById('changeNetwork').removeAttribute('disabled')
-        document.getElementById('reset').removeAttribute('disabled')
+        document.getElementById('disconnect').removeAttribute('disabled')
 
         // handle eip-1193
         provider.on(window.RLogin.ACCOUNTS_CHANGED, (response) =>
@@ -342,11 +343,14 @@
           })
         })
 
-        document.getElementById('reset').addEventListener('click', () => {
-          localStorage.removeItem('RLogin:DontShowAgain')
-          disconnect()
+        document.getElementById('disconnect').addEventListener('click', () => {
+          rLoginResponse.disconnect()
         })
       }
+
+      document.getElementById('reset').addEventListener('click', () => {
+        localStorage.removeItem('RLogin:DontShowAgain')
+      })
     </script>
   </body>
 </html>
