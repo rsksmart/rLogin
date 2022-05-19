@@ -13,7 +13,7 @@ import styled from 'styled-components'
 
 import { SuccessIcon, CopyIcon, LinkIcon } from './icons'
 
-import { LIST_TITLE, LIST_DESCRIPTION } from '../../constants/cssSelectors'
+import { LIST_TITLE, LIST_DESCRIPTION, LIST_NETWORK, LIST_CLICKABLE } from '../../constants/cssSelectors'
 import { DONT_SHOW_AGAIN_KEY } from '../../constants'
 import { InfoOptions } from './InfoOptions'
 
@@ -34,7 +34,6 @@ interface ConfirmInformationProps {
 export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel, infoOptions, disconnect, showChangeNetwork }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
-  const data = sd ? Object.assign({}, sd.credentials, sd.claims) : {}
 
   const handleSubmit = async () => {
     setIsLoading(true)
@@ -80,12 +79,12 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
               <Clickable onClick={() => window.open(`${infoOptions[chainId!].addressBaseURL}${address}`, '_blank')!.focus()}><Trans>explorer</Trans> <img src={LinkIcon} alt="explorer" /></Clickable>
             </>}
           </Title>
-          {peerWallet && <Description>{peerWallet.name}</Description>}
           <Description>{providerUserOption.name}</Description>
-          <NetworkWrapper>{chainId && getChainName(chainId)}</NetworkWrapper>
+          {peerWallet && <Description>{peerWallet.name}</Description>}
+          <Network>{chainId && getChainName(chainId)}</Network>
           {isHardwareWallet && <Description>{provider.dpath || provider.path}</Description>}
-          {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{data[key]}</Description>)}
-          {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, data[key])}</Description>)}
+          {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{sd.claims[key]}</Description>)}
+          {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, sd.credentials[key])}</Description>)}
         </Column>
       </List>
       <CenterContent>
@@ -111,8 +110,8 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
         </>
       ) : <>
         <CenterContent>
-          <Button variant="secondary" onClick={disconnect} disabled={isLoading} className="cancel"><Trans>Disconnect</Trans></Button>
-          <Button variant="secondary" onClick={showChangeNetwork} disabled={isLoading} className="cancel"><Trans>Change network</Trans></Button>
+          <Button variant="secondary" onClick={disconnect} disabled={isLoading} className="disconnect"><Trans>Disconnect</Trans></Button>
+          <Button variant="secondary" onClick={showChangeNetwork} disabled={isLoading} className="change-network"><Trans>Change network</Trans></Button>
         </CenterContent>
       </>}
     </>
@@ -197,6 +196,12 @@ const NetworkWrapper = styled.span`
   }
 `
 
+const Network: React.FC<{ className?: string; }> = ({ children, className }) => (
+  <NetworkWrapper className={className ? `${LIST_NETWORK} ${className}` : LIST_NETWORK}>
+    {children}
+  </NetworkWrapper>
+)
+
 const Disclaimer = styled.dt`
   ${typeShared}
   font-weight: 500 !important;
@@ -209,11 +214,17 @@ const Disclaimer = styled.dt`
   text-align: center;
 `
 
-const Clickable = styled.span`
+const ClickableWrapper = styled.span`
   &:hover {
     cursor: pointer;
   }
 `
+
+const Clickable: React.FC<{ className?: string; onClick: () => void }> = ({ children, className, onClick }) => (
+  <ClickableWrapper className={className ? `${LIST_CLICKABLE} ${className}` : LIST_CLICKABLE} onClick={onClick}>
+    {children}
+  </ClickableWrapper>
+)
 
 const CenterContent = styled.div`
   display: flex; 

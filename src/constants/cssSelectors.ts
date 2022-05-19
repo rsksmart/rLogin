@@ -35,6 +35,8 @@ export const ANCHOR_CLASSNAME = 'rlogin-anchor'
 export const BUTTON_CLASSNAME = 'rlogin-button'
 export const LIST_TITLE = 'rlogin-list-title'
 export const LIST_DESCRIPTION = 'rlogin-list-description'
+export const LIST_NETWORK = 'rlogin-list-network'
+export const LIST_CLICKABLE = 'rlogin-list-clickable'
 export const SMALL_SPAN = 'rlogin-small-span'
 export const CHECKBOX_CLASSNAME = 'rlogin-checkbox'
 
