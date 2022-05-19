@@ -33,7 +33,6 @@ describe('Component: ConfirmInformation', () => {
   })
 
   describe('wallet types', () => {
-
     it('simple wallet with no explorer', () => {
       const wrapper = mount(<ConfirmInformation {...props} />)
 
@@ -132,10 +131,13 @@ describe('Component: ConfirmInformation', () => {
   })
 
   it('selective disclosure', () => {
-    const wrapper = mount(<ConfirmInformation {...{ ...props, sd: {
-      claims: { 'Name': 'Bob' },
-      credentials: { 'Email': rawEmailCredential }
-    } }} />)
+    const wrapper = mount(<ConfirmInformation {...{
+      ...props,
+      sd: {
+        claims: { Name: 'Bob' },
+        credentials: { Email: rawEmailCredential }
+      }
+    }} />)
 
     expect(wrapper.find(`dt.${LIST_TITLE}`).at(2).text()).toBe('Name:')
     expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(2).text()).toBe('Bob')
@@ -143,7 +145,6 @@ describe('Component: ConfirmInformation', () => {
     expect(wrapper.find(`dt.${LIST_TITLE}`).at(3).text()).toBe('Email:')
     expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(3).text()).toBe(email)
   })
-
 
   describe('display mode', () => {
     it('confirm info', () => {
