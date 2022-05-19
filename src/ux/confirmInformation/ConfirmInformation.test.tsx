@@ -161,8 +161,8 @@ describe('Component: ConfirmInformation', () => {
 
       expect(wrapper.find('button.confirm').exists()).toBe(false)
       expect(wrapper.find('button.cancel').exists()).toBe(false)
-      expect(wrapper.find('button.disconnect').exists()).toBe(true)
-      expect(wrapper.find('button.change-network').exists()).toBe(true)
+      expect(wrapper.find('button.rlogin-info-disconnect').exists()).toBe(true)
+      expect(wrapper.find('button.rlogin-info-change-network').exists()).toBe(true)
     })
   })
 
@@ -188,7 +188,7 @@ describe('Component: ConfirmInformation', () => {
     it('disconnect should call disconnect prop', () => {
       const wrapper = mount(<ConfirmInformation {...props} displayMode={true} />)
 
-      wrapper.find('button.disconnect').simulate('click')
+      wrapper.find('button.rlogin-info-disconnect').simulate('click')
 
       expect(props.disconnect).toBeCalled()
       expect(props.showChangeNetwork).not.toBeCalled()
@@ -197,7 +197,7 @@ describe('Component: ConfirmInformation', () => {
     it('change network should call showChangeNetwork prop', () => {
       const wrapper = mount(<ConfirmInformation {...props} displayMode={true} />)
 
-      wrapper.find('button.change-network').simulate('click')
+      wrapper.find('button.rlogin-info-change-network').simulate('click')
 
       expect(props.disconnect).not.toBeCalled()
       expect(props.showChangeNetwork).toBeCalled()
