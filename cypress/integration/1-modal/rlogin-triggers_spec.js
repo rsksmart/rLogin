@@ -25,15 +25,24 @@ describe('triggers', () => {
     cy.get('#connected').should('have.text', 'Yes')
   }
 
+  const testInfo = () => {
+    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
+    cy.get('.rlogin-list-description').eq(1).should('have.text', 'MetaMask')
+    cy.get('.rlogin-list-network').eq(0).should('have.text', 'RSK Testnet')
+  }
+
+  const testSelectNetwork = () => {
+    cy.get('#connected').should('have.text', 'Yes')
+    cy.get('.rlogin-header2').should('have.text', 'Select Network')
+  }
+
   describe('wallet info', () => {
     it('should open wallet info modal', () => {
       loginWithModal()
 
       cy.get('#showInfo').click()
 
-      cy.get('.rlogin-header2').should('have.text', 'Information')
-      cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-      cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+      testInfo()
     })
 
     it('should open wallet info modal after reconnect', () => {
@@ -41,26 +50,43 @@ describe('triggers', () => {
 
       cy.get('#showInfo').click()
 
-      cy.get('.rlogin-header2').should('have.text', 'Information')
-      cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-      cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+      testInfo()
 
       cy.get('.rlogin-modal-close-button').click()
 
-      cy.get('#reset').click()
+      cy.get('#disconnect').click()
 
       cy.get('#connected').should('have.text', '')
 
       loginWithModal()
-      confirmInformationStep()
 
       cy.get('#connected').should('have.text', 'Yes')
 
       cy.get('#showInfo').click()
 
-      cy.get('.rlogin-header2').should('have.text', 'Information')
-      cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-      cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+      testInfo()
+    })
+
+    it('disconnects on click', () => {
+      loginWithModal()
+
+      cy.get('#showInfo').click()
+
+      cy.get('button.rlogin-info-disconnect').click()
+
+      cy.get('#connected').should('have.text', '')
+      cy.get('.rlogin-modal-lightbox').should('be.not.visible')
+    })
+
+
+    it('shows change network on click', () => {
+      loginWithModal()
+
+      cy.get('#showInfo').click()
+
+      cy.get('button.rlogin-info-change-network').click()
+
+      testSelectNetwork()
     })
   })
 
@@ -70,7 +96,7 @@ describe('triggers', () => {
 
       cy.get('#changeNetwork').click()
 
-      cy.get('.rlogin-header2').should('have.text', 'Choose Network')
+      testSelectNetwork()
     })
   })
 })

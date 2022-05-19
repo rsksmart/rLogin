@@ -110,8 +110,8 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
         </>
       ) : <>
         <CenterContent>
-          <Button variant="secondary" onClick={disconnect} disabled={isLoading} className="disconnect"><Trans>Disconnect</Trans></Button>
-          <Button variant="secondary" onClick={showChangeNetwork} disabled={isLoading} className="change-network"><Trans>Change network</Trans></Button>
+          <Button variant="secondary" onClick={disconnect} disabled={isLoading} className="rlogin-info-disconnect"><Trans>Disconnect</Trans></Button>
+          <Button variant="secondary" onClick={showChangeNetwork} disabled={isLoading} className="rlogin-info-change-network"><Trans>Change network</Trans></Button>
         </CenterContent>
       </>}
     </>
