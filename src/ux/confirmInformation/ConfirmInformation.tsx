@@ -48,7 +48,11 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
   return !isLoading
     ? <>
-      {!displayMode && <Header2><img src={SuccessIcon} alt="success" /> <Trans>Successfully connected</Trans></Header2>}
+      {!displayMode && <HeaderContainer>
+        <SuccessIconImg src={SuccessIcon} alt="success" />
+        <Header2><Trans>Successfully connected</Trans></Header2>
+      </HeaderContainer>}
+
       <CenterContent>
         {providerUserOption && (
           <LogoWrapper>
@@ -85,11 +89,13 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, sd.credentials[key])}</Description>)}
         </Column>
       </List>
+
       <CenterContent>
         <Disclaimer>
           You are sharing this information with {window.location.href}
         </Disclaimer>
       </CenterContent>
+
       {!displayMode ? (
         <>
           <CenterContent>
@@ -114,6 +120,14 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
     </>
     : <ConfirmInWallet providerName={providerUserOption ? providerUserOption.name : ''} />
 }
+
+const HeaderContainer = styled.div`
+  display: inline-flex;
+`
+
+const SuccessIconImg = styled.img`
+  padding: 0 5px 0 0;
+`
 
 const Column = styled.div`
   display: flex;

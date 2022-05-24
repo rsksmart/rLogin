@@ -30,7 +30,7 @@ describe('permissioned e2e testing', () => {
   }
 
   const testWalletInfo = () => {
-    cy.get('.rlogin-header2').should('have.text', ' Successfully connected')
+    cy.get('.rlogin-header2').should('have.text', 'Successfully connected')
     cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
     cy.get('.rlogin-list-description').eq(1).should('have.text', 'MetaMask')
     cy.get('.rlogin-list-network').eq(0).should('have.text', 'RSK Testnet')

@@ -37,7 +37,7 @@ describe('Component: ConfirmInformation', () => {
       const wrapper = mount(<ConfirmInformation {...props} />)
 
       expect(wrapper.find('img').at(0).prop('src')).toBeDefined()
-      expect(wrapper.find('h2').text()).toBe(' Successfully connected')
+      expect(wrapper.find('h2').text()).toBe('Successfully connected')
 
       expect(wrapper.find('img').at(1).prop('src')).toBe(providerUserOption.logo)
 
@@ -83,7 +83,7 @@ describe('Component: ConfirmInformation', () => {
       const wrapper = mount(<ConfirmInformation {...peerProps} />)
 
       expect(wrapper.find('img').at(0).prop('src')).toBeDefined()
-      expect(wrapper.find('h2').text()).toBe(' Successfully connected')
+      expect(wrapper.find('h2').text()).toBe('Successfully connected')
 
       expect(wrapper.find('img').at(1).prop('src')).toBe(providerUserOption.logo)
       expect(wrapper.find('img').at(2).prop('src')).toBe('logo.jpg')
