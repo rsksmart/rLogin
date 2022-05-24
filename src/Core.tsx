@@ -82,7 +82,7 @@ interface IModalProps {
   afterDisconnnect: () => void
 }
 
-type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
+type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'changeNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -199,7 +199,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   // Interacts with RLogin to expose hide/show modal functions to the steps listed below
-  public showModalWithStep (step: 'Step1' | 'wrongNetwork' | 'walletInfo') {
+  public showModalWithStep (step: 'Step1' | 'changeNetwork' | 'walletInfo') {
     this.setState({ show: true, currentStep: step })
   }
 

@@ -110,7 +110,7 @@ export class RLogin {
   // show/hide modal functions
   private showModal = () => this.coreRef.current?.showModalWithStep('Step1')
   public showWalletInfo = () => this.coreRef.current?.showModalWithStep('walletInfo')
-  public showChangeNetwork = () => this.coreRef.current?.showModalWithStep('wrongNetwork')
+  public showChangeNetwork = () => this.coreRef.current?.showModalWithStep('changeNetwork')
 
   /** handles an event */
   private handleOnAndTrigger = async (event: string, ...args: any) =>
