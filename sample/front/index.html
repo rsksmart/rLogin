@@ -129,7 +129,7 @@
         defaultNetworks :
         (supportedChainsParam == 'all'? null : supportedChainsParam.split(',').map(chain => parseInt(chain)))
 
-      setElementInnerText('supportedChains', supportedChains.join(','))
+      setElementInnerText('supportedChains', supportedChains ? supportedChains.join(',') : 'all')
 
       if (!withBackend) {
         const beOnly = document.getElementsByClassName('be-only')
