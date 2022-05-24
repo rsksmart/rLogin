@@ -537,7 +537,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
             onCancel={this.closeModal}
             infoOptions={infoOptions}
             disconnect={this.disconnect}
-            showChangeNetwork={() => this.setState({ currentStep: 'wrongNetwork' })}
           />
         )}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}

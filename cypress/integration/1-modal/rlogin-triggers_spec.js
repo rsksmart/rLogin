@@ -77,17 +77,6 @@ describe('triggers', () => {
       cy.get('#connected').should('have.text', '')
       cy.get('.rlogin-modal-lightbox').should('be.not.visible')
     })
-
-
-    it('shows change network on click', () => {
-      loginWithModal()
-
-      cy.get('#showInfo').click()
-
-      cy.get('button.rlogin-info-change-network').click()
-
-      testSelectNetwork()
-    })
   })
 
   describe('change network', () => {
