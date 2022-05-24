@@ -28,9 +28,10 @@ interface ConfirmInformationProps {
   onCancel: () => void
   infoOptions: InfoOptions
   disconnect: () => void
+  showChangeNetwork: () => void
 }
 
-export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel, infoOptions, disconnect }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel, infoOptions, disconnect, showChangeNetwork }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
 
@@ -115,6 +116,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
       ) : <>
         <CenterContent>
           <Button variant="secondary" onClick={disconnect} disabled={isLoading} className="rlogin-info-disconnect"><Trans>Disconnect</Trans></Button>
+          <Button variant="secondary" onClick={showChangeNetwork} disabled={isLoading} className="rlogin-info-change-network"><Trans>Change network</Trans></Button>
         </CenterContent>
       </>}
     </>
