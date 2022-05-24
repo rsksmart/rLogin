@@ -74,8 +74,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           <Title>
             <Clickable onClick={() => navigator.clipboard.writeText(address!)}><Trans>copy</Trans> <img src={CopyIcon} alt="copy" /></Clickable>
             {infoOptions[chainId!] && <>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <Clickable onClick={() => window.open(`${infoOptions[chainId!].addressBaseURL}${address}`, '_blank')!.focus()}><Trans>explorer</Trans> <img src={LinkIcon} alt="explorer" /></Clickable>
+              <PaddedClickable onClick={() => window.open(`${infoOptions[chainId!].addressBaseURL}${address}`, '_blank')!.focus()}><Trans>explorer</Trans> <img src={LinkIcon} alt="explorer" /></PaddedClickable>
             </>}
           </Title>
           <Description>{providerUserOption.name}</Description>
@@ -224,8 +223,21 @@ const Clickable: React.FC<{ className?: string; onClick: () => void }> = ({ chil
   </ClickableWrapper>
 )
 
+const PaddedClickableWrapper = styled.span`
+  padding: 0 0 0 15px;
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const PaddedClickable: React.FC<{ className?: string; onClick: () => void }> = ({ children, className, onClick }) => (
+  <PaddedClickableWrapper className={className ? `${LIST_CLICKABLE} ${className}` : LIST_CLICKABLE} onClick={onClick}>
+    {children}
+  </PaddedClickableWrapper>
+)
+
 const CenterContent = styled.div`
-  display: flex; 
+  display: flex;
   gap: 16px;
   justify-content: center;
 `
