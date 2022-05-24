@@ -65,6 +65,8 @@
     <script src="https://unpkg.com/@rsksmart/ipfs-cpinner-client@0.1.3/dist/bundle.js" integrity="sha384-Vqy7eKjwpV8AMv0kkeflaAUxoUgdOyjYJ3sNfEHOdptoaF8NuOFl0Ag/g0HChrCn" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
+      const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
+
       if (window.ethereum) {
         window.ethereum.autoRefreshOnNetworkChange = false
       }
@@ -79,12 +81,55 @@
       // hide modals
       const keepModalHidden = new URLSearchParams(window.location.search).get('keepModalHidden') === 'yes'
 
+      // networks
+      const rpcUrls = {
+          30: 'https://public-node.rsk.co',
+          31: 'https://public-node.testnet.rsk.co',
+
+          1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+          3: 'https://ropsten.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+          4: 'https://rinkeby.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+          42: 'https://kovan.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+          420: 'https://goerli.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
+
+          250: 'https://rpc.ftm.tools/',
+          4002: 'https://rpc.testnet.fantom.network/',
+
+          42161: 'https://arb1.arbitrum.io/rpc',
+          421611: 'https://rinkeby.arbitrum.io/rpc',
+
+          137: 'https://polygon-rpc.com',
+          80001: 'https://matic-mumbai.chainstacklabs.com',
+        }
+
+      const infoOptions = {
+        30: { addressBaseURL: 'https://explorer.rsk.co/address/' },
+        31: { addressBaseURL: 'https://explorer.testnet.rsk.co/address/' },
+
+        1: { addressBaseURL: 'https://etherscan.io/address' },
+        3: { addressBaseURL: 'https://ropsten.etherscan.io/address/' },
+        4: { addressBaseURL: 'https://rinkeby.etherscan.io/address/' },
+        42: { addressBaseURL: 'https://kovan.etherscan.io/address/' },
+        420: { addressBaseURL: 'https://goerli.etherscan.io/address/' },
+
+        250: { addressBaseURL: 'https://ftmscan.com/address/' },
+        4001: { addressBaseURL: 'https://testnet.ftmscan.com/address/' },
+
+        42161: { addressBaseURL: 'https://arbiscan.io/address/' },
+        421611: { addressBaseURL: 'https://rinkeby-explorer.arbitrum.io/address/' },
+
+        137: { addressBaseURL: 'https://polygonscan.com/address/' },
+        80001: { addressBaseURL: 'https://mumbai.polygonscan.com/address/' },
+      }
+
       // supportedChains parameter
-      const defaultNetworks = [1,30,31]
+      const defaultNetworks = Object.keys(rpcUrls).map(Number)
       const supportedChainsParam = new URLSearchParams(window.location.search).get('supportedChains')
       const supportedChains = !supportedChainsParam ?
         defaultNetworks :
         (supportedChainsParam == 'all'? null : supportedChainsParam.split(',').map(chain => parseInt(chain)))
+
+      setElementInnerText('supportedChains', supportedChains.join(','))
 
       if (!withBackend) {
         const beOnly = document.getElementsByClassName('be-only')
@@ -101,11 +146,7 @@
             package: window.WalletConnectProvider.default,
             options: {
               bridge: "https://walletconnect-bridge.rifos.org/",
-              rpc: {
-                1: 'https://mainnet.infura.io/v3/7d5d71df32d548249ff444f6a43b43c5',
-                30: 'https://public-node.rsk.co',
-                31: 'https://public-node.testnet.rsk.co',
-              }
+              rpc: rpcUrls
             }
           },
           portis: {
@@ -139,17 +180,10 @@
           package:RIFDataVault,
           serviceUrl: 'https://data-vault.identity.rifos.org',
         },
-        rpcUrls: {
-          1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
-          30: 'https://public-node.rsk.co',
-          31: 'https://public-node.testnet.rsk.co'
-        },
+        rpcUrls,
+        infoOptions,
         // customThemes: {light:{modalBackground:'#ff0000'}},
         // defaultTheme: 'dark',
-        infoOptions: {
-          30: { addressBaseURL: 'https://explorer.rsk.co/address/' },
-          31: { addressBaseURL: 'https://explorer.testnet.rsk.co/address/' }
-        }
       })
 
       window.rLogin=rLogin;
@@ -189,7 +223,6 @@
       })
 
       // ui - display handlers
-      const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
       const displayAccounts = (accounts) => setElementInnerText('accounts', accounts.join(', '))
       const handleError = (error) => setElementInnerText('error', `Error: ${error.message}`)
       const displayChainId = (chainId) => setElementInnerText('chain-id', parseInt(chainId))
@@ -209,9 +242,6 @@
       const ecRecover = (provider, params) => providerRPC(provider, { method: 'personal_ecRecover', params })
       const signTypedDataV1 = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData', params })
       const signTypedDataV4 = (provider, params) => providerRPC(provider, { method: 'eth_signTypedData_v4', params })
-
-
-      setElementInnerText('supportedChains', supportedChainsParam || supportedChains.join(','))
 
       const handleProvider = function (rLoginResponse) {
         const provider = rLoginResponse.provider
