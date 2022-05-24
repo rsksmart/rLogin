@@ -93,6 +93,11 @@ const rpcUrls = {
 
 const supportedChains = Object.keys(rpcUrls).map(Number)
 
+const infoOptions = {
+  30: { addressBaseURL: 'https://explorer.rsk.co/address/' },
+  31: { addressBaseURL: 'https://explorer.testnet.rsk.co/address/' }
+}
+
 export const rLogin = new RLogin({
   providerOptions: {
     walletconnect: {
@@ -125,7 +130,8 @@ export const rLogin = new RLogin({
     }
   },
   rpcUrls,
-  supportedChains
+  supportedChains,
+  infoOptions
 })
 ```
 
