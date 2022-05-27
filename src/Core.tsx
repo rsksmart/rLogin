@@ -79,7 +79,7 @@ interface IModalProps {
   defaultTheme: themesOptions
   rpcUrls?: {[key: string]: string}
   infoOptions: InfoOptions
-  afterDisconnnect: () => void
+  afterDisconnect: () => void
 }
 
 type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'changeNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
@@ -468,7 +468,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * Disconnect from the provider
    */
    public disconnect () {
-     const { providerController, afterDisconnnect } = this.props
+     const { providerController, afterDisconnect } = this.props
      const { provider } = this.state
 
      disconnectFromProvider(provider)
@@ -476,7 +476,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      // clean up the provider controller
      providerController.clearCachedProvider()
      this.setState(INITIAL_STATE)
-     afterDisconnnect()
+     afterDisconnect()
    }
 
    /**

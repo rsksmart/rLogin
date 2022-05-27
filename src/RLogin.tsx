@@ -163,7 +163,7 @@ export class RLogin {
         defaultTheme = {this.defaultTheme}
         rpcUrls={this.rpcUrls}
         infoOptions={this.infoOptions}
-        afterDisconnnect={() => this.eventController.trigger('disconnected')}
+        afterDisconnect={() => this.eventController.trigger('disconnected')}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )
