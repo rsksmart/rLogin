@@ -1,5 +1,5 @@
 import { getChainName, getGasNameFromChain } from './adapters'
-import { chainList } from './chianList.test'
+import { chainList } from './chianList_test'
 
 describe('network names', () => {
   test.each(chainList)('chain id %i has name %s', (chainId, expectedName) => {

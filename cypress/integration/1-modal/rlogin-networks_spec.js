@@ -1,6 +1,6 @@
 import { MockProvider } from '@rsksmart/mock-web3-provider'
 import { privateKey, address } from '../account'
-import { chainList } from '../../../src/chianList.test'
+import { chainList } from '../../../src/chianList_test'
 
 describe('supported chain names', () => {
   chainList.forEach(([chainId, expectedName]) => {
@@ -10,7 +10,7 @@ describe('supported chain names', () => {
         win.ethereum = new MockProvider({
           address,
           privateKey,
-          networkVersion: 31,
+          networkVersion: chainId,
           debug: true
         })
         win.ethereum.isMetaMask = true
@@ -20,7 +20,7 @@ describe('supported chain names', () => {
       cy.get('#login').click()
       cy.contains('MetaMask').click()
 
-      cy.get('.rlogin-list-network').eq(0).should('have.text', 'RSK Testnet')
+      cy.get('.rlogin-list-network').eq(0).should('have.text', expectedName)
     })
   })
 })

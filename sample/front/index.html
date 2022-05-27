@@ -124,6 +124,7 @@
 
       // supportedChains parameter
       const defaultNetworks = Object.keys(rpcUrls).map(Number)
+      defaultNetworks.push(1337)
       const supportedChainsParam = new URLSearchParams(window.location.search).get('supportedChains')
       const supportedChains = !supportedChainsParam ?
         defaultNetworks :
