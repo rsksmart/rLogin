@@ -29,6 +29,13 @@ describe('permissioned e2e testing', () => {
     cy.contains('MetaMask').click()
   }
 
+  const testWalletInfo = () => {
+    cy.get('.rlogin-header2').should('have.text', 'Successfully connected')
+    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
+    cy.get('.rlogin-list-description').eq(1).should('have.text', 'MetaMask')
+    cy.get('.rlogin-list-network').eq(0).should('have.text', 'RSK Testnet')
+  }
+
   const interceptNodePost = () => {
     // rLogin makes 3 post requests to this URL, we will wait but not mock as they need to increment.
     cy.intercept('POST', 'https://did.rsk.co:4444/').as('didRsk')
@@ -69,9 +76,7 @@ describe('permissioned e2e testing', () => {
     cy.get('label').eq(1).should('have.text', 'Email address: jesse@iovlabs.org (Verifiable Credential)').click()
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D') // '0xb98bd7c7f656290071e52d1aa617d9cb4467fd6d'
-    cy.get('.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    testWalletInfo()
     cy.get('.rlogin-list-description').eq(2).should('have.text', 'CI Testing')
     cy.get('.rlogin-list-description').eq(3).should('have.text', 'jesse@iovlabs.org')
 
@@ -110,9 +115,7 @@ describe('permissioned e2e testing', () => {
     cy.get('label').eq(1).should('have.text', 'Email address: jesse@iovlabs.org (Verifiable Credential)').click()
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('dd.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D')
-    cy.get('dd.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    testWalletInfo()
     cy.get('dd.rlogin-list-description').eq(2).should('have.text', 'jesse@iovlabs.org')
     cy.contains('Confirm').click()
 
@@ -133,9 +136,7 @@ describe('permissioned e2e testing', () => {
     cy.get('label').eq(0).should('have.text', 'CI Testing').click()
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('dd.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D')
-    cy.get('dd.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    testWalletInfo()
     cy.get('dd.rlogin-list-description').eq(2).should('have.text', 'CI Testing')
 
     cy.contains('Confirm').click()
@@ -156,9 +157,7 @@ describe('permissioned e2e testing', () => {
     cy.get('.rlogin-header2').should('have.text', 'Select information to share')
 
     cy.contains('Confirm').click()
-    cy.get('.rlogin-header2').should('have.text', 'Information')
-    cy.get('dd.rlogin-list-description').eq(0).should('have.text', '0xB98b...Fd6D')
-    cy.get('dd.rlogin-list-description').eq(1).should('have.text', 'RSK Testnet')
+    testWalletInfo()
 
     cy.contains('Confirm').click()
 

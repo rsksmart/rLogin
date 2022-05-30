@@ -42,7 +42,8 @@
       <p id="typed-signature"></p>
       <p id="typed-recovery"></p>
       <hr />
-      <button id="reset" disabled>Reset</button>
+      <button id="disconnect" disabled>Disconnect</button>
+      <button id="reset">Reset</button>
     </div>
 
     <script src="http://localhost:3005/index.js"></script>
@@ -142,9 +143,13 @@
           1: 'https://mainnet.infura.io/v3/8043bb2cf99347b1bfadfb233c5325c0',
           30: 'https://public-node.rsk.co',
           31: 'https://public-node.testnet.rsk.co'
-        }
+        },
         // customThemes: {light:{modalBackground:'#ff0000'}},
-        // defaultTheme: 'dark'
+        // defaultTheme: 'dark',
+        infoOptions: {
+          30: { addressBaseURL: 'https://explorer.rsk.co/address/' },
+          31: { addressBaseURL: 'https://explorer.testnet.rsk.co/address/' }
+        }
       })
 
       window.rLogin=rLogin;
@@ -154,8 +159,35 @@
       document.getElementById('loginMetamask').addEventListener('click', () => rLogin.connectTo('injected').then(handleProvider).catch(handleError));
       document.getElementById('showInfo').addEventListener('click', () => rLogin.showWalletInfo());
       document.getElementById('changeNetwork').addEventListener('click', () => rLogin.showChangeNetwork());
+
       rLogin.on('languageChanged', (languageSelected) => console.log(languageSelected))
       rLogin.on('themeChanged', (themeSelected) => console.log(themeSelected))
+
+      rLogin.on('disconnected', () => {
+        // clean up all HTML elements (top to bottom):
+        setElementInnerText('error', '')
+        setElementInnerText('connected', '')
+        setElementInnerText('accounts', '')
+        setElementInnerText('chain-id', '')
+        setElementInnerText('access-token', '')
+        setElementInnerText('refresh-token', '')
+        setElementInnerText('accounts', '')
+        setElementInnerText('signature', '')
+        setElementInnerText('recovery', '')
+        setElementInnerText('typed-signature', '')
+        setElementInnerText('typed-recovery', '')
+
+        // reset button states:
+        document.getElementById('login').removeAttribute('disabled')
+        document.getElementById('loginMetamask').removeAttribute('disabled')
+        document.getElementById('showInfo').setAttribute('disabled', true)
+        document.getElementById('changeNetwork').setAttribute('disabled', true)
+        document.getElementById('send-tx').setAttribute('disabled', true)
+        document.getElementById('sign').setAttribute('disabled', true)
+        document.getElementById('sign-typed-data-v1').setAttribute('disabled', true)
+        document.getElementById('sign-typed-data').setAttribute('disabled', true)
+      })
+
       // ui - display handlers
       const setElementInnerText = (elementId, content) => { document.getElementById(elementId).innerText = content }
       const displayAccounts = (accounts) => setElementInnerText('accounts', accounts.join(', '))
@@ -189,7 +221,7 @@
         document.getElementById('loginMetamask').setAttribute('disabled', true)
         document.getElementById('showInfo').removeAttribute('disabled')
         document.getElementById('changeNetwork').removeAttribute('disabled')
-        document.getElementById('reset').removeAttribute('disabled')
+        document.getElementById('disconnect').removeAttribute('disabled')
 
         // handle eip-1193
         provider.on(window.RLogin.ACCOUNTS_CHANGED, (response) =>
@@ -311,36 +343,14 @@
           })
         })
 
-        const disconnect = () => {
+        document.getElementById('disconnect').addEventListener('click', () => {
           rLoginResponse.disconnect()
-          provider.removeAllListeners()
-
-          // clean up all HTML elements (top to bottom):
-          setElementInnerText('error', '')
-          setElementInnerText('connected', '')
-          setElementInnerText('accounts', '')
-          setElementInnerText('chain-id', '')
-          setElementInnerText('access-token', '')
-          setElementInnerText('refresh-token', '')
-          setElementInnerText('accounts', '')
-          setElementInnerText('signature', '')
-          setElementInnerText('recovery', '')
-          setElementInnerText('typed-signature', '')
-          setElementInnerText('typed-recovery', '')
-
-          // reset button states:
-          document.getElementById('login').removeAttribute('disabled')
-          document.getElementById('loginMetamask').removeAttribute('disabled')
-          document.getElementById('showInfo').setAttribute('disabled', true)
-          document.getElementById('changeNetwork').setAttribute('disabled', true)
-          document.getElementById('send-tx').setAttribute('disabled', true)
-          document.getElementById('sign').setAttribute('disabled', true)
-          document.getElementById('sign-typed-data').setAttribute('disabled', true)
-        }
-
-        provider.on('disconnect', disconnect)
-        document.getElementById('reset').addEventListener('click', disconnect)
+        })
       }
+
+      document.getElementById('reset').addEventListener('click', () => {
+        localStorage.removeItem('RLogin:DontShowAgain')
+      })
     </script>
   </body>
 </html>

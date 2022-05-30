@@ -32,6 +32,7 @@ import { NetworkParams } from './lib/networkOptionsTypes'
 import { Button } from './ui/shared/Button'
 import { DONT_SHOW_AGAIN_KEY, RLOGIN_SELECTED_PROVIDER } from './constants'
 import { ChooseDPathComponent } from './ux/chooseDpath/ChooseDPath'
+import { InfoOptions } from './ux/confirmInformation/InfoOptions'
 
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/components/Modal.tsx
@@ -77,9 +78,11 @@ interface IModalProps {
   themes: { [K in themesOptions]: ThemeType }
   defaultTheme: themesOptions
   rpcUrls?: {[key: string]: string}
+  infoOptions: InfoOptions
+  afterDisconnect: () => void
 }
 
-type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
+type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'changeNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
 
 interface ErrorDetails {
   title: string
@@ -196,7 +199,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
   }
 
   // Interacts with RLogin to expose hide/show modal functions to the steps listed below
-  public showModalWithStep (step: 'Step1' | 'chooseNetwork' | 'walletInfo') {
+  public showModalWithStep (step: 'Step1' | 'changeNetwork' | 'walletInfo') {
     this.setState({ show: true, currentStep: step })
   }
 
@@ -251,7 +254,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
         return false
       }
 
-      this.setState({ currentStep: 'wrongNetwork', show: true })
+      this.setState({ currentStep: 'changeNetwork', show: true })
     }
 
     return isCurrentChainSupported
@@ -465,7 +468,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
    * Disconnect from the provider
    */
    public disconnect () {
-     const { providerController } = this.props
+     const { providerController, afterDisconnect } = this.props
      const { provider } = this.state
 
      disconnectFromProvider(provider)
@@ -473,6 +476,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
      // clean up the provider controller
      providerController.clearCachedProvider()
      this.setState(INITIAL_STATE)
+     afterDisconnect()
    }
 
    /**
@@ -507,7 +511,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
-    const { userProviders, backendUrl, supportedChains, themes, rpcUrls } = this.props
+    const { userProviders, backendUrl, supportedChains, themes, rpcUrls, infoOptions } = this.props
     const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
@@ -531,6 +535,8 @@ export class Core extends React.Component<IModalProps, IModalState> {
             sd={sd}
             onConfirm={this.onConfirmAuth}
             onCancel={this.closeModal}
+            infoOptions={infoOptions}
+            disconnect={this.disconnect}
           />
         )}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
