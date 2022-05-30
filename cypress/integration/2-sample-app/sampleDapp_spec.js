@@ -87,6 +87,30 @@ describe('sample:dapp testing, no backend', () => {
     cy.get('#connected').should('have.text', 'Yes')
   })
 
+  it('should show confirm information again if don\'t show again is clicked twice', () => {
+    cy.clearLocalStorage('RLogin:DontShowAgain')
+
+    loginWithModal()
+    testInfoScreen()
+
+    const checkbox = cy.get('.rlogin-checkbox')
+    checkbox.check({ force: true }) // don't show again
+    checkbox.uncheck({ force: true }) // show again
+    cy.get('.rlogin-button.confirm').click() // confirm
+
+    cy.get('#connected').should('have.text', 'Yes')
+    cy.get('#disconnect').click()
+
+    cy.get('#connected').should('have.text', '')
+
+    loginWithModal()
+    confirmInformationStep()
+
+    cy.get('#connected').should('have.text', 'Yes')
+
+    cy.clearLocalStorage('RLogin:DontShowAgain')
+  })
+
   it('signs data', () => {
     loginWithModal()
     confirmInformationStep()
