@@ -46,6 +46,8 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
   const isHardwareWallet = provider?.isLedger || provider?.isTrezor || provider?.isDCent
 
+  const chainName = chainId ? getChainName(chainId) : ''
+
   return !isLoading
     ? <>
       {!displayMode && <HeaderContainer>
@@ -83,7 +85,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
           </Title>
           <Description>{providerUserOption.name}</Description>
           {peerWallet && <Description>{peerWallet.name}</Description>}
-          <Network>{chainId && getChainName(chainId)}</Network>
+          <Network title={chainName}>{chainName}</Network>
           {isHardwareWallet && <Description>{provider.dpath || provider.path}</Description>}
           {sd && Object.keys(sd.claims).map(key => <Description key={`claim-value-${key}`}>{sd.claims[key]}</Description>)}
           {sd && Object.keys(sd.credentials).map(key => <Description key={`credential-value-${key}`}>{credentialValueToText(key, sd.credentials[key])}</Description>)}
@@ -207,8 +209,8 @@ const NetworkWrapper = styled.span`
   }
 `
 
-const Network: React.FC<{ className?: string; }> = ({ children, className }) => (
-  <NetworkWrapper className={className ? `${LIST_NETWORK} ${className}` : LIST_NETWORK}>
+const Network: React.FC<{ className?: string; title?: string }> = ({ children, className, title }) => (
+  <NetworkWrapper className={className ? `${LIST_NETWORK} ${className}` : LIST_NETWORK} title={title}>
     {children}
   </NetworkWrapper>
 )

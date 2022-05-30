@@ -41,11 +41,14 @@ Wallet support:
 Network support:
 - RSK Mainnet, RSK Testnet
 - Etheruem, Ropsten, Kovan, Rinkeby, Gorely
+- Any RPC-compatible network, like Polygon or Arbitrum
 
 EIP 1193 support
 
 Clients support:
 - `ethers`, `web3.js` and others
+
+> Any RPC-compatible networks are supported, but our manual QA process is run only for RSK Networks. See the list of networks for which we have enhanced the UI [here](https://github.com/rsksmart/rLogin/blob/develop/src/adapters.ts). Networks that are not in that list are supported too with a generic display.
 
 ## Getting started
 

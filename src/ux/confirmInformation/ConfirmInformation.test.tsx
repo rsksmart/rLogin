@@ -48,7 +48,9 @@ describe('Component: ConfirmInformation', () => {
       expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(1).text()).toBe('test1')
 
       expect(wrapper.find(`dt.${LIST_TITLE}`).at(1).text()).toBe('Network:')
-      expect(wrapper.find(`span.${LIST_NETWORK}`).at(0).text()).toBe('RSK Testnet')
+      const networkInfo = wrapper.find(`span.${LIST_NETWORK}`).at(0)
+      expect(networkInfo.text()).toBe('RSK Testnet')
+      expect(networkInfo.prop('title')).toBe('RSK Testnet')
 
       expect(wrapper.find(window.location.href)).toBeDefined()
     })
@@ -98,7 +100,9 @@ describe('Component: ConfirmInformation', () => {
       expect(wrapper.find(`dd.${LIST_DESCRIPTION}`).at(2).text()).toBe('Wallet Test 1')
 
       expect(wrapper.find(`dt.${LIST_TITLE}`).at(2).text()).toBe('Network:')
-      expect(wrapper.find(`span.${LIST_NETWORK}`).at(0).text()).toBe('RSK Testnet')
+      const networkInfo = wrapper.find(`span.${LIST_NETWORK}`).at(0)
+      expect(networkInfo.text()).toBe('RSK Testnet')
+      expect(networkInfo.prop('title')).toBe('RSK Testnet')
 
       expect(wrapper.find(window.location.href)).toBeDefined()
     })
