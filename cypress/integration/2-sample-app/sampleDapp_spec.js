@@ -1,17 +1,8 @@
-import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { address, mockInjectedProvider } from '../account'
 
 describe('sample:dapp testing, no backend', () => {
   beforeEach(() => {
-    cy.on('window:before:load', (win) => {
-      win.ethereum = new MockProvider({
-        address,
-        privateKey,
-        networkVersion: 31,
-        debug: true
-      })
-      win.ethereum.isMetaMask = true
-    })
+    mockInjectedProvider()
   })
 
   const loginWithModal = (withCacheProvider = false) => {
