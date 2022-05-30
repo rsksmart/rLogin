@@ -1,5 +1,5 @@
 import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { privateKey, address, mockInjectedProvider } from '../account'
 
 const testHasNoAuthKeys = () => {
   cy.get('#access-token').should('be.empty')
@@ -9,16 +9,7 @@ const testHasNoAuthKeys = () => {
 describe('permissioned e2e testing', () => {
   beforeEach(() => {
     cy.clearLocalStorage('RLogin:DontShowAgain')
-
-    cy.on('window:before:load', (win) => {
-      win.ethereum = new MockProvider({
-        address,
-        privateKey,
-        networkVersion: 31,
-        debug: true
-      })
-      win.ethereum.isMetaMask = true
-    })
+    mockInjectedProvider()
   })
 
   const connectToMetamask = () => {

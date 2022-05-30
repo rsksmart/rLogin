@@ -1,20 +1,10 @@
-import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { mockInjectedProvider } from '../account'
 import { chainList } from '../../../src/chianList_test'
 
 describe('supported chain names', () => {
   chainList.forEach(([chainId, expectedName]) => {
     it(`connects to chain ${chainId} and displays ${expectedName}`, () => {
-
-      cy.on('window:before:load', (win) => {
-        win.ethereum = new MockProvider({
-          address,
-          privateKey,
-          networkVersion: chainId,
-          debug: true
-        })
-        win.ethereum.isMetaMask = true
-      })
+      mockInjectedProvider({ networkVersion: chainId })
 
       cy.visit('/')
       cy.get('#login').click()
