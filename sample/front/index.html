@@ -71,15 +71,17 @@
         window.ethereum.autoRefreshOnNetworkChange = false
       }
 
+      const urlSearchParams = new URLSearchParams(window.location.search)
+
       // detect flavor
-      const withBackend = new URLSearchParams(window.location.search).get('backend') === 'yes'
+      const withBackend = urlSearchParams.get('backend') === 'yes'
       const backendUrl = withBackend && 'http://localhost:3007'
 
       // enable cacheProvider
-      const withCacheProvider = new URLSearchParams(window.location.search).get('cache') === 'yes'
+      const withCacheProvider = urlSearchParams.get('cache') === 'yes'
 
       // hide modals
-      const keepModalHidden = new URLSearchParams(window.location.search).get('keepModalHidden') === 'yes'
+      const keepModalHidden = urlSearchParams.get('keepModalHidden') === 'yes'
 
       // networks
       const rpcUrls = {
@@ -125,7 +127,7 @@
       // supportedChains parameter
       const defaultNetworks = Object.keys(rpcUrls).map(Number)
       defaultNetworks.push(1337)
-      const supportedChainsParam = new URLSearchParams(window.location.search).get('supportedChains')
+      const supportedChainsParam = urlSearchParams.get('supportedChains')
       const supportedChains = !supportedChainsParam ?
         defaultNetworks :
         (supportedChainsParam == 'all'? null : supportedChainsParam.split(',').map(chain => parseInt(chain)))
@@ -183,8 +185,8 @@
         },
         rpcUrls,
         infoOptions,
+        defaultTheme: urlSearchParams.get('defaultTheme') || 'light',
         // customThemes: {light:{modalBackground:'#ff0000'}},
-        // defaultTheme: 'dark',
       })
 
       window.rLogin=rLogin;

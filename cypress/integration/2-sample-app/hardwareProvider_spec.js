@@ -1,5 +1,4 @@
-import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { mockInjectedProvider } from '../account'
 
 describe('hardware provider tests', () => {
   const rLoginCached = JSON.stringify({
@@ -15,18 +14,9 @@ describe('hardware provider tests', () => {
   })
 
   beforeEach(() => {
-    cy.on('window:before:load', (win) => {
-      const provider = new MockProvider({
-        address,
-        privateKey,
-        networkVersion: 31,
-        debug: true
-      })
-
+    mockInjectedProvider({}, (provider) => {
       provider.isMetaMask = null
       provider.isLedger = true
-
-      win.ethereum = provider
     })
   })
 

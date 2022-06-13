@@ -1,17 +1,8 @@
-import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { mockInjectedProvider } from '../account'
 
 describe('show Select Network modal when trying to connect with a unsupported chainId', () => {
   beforeEach(() => {
-    cy.on('window:before:load', (win) => {
-      win.ethereum = new MockProvider({
-        address,
-        privateKey,
-        networkVersion: 2,
-        debug: true
-      })
-      win.ethereum.isMetaMask = true
-    })
+    mockInjectedProvider({ networkVersion: 2 })
   })
 
   it('shows the Select Network modal when using connect', () => {
