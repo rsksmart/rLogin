@@ -1,21 +1,9 @@
-import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { mockInjectedProvider } from '../account'
 
 describe('Web3 Provider throws an error when connecting', () => {
   beforeEach(() => {
-    const provider = new MockProvider({
-      address,
-      privateKey,
-      networkVersion: 31,
-      debug: true
-    })
-
-    // overwrite the enable method to throw an error:
-    provider.request = (_props) => Promise.reject(new Error('Not today'))
-    provider.isMetaMask = true
-
-    cy.on('window:before:load', (win) => {
-      win.ethereum = provider
+    mockInjectedProvider({}, (provider) => {
+      provider.request = (_props) => Promise.reject(new Error('Not today'))
     })
   })
 

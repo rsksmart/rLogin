@@ -1,5 +1,5 @@
 import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { privateKey, address, mockInjectedProvider } from '../account'
 
 describe('cache provider tests', () => {
   const rLoginCached = JSON.stringify({
@@ -11,15 +11,7 @@ describe('cache provider tests', () => {
   })
 
   beforeEach(() => {
-    cy.on('window:before:load', (win) => {
-      win.ethereum = new MockProvider({
-        address,
-        privateKey,
-        networkVersion: 31,
-        debug: true
-      })
-      win.ethereum.isMetaMask = true
-    })
+    mockInjectedProvider()
   })
 
   it('logs in as normal', () => {
