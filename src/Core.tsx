@@ -455,9 +455,11 @@ export class Core extends React.Component<IModalProps, IModalState> {
     * to ConfirmAuth which will detect the flavor.
     */
    private shouldShowConfirmStep = () => {
-     !localStorage.getItem(DONT_SHOW_AGAIN_KEY)
-       ? this.setState({ currentStep: 'confirmInformation', show: true })
-       : this.onConfirmAuth()
+     const dontShowAgainItem = localStorage.getItem(DONT_SHOW_AGAIN_KEY)
+     const dontShowAgain = dontShowAgainItem && dontShowAgainItem === 'true'
+
+     if (!dontShowAgain) this.setState({ currentStep: 'confirmInformation', show: true })
+     else this.onConfirmAuth()
    }
 
    private setLightboxRef (c: HTMLDivElement | null) {

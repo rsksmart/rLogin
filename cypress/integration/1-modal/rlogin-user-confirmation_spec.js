@@ -1,21 +1,8 @@
-import { MockProvider } from '@rsksmart/mock-web3-provider'
-import { privateKey, address } from '../account'
+import { mockInjectedProvider } from '../account'
 
 describe('rLogin modal loading while user confirms wallet', () => {
   beforeEach(() => {
-    const provider = new MockProvider({
-      address,
-      privateKey,
-      networkVersion: 31,
-      debug: true,
-      manualConfirmEnable: true
-    })
-
-    provider.isMetaMask = true
-
-    cy.on('window:before:load', (win) => {
-      win.ethereum = provider
-    })
+    mockInjectedProvider({ manualConfirmEnable: true })
     cy.visit('/')
     cy.contains('login with rLogin').click()
   })
