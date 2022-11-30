@@ -1,9 +1,8 @@
 name: publish
 
 on:
-  push:
-    branches:
-      - 'master'
+  release:
+    types: [created]
 
 jobs:
   publish:
@@ -16,7 +15,7 @@ jobs:
     - name: Push package to npmjs.com
       uses: actions/setup-node@v1
       with:
-        node-version: 12
+        node-version: 14
         registry-url: https://registry.npmjs.org/
     - run: npm install
     - run: npm publish --access public
