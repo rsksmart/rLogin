@@ -22,7 +22,7 @@
     "sample:permissioned": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js permissioned\"",
     "sample:cypress": "concurrently \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js permissioned\"",
     "serve": "serve dist -l 3005",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
