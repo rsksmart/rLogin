@@ -7,7 +7,7 @@ import * as MathWalletLogo from './logos/mathWalletLogo.png'
 // @ts-ignore
 import * as DcentWalletLogo from './logos/dcentLogo.png'
 
-import { TALLYWALLET } from '../ux/step1/extraProviders'
+import { TALLYWALLET, BLOCKWALLET } from '../ux/step1/extraProviders'
 
 /**
  * A list of injected Providers that have not been implemented into Web3Modal yet
@@ -32,6 +32,11 @@ const injectedProviders = [
     name: TALLYWALLET.name,
     check: TALLYWALLET.check,
     logo: TALLYWALLET.logo
+  },
+  {
+    name: BLOCKWALLET.name,
+    check: BLOCKWALLET.check,
+    logo: BLOCKWALLET.logo
   }
 ]
 
@@ -51,7 +56,7 @@ export const checkRLoginInjectedProviders = (providers: IProviderUserOptions[]) 
   let firstProvider = providers[0]
 
   // loop through list above to see if one matches
-  injectedProviders.map((item: any) => {
+  injectedProviders.forEach((item: any) => {
     if (verifyInjectedProvider(item.check)) {
       firstProvider = { ...firstProvider, name: item.name, logo: item.logo }
     }

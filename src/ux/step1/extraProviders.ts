@@ -47,3 +47,11 @@ export const TALLYWALLET: IProviderInfo = {
   type: 'web',
   check: 'isTally'
 }
+
+export const BLOCKWALLET: IProviderInfo = {
+  id: 'block-wallet',
+  logo: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAB7klEQVR4Xt2aa00DURBGRwISKgEJKwEJlYCDVgIOigQcYAEHlYAEHk2zSc+0uzN3H9+9e5LzZ+7rNKThB5itx+nPn6Bv1zNN82r+g5X6Yo3QmY+f251VyKf50KU9WSUwbG1lMETtqvDxWlycL/OP1ubBFoIP1e6s8PJWnAVe2pqTOJu/sDUPNgFe1qpF8JLWTcHDWzEMD27FEDw0qBr2BBzkbP7AoGrYE/BoA3DzqGrYE/Que/MbR1XDnqBPdgduCqmGPQkd3BBSDXsS3rC/DtOqYU/Cm68BF8OqYU/SHi6EVcOepD1cCKuGPUkvfNxZCKuGPUkvf3DhMKUa9hToBinVsKdAN0iphj0FukFKNewp0A1SqmFPgW6QUg17CnSDlGrYU6AbpFTDngLdIKUa9hToBinVsKfAyz8kcRhWDXuSdnaFC2HVsCdpDxfCqmFP0h4uhFXDnqQ93Z3FkGrYk9DBDSHVsCehgxtCqmFPQkdnftOoatgT9CHcOKoa9gR9yLv5zYOqYU/AzkbggUHVsCdgCB7aimF4cCum4OHWLYKXtGoxR/OXteazTYQXtuS3zQQvbsVZ4eU1O9tPnhzNP1abk7/zEfhoLa4KH1crgyFrWwV782FL21mlMHRum2FnPr7UTdCZ/2CPXOVX2T+/xcZzJlTahk0AAAAASUVORK5CYII=',
+  name: 'Block Wallet',
+  type: 'web',
+  check: 'isBlockWallet'
+}
