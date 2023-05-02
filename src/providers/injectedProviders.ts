@@ -7,7 +7,7 @@ import * as MathWalletLogo from './logos/mathWalletLogo.png'
 // @ts-ignore
 import * as DcentWalletLogo from './logos/dcentLogo.png'
 
-import { TALLYWALLET, BLOCKWALLET } from '../ux/step1/extraProviders'
+import { TALLYWALLET, BLOCKWALLET, EXODUSWALLET } from '../ux/step1/extraProviders'
 
 /**
  * A list of injected Providers that have not been implemented into Web3Modal yet
@@ -37,6 +37,11 @@ const injectedProviders = [
     name: BLOCKWALLET.name,
     check: BLOCKWALLET.check,
     logo: BLOCKWALLET.logo
+  },
+  {
+    name: EXODUSWALLET.name,
+    check: EXODUSWALLET.check,
+    logo: EXODUSWALLET.logo
   }
 ]
 
