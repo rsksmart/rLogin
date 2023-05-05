@@ -22,7 +22,7 @@
     "sample:permissioned": "concurrently \"npm run build:dev\" \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js permissioned\"",
     "sample:cypress": "concurrently \"node sample/launcher.js backend\" \"serve dist -l 3005\" \"serve sample/front -l 3006\" \"nodemon --watch sample/back sample/back/index.js permissioned\"",
     "serve": "serve dist -l 3005",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -74,7 +74,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "express": "^4.17.1",
     "jest": "^26.5.3",
-    "jest-enzyme": "^7.1.2",
+    "jest-enzyme": "^4.2.0",
     "jest-transform-stub": "^2.0.0",
     "jsdom": "^16.4.0",
     "jsdom-global": "^3.0.2",
