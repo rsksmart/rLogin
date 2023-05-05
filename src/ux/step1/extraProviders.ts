@@ -1,6 +1,8 @@
 import { IProviderInfo } from 'web3modal'
 // @ts-ignore
 import * as TallyWalletLogo from '../../providers/logos/tallyLogo.svg'
+// @ts-ignore
+import * as ExodusWalletLogo from '../../providers/logos/exodus.svg'
 
 // this providers are addded because they are not still passed from the configuration
 // we need to find a better strategy for this
@@ -54,4 +56,12 @@ export const BLOCKWALLET: IProviderInfo = {
   name: 'Block Wallet',
   type: 'web',
   check: 'isBlockWallet'
+}
+
+export const EXODUSWALLET: IProviderInfo = {
+  id: 'exodus-wallet',
+  logo: ExodusWalletLogo.default,
+  name: 'Exodus Wallet',
+  type: 'web',
+  check: 'isExodus'
 }

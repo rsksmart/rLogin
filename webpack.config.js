@@ -11,7 +11,11 @@ module.exports = env => ({
     filename: "index.js"
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: [".ts", ".tsx", ".js"],
+    fallback: {
+      "assert": require.resolve("assert/"),
+      "stream": require.resolve("stream-browserify"),
+    }
   },
   plugins: [
     new webpack.ProvidePlugin({
