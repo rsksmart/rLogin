@@ -48,7 +48,7 @@ const injectedProviders = [
   {
     name: 'Defiant Wallet',
     check: 'isDefiant',
-    logo: DefiantWalletLogo
+    logo: DefiantWalletLogo.default
   }
 ]
 
