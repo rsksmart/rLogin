@@ -6,6 +6,8 @@ import * as RWalletLogo from './logos/rWalletlogo.svg'
 import * as MathWalletLogo from './logos/mathWalletLogo.png'
 // @ts-ignore
 import * as DcentWalletLogo from './logos/dcentLogo.png'
+// @ts-ignore
+import * as DefiantWalletLogo from './logos/defiant.svg'
 
 import { TALLYWALLET, BLOCKWALLET, EXODUSWALLET } from '../ux/step1/extraProviders'
 
@@ -42,6 +44,11 @@ const injectedProviders = [
     name: EXODUSWALLET.name,
     check: EXODUSWALLET.check,
     logo: EXODUSWALLET.logo
+  },
+  {
+    name: 'Defiant Wallet',
+    check: 'isDefiant',
+    logo: DefiantWalletLogo.default
   }
 ]
 

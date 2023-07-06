@@ -20,4 +20,16 @@ describe('rLogin modal loading while user confirms wallet', () => {
 
     cy.contains('Nifty').should('exist')
   })
+
+  it('shows Defiant', () => {
+    mockInjectedProvider({}, (provider) => {
+      provider.isMetaMask = true
+      provider.isDefiant = true
+    })
+
+    cy.visit('/')
+    cy.contains('login with rLogin').click()
+
+    cy.contains('Defiant').should('exist')
+  })
 })
