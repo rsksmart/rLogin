@@ -11,7 +11,7 @@ const Text = styled.span`
   color: #B0AEB1;
   font-size: 13px;
   font-weight: 300 !important;
-  padding: 10px 10px 0 0;
+  padding: 7px 10px 0 0;
 `
 
 const SVG = styled.svg`
