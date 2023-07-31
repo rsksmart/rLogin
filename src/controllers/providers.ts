@@ -41,6 +41,17 @@ export class RLoginProviderController {
         providerInfo = getProviderInfoById(id)
       }
 
+      if (providerInfo.id === 'walletconnect') {
+        // console.log('TACO!', providerInfo)
+        providerInfo = {
+          ...providerInfo,
+          package: {
+            ...providerInfo.package,
+            required: ['projectId', 'chains']
+          }
+        }
+      }
+
       // parse custom display options
       if (this.providerOptions[id]) {
         const options = this.providerOptions[id]
