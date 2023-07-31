@@ -3,6 +3,7 @@ import { EventController, IProviderInfo, IProviderDisplayWithConnector, IProvide
 
 import { RLoginIProviderUserOptions } from '../Core'
 import { RLOGIN_SELECTED_PROVIDER, CACHED_PROVIDER_KEY } from '../constants'
+import { walletConnect2Provider } from './walletconnect2'
 
 export class RLoginProviderController {
   public cachedProvider: string = '';
@@ -41,15 +42,9 @@ export class RLoginProviderController {
         providerInfo = getProviderInfoById(id)
       }
 
+      // Handles WalletConnect 2.0
       if (providerInfo.id === 'walletconnect') {
-        // console.log('TACO!', providerInfo)
-        providerInfo = {
-          ...providerInfo,
-          package: {
-            ...providerInfo.package,
-            required: ['projectId', 'chains']
-          }
-        }
+        return (walletConnect2Provider(providerInfo))
       }
 
       // parse custom display options
