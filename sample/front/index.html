@@ -49,7 +49,7 @@
     <script src="http://localhost:3005/index.js"></script>
 
     <!-- Mobile -->
-    <script src="https://unpkg.com/@walletconnect/web3-provider@1.3.2/dist/umd/index.min.js" integrity="sha384-e1LVDbPXlpouaOa/B5TOOA/EeKsLWbCQpRC6XB5RBn0eKI8E1msrTnw8Dvkft020" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@rsksmart/rlogin-walletconnect2-provider@1.0.0/dist/bundle.js" integrity="sha384-b45t2uis3XhbvsJcTjcjp/qYB2AeKvfznFptmQItG3RhSKDyrmHoKJKtrHyXJmHY" crossorigin="anonymous"></script>
 
     <!-- Custodial -->
     <script src="https://unpkg.com/@portis/web3@4.0.0/umd/index.js" integrity="sha384-rVrQx3OPQbx/BulpfW0MLzID/fIM+x2qiI9Ibhpgd8MKK7wqsVPRRLDMQDWU7zS3" crossorigin="anonymous"></script>
@@ -146,10 +146,12 @@
         cacheProvider: withCacheProvider,
         providerOptions: {
           walletconnect: {
-            package: window.WalletConnectProvider.default,
+            package: window.rLoginWalletConnect2Provider.WalletConnect2Provider,
             options: {
-              bridge: "https://walletconnect-bridge.rifos.org/",
-              rpc: rpcUrls
+              projectId: '4d14850f2288242161063a7dd66a7b0a',
+              chains: ['31'],
+              showQrModal: true,
+              rpcMap: rpcUrls,
             }
           },
           portis: {

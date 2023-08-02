@@ -68,7 +68,7 @@ Add wallets peer dependecies:
 | Wallet provider | Required package |
 | - | - |
 | Browser wallets | none |
-| Wallet Connect | `@walletconnect/web3-provider` |
+| Wallet Connect | `@rsksmart/rlogin-walletconnect2-provider` |
 | Portis | `@portis/web3` |
 | Torus (beta) | `@toruslabs/torus-embed` |
 | Trezor | `@rsksmart/rlogin-trezor-provider` |
@@ -76,14 +76,14 @@ Add wallets peer dependecies:
 | D'Cent | `@rsksmart/rlogin-dcent-provider` |
 
 ```
-yarn add @walletconnect/web3-provider @portis/web3 @toruslabs/torus-embed @rsksmart/rlogin-trezor-provider @rsksmart/rlogin-ledger-provider @rsksmart/rlogin-dcent-provider
+yarn add @rsksmart/rlogin-walletconnect2-provider @portis/web3 @toruslabs/torus-embed @rsksmart/rlogin-trezor-provider @rsksmart/rlogin-ledger-provider @rsksmart/rlogin-dcent-provider
 ```
 
 ### 2. Create the DOM element
 
 ```typescript
 import RLogin from '@rsksmart/rlogin'
-import WalletConnectProvider from '@walletconnect/web3-provider'
+import { WalletConnect2Provider } from '@rsksmart/rlogin-walletconnect2-provider'
 import Portis from '@portis/web3'
 import Torus from '@toruslabs/torus-embed'
 import { trezorProviderOptions } from '@rsksmart/rlogin-trezor-provider'
@@ -105,9 +105,12 @@ const infoOptions = {
 export const rLogin = new RLogin({
   providerOptions: {
     walletconnect: {
-      package: WalletConnectProvider,
+      package: WalletConnect2Provider,
       options: {
-        rpc: rpcUrls
+        projectId: 'PROJECTID',
+        chains: ['31'],
+        showQrModal: true,
+        rpcMap: rpcUrls,
       }
     },
     portis: {

@@ -20,6 +20,6 @@ describe('rLoign modal interaction', () => {
 
   it('shows a QR code for WalletConnect', () => {
     cy.contains('WalletConnect').click()
-    cy.get('#walletconnect-qrcode-text').should('exist')
+    cy.get('wcm-modal')
   })
 })

@@ -25,6 +25,6 @@ describe('modal - chose metamask fails, then walletconnect works', () => {
   it('shows a QR code for WalletConnect', () => { // try with WalletConnect should work
     cy.contains('login with rLogin').click()
     cy.contains('WalletConnect').click()
-    cy.get('#walletconnect-qrcode-text').should('exist')
+    cy.get('wcm-modal')
   })
 })
