@@ -63,7 +63,7 @@ Sample app: [`rsksmart/rLogin-sample-apps`](https://github.com/rsksmart/rLogin-s
 yarn add @rsksmart/rlogin
 ```
 
-Add wallets peer dependecies:
+Add wallets peer dependencies:
 
 | Wallet provider | Required package |
 | - | - |
@@ -82,7 +82,7 @@ yarn add @rsksmart/rlogin-walletconnect2-provider @portis/web3 @toruslabs/torus-
 ### 2. Create the DOM element
 
 ```typescript
-import RLogin from '@rsksmart/rlogin'
+import RLogin, { AddEthereumChainParameter } from '@rsksmart/rlogin'
 import { WalletConnect2Provider } from '@rsksmart/rlogin-walletconnect2-provider'
 import Portis from '@portis/web3'
 import Torus from '@toruslabs/torus-embed'
@@ -94,7 +94,10 @@ const rpcUrls = {
   30: 'https://public-node.rsk.co',
   31: 'https://public-node.testnet.rsk.co',
 }
+```
+#### Method 1
 
+```typescript
 const supportedChains = Object.keys(rpcUrls).map(Number)
 
 const infoOptions = {
@@ -142,7 +145,81 @@ export const rLogin = new RLogin({
 })
 ```
 
-> We usually put this all together in a single file called `rlogin.ts` and export a single instance of `RLogin`. This ensures a single DOM element is creted.
+#### Method 2. 
+Provide an array of supported network parameters to the rLogin constructor within `ethereumChains` parameter. This will allow you to add the selected network to Metamask (if it has not been previously added) and switch to the network if the wallet was initially connected to an unsupported network.
+
+```typescript
+const supportedChains: AddEthereumChainParameter[] = [
+  {
+    chainId: '0x1e', // hex 30
+    chainName: 'RSK Mainnet',
+    nativeCurrency: {
+      name: 'RSK BTC',
+      symbol: 'RBTC',
+      decimals: 18
+    },
+    rpcUrls: ['https://public-node.rsk.co'],
+    blockExplorerUrls: ['https://explorer.rsk.co'],
+    iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
+  },
+  // previously unknown network
+ {
+    chainId: '0x4E', // hex 78
+    chainName: 'RSK Alphanet',
+    nativeCurrency: {
+      name: 'Test RSK BTC',
+      symbol: 'tRBTC',
+      decimals: 18
+    },
+    rpcUrls: ['https://fullnode-use1-1.alphanet.iovlabs.net'],
+    blockExplorerUrls: ['https://explorer.alphanet.rsk.co'],
+    iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
+  }
+];
+
+export const rLogin = new RLogin({
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnect2Provider,
+      options: {
+        projectId: 'PROJECTID',
+        chains: supportedChains.map(({ chainId }) => parseInt(chainId, 16).toString()),
+        showQrModal: true,
+        rpcMap: rskChains.reduce((acc, { chainId, rpcUrls: [rpcUrl] }) => ({
+              ...acc,
+              [parseInt(chainId, 16)]: rpcUrl
+            }), {})
+      }
+    },
+    portis: {
+      package: Portis,
+      options: {
+        id: "a1c8672b-7b1c-476b-b3d0-41c27d575920",
+        network: {
+          nodeUrl: supportedChains[0].rpcUrls[0],
+          chainId: parseInt(supportedChains[0].chainId, 16),
+        }
+      }
+    },
+    torus: {
+        package: Torus,
+    },
+    'custom-ledger': ledgerProviderOptions,
+    'custom-dcent': dcentProviderOptions,
+    'custom-trezor': {
+      ...trezorProviderOptions,
+      options: {
+        manifestEmail: 'info@iovlabs.org',
+        manifestAppUrl: 'https://basic-sample.rlogin.identity.rifos.org/',
+      }
+    }
+  },
+  // single network list parameter
+  ethereumChains: supportedChains,
+})
+```
+
+> We usually put this all together in a single file called `rlogin.ts` and export a single instance of `RLogin`. This ensures a single DOM element is created.
 
 ### 3. Connect!
 
@@ -217,7 +294,7 @@ npm run serve
 The key points:
 - `src/RLogin.ts` is the API. There we create the DOM element.
 - `src/Core.ts` handles the whole UX. It connects to the wallet, does the authentication, show the modal when triggered and so on.
-- `src/ux` has the different flows for the UX described. You will finde _step1_ or _confirmInformation_
+- `src/ux` has the different flows for the UX described. You will find _step1_ or _confirmInformation_
 - `src/ui` are the visual components of the rLogin
 - `src/lib` has the wallet specifics and authentication implementations
 

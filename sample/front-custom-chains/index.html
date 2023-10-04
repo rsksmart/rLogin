@@ -164,7 +164,7 @@
           package: window.rLoginWalletConnect2Provider.WalletConnect2Provider,
           options: {
             projectId: '4d14850f2288242161063a7dd66a7b0a',
-            chains: rskChains.map(({ chainId }) => parseInt(chainId).toString()),
+            chains: rskChains.map(({ chainId }) => parseInt(chainId, 16).toString()),
             showQrModal: true,
             rpcMap: rskChains.reduce((acc, { chainId, rpcUrls: [rpcUrl] }) => ({
               ...acc,
