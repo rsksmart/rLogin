@@ -1,6 +1,6 @@
 import React from 'react'
 import { getChainName } from '../../adapters'
-import { AddEthereumChainParameter, networks } from './changeNetwork'
+import { AddEthereumChainParameter, networks as hardcodedNetworks } from './changeNetwork'
 import { Paragraph, Header2, Header3 } from '../../ui/shared/Typography'
 import NetworkUnorderedList from './NetworkUnorderedList'
 import ChangeNetworkButton from './ChangeNetworkButton'
@@ -11,16 +11,17 @@ interface WrongNetworkComponentInterface {
   chainId: number | undefined,
   isMetamask: boolean | null,
   isWrongNetwork: boolean,
-  changeNetwork: (params: AddEthereumChainParameter) => void
+  changeNetwork: (params: AddEthereumChainParameter) => void,
+  ethereumChains?: Map<number, AddEthereumChainParameter>
 }
 
 const WrongNetworkComponent: React.FC<WrongNetworkComponentInterface> = ({
-  supportedNetworks, isMetamask, isWrongNetwork, chainId, changeNetwork
+  supportedNetworks, isMetamask, isWrongNetwork, chainId, changeNetwork, ethereumChains
 }) => {
   if (!supportedNetworks) {
     return <></>
   }
-
+  const networks = ethereumChains ?? hardcodedNetworks
   const handleChangeNetwork = (params: AddEthereumChainParameter | undefined) =>
     params !== undefined && changeNetwork(params)
 

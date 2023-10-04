@@ -1,7 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import WrongNetworkComponent from './WrongNetworkComponent'
-import { networks } from './changeNetwork'
+import { networks, AddEthereumChainParameter } from './changeNetwork'
 
 describe('Component: WrongNetworkComponent', () => {
   const metamaskParagraph = 'You are connected to an incorrect network with Metamask. '
@@ -86,6 +86,70 @@ describe('Component: WrongNetworkComponent', () => {
     it('shows text instead of buttons if !isMetamask', () => {
       const wrapper = mount(<WrongNetworkComponent {...sharedProps} supportedNetworks={[30]} isMetamask={false} />)
       expect(wrapper.find('button')).toHaveLength(0)
+    })
+  })
+
+  describe('switch to custom network', () => {
+    const rskChains: AddEthereumChainParameter[] = [
+      {
+        chainId: '0x1e',
+        chainName: 'RSK Mainnet',
+        nativeCurrency: {
+          name: 'RSK BTC',
+          symbol: 'RBTC',
+          decimals: 18
+        },
+        rpcUrls: ['https://public-node.rsk.co'],
+        blockExplorerUrls: ['https://explorer.rsk.co'],
+        iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
+      },
+      {
+        chainId: '0x1f',
+        chainName: 'RSK Testnet',
+        nativeCurrency: {
+          name: 'Test RSK BTC',
+          symbol: 'tRBTC',
+          decimals: 18
+        },
+        rpcUrls: ['https://public-node.testnet.rsk.co'],
+        blockExplorerUrls: ['https://explorer.testnet.rsk.co'],
+        iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
+      },
+      {
+        chainId: '0x4E',
+        chainName: 'RSK Alphanet',
+        nativeCurrency: {
+          name: 'Test RSK BTC',
+          symbol: 'tRBTC',
+          decimals: 18
+        },
+        rpcUrls: ['https://fullnode-use1-1.alphanet.iovlabs.net'],
+        blockExplorerUrls: ['https://explorer.testnet.rsk.co'],
+        iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
+      }
+    ]
+    const props = {
+      supportedNetworks: rskChains.map(({ chainId }) => parseInt(chainId, 16)),
+      isMetamask: true,
+      changeNetwork: jest.fn(),
+      chainId: undefined,
+      isWrongNetwork: true,
+      ethereumChains: new Map(rskChains.map(chain => [parseInt(chain.chainId, 16), chain]))
+    }
+    it('displays the networks', () => {
+      const wrapper = mount(<WrongNetworkComponent {...props} />)
+      rskChains.forEach(({ chainName }, index) => {
+        expect(wrapper.find('li').at(index).text()).toBe(chainName)
+      })
+    })
+
+    it('sends the params when clicked', () => {
+      const changeNetwork = jest.fn()
+      const wrapper = mount(<WrongNetworkComponent {...props} changeNetwork={changeNetwork} />)
+      rskChains.forEach((chain, index) => {
+        wrapper.find('button').at(index).simulate('click')
+        expect(changeNetwork).toBeCalledWith(chain)
+      })
     })
   })
 })

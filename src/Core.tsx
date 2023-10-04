@@ -80,6 +80,7 @@ interface IModalProps {
   rpcUrls?: {[key: string]: string}
   infoOptions: InfoOptions
   afterDisconnect: () => void
+  ethereumChains?: Map<number, AddEthereumChainParameter>
 }
 
 type Step = 'Step1' | 'Step2' | 'confirmInformation' | 'walletInfo' | 'error' | 'wrongNetwork' | 'changeNetwork' | 'chooseNetwork' | 'choosePath' | 'loading' | 'tutorial'
@@ -513,7 +514,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   public render = () => {
     const { show, lightboxOffset, currentStep, sd, sdr, chainId, address, errorReason, provider, selectedProviderUserOption, loadingReason } = this.state
-    const { userProviders, backendUrl, supportedChains, themes, rpcUrls, infoOptions } = this.props
+    const { userProviders, backendUrl, supportedChains, themes, rpcUrls, infoOptions, ethereumChains } = this.props
     const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
@@ -542,7 +543,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
           />
         )}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
-        {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} />}
+        {['wrongNetwork', 'changeNetwork'].includes(currentStep) && <WrongNetworkComponent chainId={chainId} isWrongNetwork={currentStep === 'wrongNetwork'} supportedNetworks={supportedChains} isMetamask={isMetamask(provider)} changeNetwork={this.changeMetamaskNetwork} ethereumChains={ethereumChains} />}
         {currentStep === 'chooseNetwork' && (
           <ChooseNetworkComponent
             providerName={provider.name}
