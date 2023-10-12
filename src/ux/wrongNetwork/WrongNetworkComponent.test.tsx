@@ -114,18 +114,6 @@ describe('Component: WrongNetworkComponent', () => {
         rpcUrls: ['https://public-node.testnet.rsk.co'],
         blockExplorerUrls: ['https://explorer.testnet.rsk.co'],
         iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
-      },
-      {
-        chainId: '0x4E',
-        chainName: 'RSK Alphanet',
-        nativeCurrency: {
-          name: 'Test RSK BTC',
-          symbol: 'tRBTC',
-          decimals: 18
-        },
-        rpcUrls: ['https://fullnode-use1-1.alphanet.iovlabs.net'],
-        blockExplorerUrls: ['https://explorer.testnet.rsk.co'],
-        iconUrls: ['https://developers.rsk.co/assets/img/favicons/android-chrome-192x192.png']
       }
     ]
     const props = {
