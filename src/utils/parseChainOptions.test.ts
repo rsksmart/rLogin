@@ -53,4 +53,10 @@ describe('Chain options parsing functions', () => {
       }
     })
   })
+
+  it('functions should return undefined if no argument is passed', () => {
+    expect(parseSupportedChains()).toBe(undefined)
+    expect(parseRpcUrls()).toBe(undefined)
+    expect(parseInfoOptions()).toBe(undefined)
+  })
 })
