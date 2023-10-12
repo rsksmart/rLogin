@@ -23,6 +23,7 @@ import { RLoginStorage } from './lib/storage'
 import { AuthKeys } from './lib/did-auth'
 import { InfoOptions } from './ux/confirmInformation/InfoOptions'
 import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
+import { parseSupportedChains, parseInfoOptions, parseRpcUrls } from './utils'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -80,7 +81,11 @@ export class RLogin {
       network: options.network
     })
 
-    opts && this.doSomething(opts)
+    // if `ethereumChains` option is passed to the constructor, take chains
+    // information from there, otherwise take it from `supportedChains`, `rpcUrls` and `infoOptions`
+    this.supportedChains = opts && (parseSupportedChains(opts.ethereumChains) ?? opts.supportedChains)
+    this.rpcUrls = opts && (parseRpcUrls(opts.ethereumChains) ?? opts.rpcUrls)
+    this.infoOptions = (opts && (parseInfoOptions(opts.ethereumChains) ?? opts.infoOptions)) ?? {}
 
     this.supportedLanguages = opts && opts.supportedLanguages
     // setup did auth
@@ -106,40 +111,6 @@ export class RLogin {
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
-  }
-
-  private doSomething = (opts: Partial<Options>) => {
-    if (opts?.ethereumChains && opts.ethereumChains.length > 0) {
-      this.ethereumChains = new Map(
-        opts.ethereumChains.map((chain) => [
-          parseInt(chain.chainId, 16),
-          chain
-        ])
-      )
-      this.supportedChains = opts.ethereumChains.map(({ chainId }) =>
-        parseInt(chainId, 16)
-      )
-      this.rpcUrls = opts.ethereumChains.reduce(
-        (acc, { chainId, rpcUrls }) => ({
-          ...acc,
-          [parseInt(chainId, 16).toString()]: rpcUrls[0]
-        }),
-        {}
-      )
-      this.infoOptions = opts.ethereumChains.reduce(
-        (acc, { chainId, blockExplorerUrls }) => ({
-          ...acc,
-          [parseInt(chainId, 16)]: {
-            addressBaseURL: blockExplorerUrls?.[0]
-          }
-        }),
-        {}
-      )
-    } else {
-      this.supportedChains = opts && opts.supportedChains
-      this.rpcUrls = opts && opts.rpcUrls
-      this.infoOptions = opts?.infoOptions ? opts.infoOptions : {}
-    }
   }
 
   // show/hide modal functions
