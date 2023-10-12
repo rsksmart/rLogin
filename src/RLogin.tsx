@@ -80,28 +80,7 @@ export class RLogin {
       network: options.network
     })
 
-    if (opts?.ethereumChains && opts.ethereumChains.length > 0) {
-      this.ethereumChains = new Map(opts.ethereumChains.map(
-        chain => [parseInt(chain.chainId, 16), chain]
-      ))
-      this.supportedChains = opts.ethereumChains.map(({ chainId }) => parseInt(chainId, 16))
-      this.rpcUrls = opts.ethereumChains.reduce((acc, { chainId, rpcUrls }) => ({
-        ...acc,
-        [parseInt(chainId, 16).toString()]: rpcUrls[0]
-      }), {})
-      this.infoOptions = opts.ethereumChains.reduce((acc, { chainId, blockExplorerUrls }) => ({
-        ...acc,
-        [parseInt(chainId, 16)]: {
-          addressBaseURL: blockExplorerUrls?.[0]
-        }
-      }), {})
-    } else {
-      this.supportedChains = opts && opts.supportedChains
-
-      this.rpcUrls = opts && opts.rpcUrls
-
-      this.infoOptions = opts?.infoOptions ? opts.infoOptions : {}
-    }
+    opts && this.doSomething(opts)
 
     this.supportedLanguages = opts && opts.supportedLanguages
     // setup did auth
@@ -127,6 +106,40 @@ export class RLogin {
 
   get cachedProvider (): string {
     return this.providerController.cachedProvider
+  }
+
+  private doSomething = (opts: Partial<Options>) => {
+    if (opts?.ethereumChains && opts.ethereumChains.length > 0) {
+      this.ethereumChains = new Map(
+        opts.ethereumChains.map((chain) => [
+          parseInt(chain.chainId, 16),
+          chain
+        ])
+      )
+      this.supportedChains = opts.ethereumChains.map(({ chainId }) =>
+        parseInt(chainId, 16)
+      )
+      this.rpcUrls = opts.ethereumChains.reduce(
+        (acc, { chainId, rpcUrls }) => ({
+          ...acc,
+          [parseInt(chainId, 16).toString()]: rpcUrls[0]
+        }),
+        {}
+      )
+      this.infoOptions = opts.ethereumChains.reduce(
+        (acc, { chainId, blockExplorerUrls }) => ({
+          ...acc,
+          [parseInt(chainId, 16)]: {
+            addressBaseURL: blockExplorerUrls?.[0]
+          }
+        }),
+        {}
+      )
+    } else {
+      this.supportedChains = opts && opts.supportedChains
+      this.rpcUrls = opts && opts.rpcUrls
+      this.infoOptions = opts?.infoOptions ? opts.infoOptions : {}
+    }
   }
 
   // show/hide modal functions
