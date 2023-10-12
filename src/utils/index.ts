@@ -1,1 +1,1 @@
-export { parseInfoOptions, parseRpcUrls, parseSupportedChains } from './parseChainOptions'
+export { parseInfoOptions, parseRpcUrls, parseSupportedChains, chainArrToMap } from './parseChainOptions'

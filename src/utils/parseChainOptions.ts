@@ -31,3 +31,10 @@ export function parseInfoOptions (ethereumChains?: AddEthereumChainParameter[]):
     {}
   )
 }
+
+export function chainArrToMap (ethereumChains?: AddEthereumChainParameter[]): Map<number, AddEthereumChainParameter> | undefined {
+  if (!ethereumChains) return
+  return new Map(ethereumChains.map(
+    chain => [parseInt(chain.chainId, 16), chain]
+  ))
+}
