@@ -540,6 +540,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
             onCancel={this.closeModal}
             infoOptions={infoOptions}
             disconnect={this.disconnect}
+            ethereumChains={ethereumChains}
           />
         )}
         {currentStep === 'error' && <ErrorMessage title={errorReason?.title} description={errorReason?.description} footerCta={errorReason?.footerCta} />}
@@ -549,7 +550,9 @@ export class Core extends React.Component<IModalProps, IModalState> {
             providerName={provider.name}
             networkParamsOptions={networkParamsOptions}
             rpcUrls={rpcUrls}
-            chooseNetwork={this.chooseNetwork} />
+            chooseNetwork={this.chooseNetwork}
+            ethereumChains={ethereumChains}
+          />
         )}
         {currentStep === 'choosePath' && (
           <ChooseDPathComponent

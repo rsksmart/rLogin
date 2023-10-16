@@ -1,7 +1,5 @@
 import rootstockChains from './rootstock-chains.js'
 
-let rLogin
-
 async function queryChainData (response) {
   const provider = response?.provider
   if (!provider) return
@@ -26,16 +24,17 @@ function showLogin () {
 }
 
 function addButtonListeners () {
-  document.getElementById('login-button').addEventListener('click', () => rLogin.connect())
+  document.getElementById('login-button').addEventListener('click', () => window.rLogin.connect())
   document.getElementById('disconnect-button').addEventListener('click', showLogin)
-  document.getElementById('change-network-button').addEventListener('click', () => rLogin.showChangeNetwork())
+  document.getElementById('change-network-button').addEventListener('click', () => window.rLogin.showChangeNetwork())
 }
 
 function main () {
   // eslint-disable-next-line new-cap
-  rLogin = new window.RLogin.default({
+  const rLogin = new window.RLogin.default({
     ethereumChains: rootstockChains
   })
+  window.rLogin = rLogin
   rLogin.on('connect', queryChainData)
   rLogin.on('chainChanged', queryChainData)
   rLogin.on('disconnected', showLogin)

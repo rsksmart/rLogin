@@ -16,6 +16,7 @@ import { SuccessIcon, CopyIcon, LinkIcon } from './icons'
 import { LIST_TITLE, LIST_DESCRIPTION, LIST_NETWORK, LIST_CLICKABLE } from '../../constants/cssSelectors'
 import { DONT_SHOW_AGAIN_KEY } from '../../constants'
 import { InfoOptions } from './InfoOptions'
+import { AddEthereumChainParameter } from '../wrongNetwork/changeNetwork'
 
 interface ConfirmInformationProps {
   chainId: number | undefined
@@ -28,9 +29,10 @@ interface ConfirmInformationProps {
   onCancel: () => void
   infoOptions: InfoOptions
   disconnect: () => void
+  ethereumChains?: Map<number, AddEthereumChainParameter>
 }
 
-export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel, infoOptions, disconnect }: ConfirmInformationProps) {
+export function ConfirmInformation ({ displayMode, chainId, address, providerUserOption, sd, provider, onConfirm, onCancel, infoOptions, disconnect, ethereumChains }: ConfirmInformationProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [dontShowAgainSelected, setDontShowAgainSelected] = useState<boolean>(false)
 
@@ -46,7 +48,7 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
 
   const isHardwareWallet = provider?.isLedger || provider?.isTrezor || provider?.isDCent
 
-  const chainName = chainId ? getChainName(chainId) : ''
+  const chainName = chainId ? ethereumChains ? (ethereumChains.get(chainId)?.chainName ?? '') : getChainName(chainId) : ''
 
   return !isLoading
     ? <>
