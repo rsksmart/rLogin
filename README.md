@@ -145,8 +145,8 @@ export const rLogin = new RLogin({
 })
 ```
 
-#### Method 2. 
-Provide an array of supported network parameters to the rLogin constructor within `ethereumChains` parameter. This will allow you to add the selected network to Metamask (if it has not been previously added) and switch to the network if the wallet was initially connected to an unsupported network.
+#### Method 2
+Provide an array of supported network parameters to the rLogin constructor within `ethereumChains` parameter. This will allow you to add selected network to Metamask (if it has not been previously added) and switch to the network if the wallet was initially connected to an unsupported network.
 
 ```typescript
 const supportedChains: AddEthereumChainParameter[] = [
