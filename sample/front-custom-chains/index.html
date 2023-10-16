@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add custom network</title>
+  <script defer src="http://localhost:3005/index.js"></script>
+  <script defer type="module" src="./main.js"></script>
+</head>
+
+<body>
+  <h1>Add custom network to RLogin</h1>
+  <div id="login-section">
+    <h2>Connect Metamask</h2>
+    <button id="login-button">connect</button>
+  </div>
+  <div id="connected-section" style="display: none;">
+    <h2>Connected</h2>
+    <h3>Wallet address</h3>
+    <p id="wallet-address"></p>
+    <h3>Supported chains</h3>
+    <p id="supported-chains"></p>
+    <h3>Chain ID</h3>
+    <p id="chain-id"></p>
+    <button id="change-network-button">change network</button>
+    <button id="disconnect-button">disconnect</button>
+  </div>
+</body>
+
+</html>
