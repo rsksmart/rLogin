@@ -22,6 +22,8 @@ import { defaultTheme as defaultThemeConfig, themes as themesConfig, themesOptio
 import { RLoginStorage } from './lib/storage'
 import { AuthKeys } from './lib/did-auth'
 import { InfoOptions } from './ux/confirmInformation/InfoOptions'
+import { AddEthereumChainParameter } from './ux/wrongNetwork/changeNetwork'
+import { parseSupportedChains, parseInfoOptions, parseRpcUrls, chainArrToMap } from './utils'
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
@@ -44,6 +46,7 @@ interface RLoginOptions {
   defaultTheme?: themesOptions
   rpcUrls?: {[key: string]: string}
   infoOptions?: InfoOptions
+  ethereumChains?: AddEthereumChainParameter[]
 }
 
 type Options = Partial<IProviderControllerOptions> & RLoginOptions
@@ -62,6 +65,7 @@ export class RLogin {
   private defaultTheme: themesOptions
   private rpcUrls?: {[key: string]: string}
   private infoOptions: InfoOptions
+  private ethereumChains?: Map<number, AddEthereumChainParameter>
 
   private coreRef: React.RefObject<Core>
 
@@ -79,11 +83,14 @@ export class RLogin {
       network: options.network
     })
 
-    this.supportedChains = opts && opts.supportedChains
-    this.supportedLanguages = opts && opts.supportedLanguages
-    this.rpcUrls = opts && opts.rpcUrls
-    this.infoOptions = opts?.infoOptions ? opts.infoOptions : {}
+    // if `ethereumChains` option is passed to the constructor, take chains
+    // information from there, otherwise take it from `supportedChains`, `rpcUrls` and `infoOptions`
+    this.ethereumChains = chainArrToMap(opts?.ethereumChains)
+    this.supportedChains = parseSupportedChains(opts?.ethereumChains) ?? opts?.supportedChains
+    this.rpcUrls = parseRpcUrls(opts?.ethereumChains) ?? opts?.rpcUrls
+    this.infoOptions = parseInfoOptions(opts?.ethereumChains) ?? opts?.infoOptions ?? {}
 
+    this.supportedLanguages = opts && opts.supportedLanguages
     // setup did auth
     this.backendUrl = opts && opts.backendUrl
     this.dataVaultOptions = opts && opts.dataVaultOptions
@@ -168,6 +175,7 @@ export class RLogin {
         rpcUrls={this.rpcUrls}
         infoOptions={this.infoOptions}
         afterDisconnect={() => this.eventController.trigger('disconnected')}
+        ethereumChains={this.ethereumChains}
       />,
       document.getElementById(WEB3_CONNECT_MODAL_ID)
     )

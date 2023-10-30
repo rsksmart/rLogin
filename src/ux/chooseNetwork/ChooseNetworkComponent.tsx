@@ -9,19 +9,22 @@ import { getChainName } from '../../adapters'
 import { NetworkParams, NetworkParamsAllOptions } from '../../lib/networkOptionsTypes'
 import Checkbox from '../../ui/shared/Checkbox'
 import { getDPathByChainId } from '@rsksmart/rlogin-dpath'
+import { AddEthereumChainParameter } from '../wrongNetwork/changeNetwork'
 
 interface Interface {
   rpcUrls?: {[key: string]: string}
   networkParamsOptions?: NetworkParamsAllOptions
   providerName?: string,
-  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams, dPath?: string }) => void
+  chooseNetwork: (network: { chainId: number, rpcUrl?: string, networkParams?:NetworkParams, dPath?: string }) => void,
+  ethereumChains?: Map<number, AddEthereumChainParameter>
 }
 
 const ChooseNetworkComponent: React.FC<Interface> = ({
   rpcUrls,
   networkParamsOptions,
   providerName,
-  chooseNetwork
+  chooseNetwork,
+  ethereumChains
 }) => {
   if (!rpcUrls) {
     return <></>
@@ -57,7 +60,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
             <Paragraph className="chainSelect">
               <Select disabled={isLoading} value={selectedChainId} onChange={evt => setSelectedChainId(evt.target.value)}>
                 {rpcUrlsArray.map((chainId: string) =>
-                  <option key={chainId} value={chainId}>{getChainName(parseInt(chainId))}</option>
+                  <option key={chainId} value={chainId}>{ethereumChains ? (ethereumChains.get(+chainId)?.chainName ?? '') : getChainName(parseInt(chainId))}</option>
                 )}
               </Select>
             </Paragraph>
@@ -66,7 +69,7 @@ const ChooseNetworkComponent: React.FC<Interface> = ({
         : (
           <>
             <Header2><Trans>Connect to:</Trans></Header2>
-            <Header3>{getChainName(parseInt(rpcUrlsArray[0]))}</Header3>
+            <Header3>{ethereumChains ? (ethereumChains.values().next().value?.chainName ?? '') : getChainName(parseInt(rpcUrlsArray[0]))}</Header3>
           </>
         )
       }
