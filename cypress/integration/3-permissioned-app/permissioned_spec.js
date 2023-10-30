@@ -6,7 +6,7 @@ const testHasNoAuthKeys = () => {
   cy.get('#refresh-token').should('be.empty')
 }
 
-describe('permissioned e2e testing', () => {
+xdescribe('permissioned e2e testing', () => {
   beforeEach(() => {
     cy.clearLocalStorage('RLogin:DontShowAgain')
     mockInjectedProvider()

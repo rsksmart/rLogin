@@ -27,6 +27,8 @@ import { parseSupportedChains, parseInfoOptions, parseRpcUrls, chainArrToMap } f
 // copy-pasted and adapted
 // https://github.com/Web3Modal/web3modal/blob/4b31a6bdf5a4f81bf20de38c45c67576c3249bfc/src/core/index.tsx
 
+const { version: rLoginVersion } = require('../package.json')
+
 const defaultOpts: IProviderControllerOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
@@ -108,6 +110,8 @@ export class RLogin {
     this.coreRef = React.createRef()
 
     this.renderModal()
+
+    console.log('rLogin version', rLoginVersion)
   }
 
   get cachedProvider (): string {

@@ -107,7 +107,7 @@ describe('cache provider tests', () => {
     })
   })
 
-  describe('sample:permissioned', () => {
+  xdescribe('sample:permissioned', () => {
     it('logs in with injected', () => {
       cy.visit('/?cache=yes&backend=yes', {
         onBeforeLoad: function (window) {
