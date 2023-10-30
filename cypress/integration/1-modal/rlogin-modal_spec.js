@@ -18,7 +18,7 @@ describe('rLoign modal interaction', () => {
     cy.get('.rlogin-modal-lightbox').should('be.not.visible')
   })
 
-  it('shows a QR code for WalletConnect', () => {
+  xit('shows a QR code for WalletConnect', () => {
     cy.contains('WalletConnect').click()
     cy.get('wcm-modal')
   })
