@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rlogin",
-  "version": "1.5.3-beta.2",
+  "version": "1.5.3-beta.3",
   "description": "Login tool for RSK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -82,11 +82,11 @@
     "open": "^7.3.0",
     "serve": "^14.1.2",
     "ts-jest": "^26.4.1",
-    "ts-loader": "^8.0.4",
+    "ts-loader": "^9.5.1",
     "typescript": "^4.0.3",
-    "url-loader": "^1.1.2",
+    "url-loader": "^4.1.1",
     "webpack": "^5.69.1",
-    "webpack-cli": "^4.9.2",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {

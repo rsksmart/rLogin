@@ -17,7 +17,7 @@ export const walletConnect2Provider = (providerInfo: IProviderInfo) => {
     },
     package: {
       ...providerInfo.package,
-      required: ['projectId', 'chains']
+      required: ['projectId']
     }
   }
 }
