@@ -94,7 +94,7 @@
     "@rsksmart/rlogin-dpath": "^1.0.1",
     "@rsksmart/vc-json-schemas-parser": "^1.0.0",
     "@types/styled-components": "^5.1.30",
-    "assert": "^2.0.0",
+    "assert": "^2.1.0",
     "axios": "^1.6.7",
     "buffer": "^6.0.3",
     "ethr-did-resolver": "^3.0.2",
