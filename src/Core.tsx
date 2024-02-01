@@ -293,7 +293,6 @@ export class Core extends React.Component<IModalProps, IModalState> {
 
   /**
    * Checklist before sending the connect method
-   * @param provider that the user selected
    */
    private preTutorialChecklist = () => {
      const { name } = this.state.provider
@@ -517,6 +516,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
     const { userProviders, backendUrl, supportedChains, themes, rpcUrls, infoOptions, ethereumChains } = this.props
     const networkParamsOptions = provider ? PROVIDERS_NETWORK_PARAMS[provider!.name as string] : undefined
 
+    // @ts-ignore
     return <ThemeProvider theme={ themes[this.selectedTheme] }>
       <Modal
         lightboxOffset={lightboxOffset}
