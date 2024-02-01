@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rlogin",
-  "version": "1.5.3-beta.3",
+  "version": "1.5.3-beta.4",
   "description": "Login tool for RSK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
