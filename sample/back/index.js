@@ -1,6 +1,5 @@
 const express = require('express')
 const cors = require('cors')
-const bodyParser = require('body-parser')
 const didAuth = require('@rsksmart/express-did-auth')
 const { SimpleSigner } = require('did-jwt')
 
@@ -15,7 +14,7 @@ const serviceUrl = 'http://localhost:3007'
 const app = express()
 
 app.use(cors())
-app.use(bodyParser.json())
+app.use(express.json())
 
 const permissioned = process.argv.length > 2 && process.argv[2] === 'permissioned'
 
