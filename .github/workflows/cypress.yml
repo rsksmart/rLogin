@@ -12,7 +12,7 @@ jobs:
         
       - uses: actions/setup-node@v4
         with:
-          node-version: 17
+          node-version: 18
 
       - name: Cypress run
         uses: cypress-io/github-action@v4
