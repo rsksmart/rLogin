@@ -29,11 +29,15 @@ module.exports = {
     'jest/prefer-to-have-length': 'warn',
     'jest/valid-expect': 'error',
     'react/prop-types': 'off',
-    'no-use-before-define': 'off'
+    'no-use-before-define': 'off',
+    semi: 'warn',
+    'multiline-ternary': 'warn',
+    'array-callback-return': 'warn',
+    indent: 'warn'
   },
   settings: {
     react: {
-      version: 'latest'
+      version: 'detect'
     }
   }
 }
