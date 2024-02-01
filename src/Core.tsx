@@ -439,7 +439,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
          throw error
        })
        .catch((error: Error | AxiosError) => {
-         const description = (error as AxiosError).response && (error as AxiosError).response?.data
+         const description = (error as AxiosError).response && (error as AxiosError).response?.data as string
          if (description) {
            this.setState({ currentStep: 'error', errorReason: { title: 'Authentication Error', description: decodeURI(description) } })
            return Promise.resolve()
