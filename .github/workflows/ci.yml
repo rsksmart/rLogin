@@ -10,10 +10,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 17
+    - name: Use Node.js 18
       uses: actions/setup-node@v4
       with:
-        node-version: 17
+        node-version: 18
     - run: npm i
     - run: npm run test:ci
     - run: npm run lint
