@@ -15,4 +15,4 @@ jobs:
       with:
         node-version: 18
 
-    - run: npm audit --parseable | grep moderate
+    - run: npm audit --parseable
