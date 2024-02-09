@@ -18,7 +18,7 @@ describe('rLoign modal interaction', () => {
     cy.get('.rlogin-modal-lightbox').should('be.not.visible')
   })
 
-  xit('shows a QR code for WalletConnect', () => {
+  it('shows a QR code for WalletConnect', { defaultCommandTimeout: 10000 }, () => {
     cy.contains('WalletConnect').click()
     cy.get('wcm-modal')
   })
