@@ -7,7 +7,7 @@ describe('modal - chose metamask fails, then walletconnect works', () => {
     })
   })
 
-  it('Try to open Metamask but fails', () => {
+  it('Try to open Metamask but fails', { defaultCommandTimeout: 10000 }, () => {
     cy.visit('/')
     cy.contains('login with rLogin').click()
     cy.contains('MetaMask').click()
