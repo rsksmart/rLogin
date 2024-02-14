@@ -9,7 +9,7 @@ import * as DcentWalletLogo from './logos/dcentLogo.png'
 // @ts-ignore
 import * as DefiantWalletLogo from './logos/defiant.svg'
 
-import { TALLYWALLET, BLOCKWALLET, EXODUSWALLET } from '../ux/step1/extraProviders'
+import { TALLYWALLET, BLOCKWALLET, EXODUSWALLET, ENKRYPTWALLET } from '../ux/step1/extraProviders'
 
 /**
  * A list of injected Providers that have not been implemented into Web3Modal yet
@@ -49,6 +49,11 @@ const injectedProviders = [
     name: 'Defiant Wallet',
     check: 'isDefiant',
     logo: DefiantWalletLogo.default
+  },
+  {
+    name: ENKRYPTWALLET.name,
+    check: ENKRYPTWALLET.check,
+    logo: ENKRYPTWALLET.logo
   }
 ]
 
