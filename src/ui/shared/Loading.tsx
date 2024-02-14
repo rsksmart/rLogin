@@ -1,69 +1,58 @@
 // adapted from: https://github.com/LucasBassetti/react-css-loaders/blob/master/lib/bubble-spin/BubbleSpin.jsx
 import React from 'react'
-import styled, { css, keyframes } from 'styled-components'
-
-const loading = keyframes`
-  0%,
-  100% {
-    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0;
-  }
-  12.5% {
-    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em;
-  }
-  25% {
-    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em;
-  }
-  37.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
-  }
-  50% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
-  }
-  62.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
-  }
-  75% {
-    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
-  }
-  87.5% {
-    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
-  }
-`
+import styled, { keyframes } from 'styled-components'
 
 const LoadingText = styled.p`
   color: ${props => props.theme.loadingText}
 `
 
-type BubbleSpinInterface = {
-  size: number
-  color?: string,
-}
+const circleSpinAnimation = keyframes`
+  to{transform: rotate(1turn)}
+`
+const CircleSpin = styled.div`
+  width:200px;
+  height:200px;
+  border-radius:50%;
+  background:conic-gradient(#0000 10%,#D1D1D1);
+  -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 24px),#000 0);
+  animation:${circleSpinAnimation} 2s infinite linear;
+`
 
-const animationMixin = css`${loading} 1s infinite linear;`
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
-const BubbleSpin = styled.div`
-  animation: ${animationMixin};
-  border-radius: 50%;
-  color: ${props => props.theme.primaryColor};
-  font-size: ${(props: BubbleSpinInterface) => `${props.size}px`};
-  height: 1em;
-  margin: 100px auto;
+const CircleSpinImageContainer = styled.div`
   position: relative;
-  text-indent: -9999em;
-  transform: translateZ(0);
-  width: 1em;
+`
+const Base64Image = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
+  margin-top: -35px;
+  margin-left: -35px;
 `
 
 interface LoadingInterface {
   text?: string
-  color?: string
-  size?: number
+  base64Image?: string
 }
 
-const LoadingComponent: React.FC<LoadingInterface> = ({ text, color, size }) =>
-  <div className="loading">
-    <BubbleSpin size={size || 10} />
+const LoadingComponent: React.FC<LoadingInterface> = ({ text, base64Image }) =>
+  <LoadingContainer className="loading">
+    <CircleSpinImageContainer>
+      <CircleSpin />
+      {base64Image && (
+        <Base64Image
+          src={base64Image}
+        />
+      )}
+    </CircleSpinImageContainer>
     {text && <LoadingText>{text}</LoadingText>}
-  </div>
+  </LoadingContainer>
 
 export default LoadingComponent

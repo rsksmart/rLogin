@@ -25,7 +25,7 @@ export const Header2: React.FC<TypographyInterface> = ({ children, className }) 
 
 const Header3Wrapper = styled.h3`
   ${typeShared}
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   font-size: 18px;
   color: ${props => props.theme.h3};
   margin: 18px 0;

@@ -561,7 +561,7 @@ export class Core extends React.Component<IModalProps, IModalState> {
             handleError={(err: any) => this.setState({ currentStep: 'error', errorReason: { title: 'Error Selecting Path', description: err.toString() } })} />
         )}
         {currentStep === 'tutorial' && <TutorialComponent providerName={provider.name} handleConnect={this.connectToWallet} />}
-        {currentStep === 'loading' && <Loading text={loadingReason} />}
+        {currentStep === 'loading' && <Loading text={loadingReason} base64Image={provider.logo} />}
       </Modal>
     </ThemeProvider>
   }

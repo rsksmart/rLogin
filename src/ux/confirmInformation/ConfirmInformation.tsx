@@ -103,8 +103,8 @@ export function ConfirmInformation ({ displayMode, chainId, address, providerUse
       {!displayMode ? (
         <>
           <CenterContent>
-            <Button variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></Button>
-            <Button onClick={handleSubmit} disabled={isLoading} className="confirm"><Trans>Confirm</Trans></Button>
+            <SecondaryButtonNewStyle variant="secondary" onClick={onCancel} disabled={isLoading} className="cancel"><Trans>Cancel</Trans></SecondaryButtonNewStyle>
+            <PrimaryButtonNewStyle onClick={handleSubmit} disabled={isLoading} className="confirm"><Trans>Confirm</Trans></PrimaryButtonNewStyle>
           </CenterContent>
           <CenterContent>
             <label style={{ marginTop: 20 }}>
@@ -282,3 +282,28 @@ export function shortAddress (address?: string): string {
     address.length
   )}`
 }
+
+const PrimaryButtonNewStyle = styled(Button)`
+    width: 164px;
+    height: 60px;
+    background: #F4F4F4;
+    color: #252525;
+    border-radius: 6px;
+    font-weight: bold;
+    :hover:enabled {
+        background: ${props => props.theme.name === 'light' ? '#0000003d' : '#F4F4F4D1'};
+    }
+`
+
+const SecondaryButtonNewStyle = styled(Button)`
+    width: 164px;
+    height: 60px;
+    color: #252525;
+    border: 1px solid #3A3A3A1A;
+    background: white;
+    border-radius: 20px;
+    font-weight: bold;
+    :hover:enabled {
+        background: ${props => props.theme.name === 'light' ? '#00000012' : '#ffffffc7'};
+    }
+`

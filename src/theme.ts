@@ -12,6 +12,7 @@ export const light = {
   disabledText: '#CCCCCC',
 
   h1: '#F2F2F2', // modal-deader
+  h1New: 'white', // Modal Header
   h2: primaryColor,
   h3: '#6C6B6C',
   p: '#B0AEB1', // p
@@ -47,6 +48,7 @@ export const dark: ThemeType = {
   disabledText: '#CCCCCC',
 
   h1: '#1a1a1a', // modal-deader
+  h1New: '#1a1a1a', // Modal Header
   h2: primaryColor,
   h3: '#B0AEB1',
   p: '#B0AEB1', // p
