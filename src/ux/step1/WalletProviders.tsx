@@ -34,7 +34,7 @@ const ProviderRow = styled.div<{ hideMobile?: boolean }>`
   width: 100%;
   display: flex;
   flex-direction: row;
-  gap: 1em;
+  gap: 34px;
 
   @media screen and (max-width: 500px) {
     flex-direction: column;

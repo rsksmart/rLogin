@@ -12,8 +12,8 @@ import {
 // https://github.com/Web3Modal/web3modal/blob/master/src/components/Provider.tsx#L1
 
 const ProviderIcon = styled.div`
-  width: 45px;
-  height: 45px;
+  width: 32px;
+  height: 32px;
   display: flex;
   margin: 5px 15px 0 15px;
   overflow: visible;
@@ -58,8 +58,16 @@ const ProviderBox = styled.div<{ disabled: boolean }>`
 
 const HeaderRow = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  align-items: center;
+  & >*:nth-child(1) {
+      flex: 3;
+      text-align: left !important;
+      margin-left: 38px !important;
+  }
+  & >*:nth-child(2) {
+      margin-right: 38px;
+      margin-top: 0;
+  }
 `
 
 interface IProviderProps {
@@ -89,10 +97,10 @@ export function Provider (props: IProviderProps) {
         className={`${PROVIDER_CONTAINER_CLASSNAME} ${disabled && PROVIDER_CONTAINER_DISABLED_CLASSNAME}`}
         onClick={disabled ? undefined : () => handleConnect(userProvider)} {...otherProps}>
         <HeaderRow>
+          <Header3>{userProvider.name}</Header3>
           <ProviderIcon className={PROVIDER_ICON_CLASSNAME}>
             <img src={userProvider.logo} alt={userProvider.name} />
           </ProviderIcon>
-          <Header3>{userProvider.name}</Header3>
         </HeaderRow>
       </ProviderBox>
     </ProviderContainer>
