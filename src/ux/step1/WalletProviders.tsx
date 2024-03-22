@@ -7,7 +7,7 @@ import { PROVIDERS_WRAPPER_CLASSNAME, PROVIDERS_DEVELOPER_CLASSNAME, PROVIDERS_C
 import { Trans } from 'react-i18next'
 import { themesOptions } from '../../theme'
 
-import { TREZOR, LEDGER, DCENT, TALLYWALLET, BLOCKWALLET, ENKRYPTWALLET } from './extraProviders'
+import { TREZOR, LEDGER, DCENT, TALLYWALLET, BLOCKWALLET, ENKRYPTWALLET, SAFEPALWALLET } from './extraProviders'
 import WalletProvidersFooter from './WalletProvidersFooter'
 
 interface IWalletProvidersProps {
@@ -57,7 +57,7 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
 
   // the providers that are hardcoded into the layout below
   const hardCodedProviderNames = [
-    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, TALLYWALLET.name, BLOCKWALLET.name, ENKRYPTWALLET.name, // browser
+    providers.METAMASK.name, providers.NIFTY.name, providers.LIQUALITY.name, TALLYWALLET.name, BLOCKWALLET.name, ENKRYPTWALLET.name, SAFEPALWALLET.name, // browser
     providers.WALLETCONNECT.name, // mobile
     providers.PORTIS.name, providers.TORUS.name, // custodial
     LEDGER.name, TREZOR.name, DCENT.name // hardware
@@ -74,7 +74,6 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
 
   // handle connect
   const handleConnect = (provider: IProviderUserOptions) => connectToWallet(provider)
-
   return <>
     <Header2>
       {Object.keys(userProviders).length !== 0 ? <Trans>Connect your wallet</Trans> : <Trans>No wallets found</Trans>}
@@ -87,6 +86,7 @@ export const WalletProviders = ({ userProviders, connectToWallet, changeLanguage
         <Provider userProvider={providersByName[TALLYWALLET.name] || TALLYWALLET} handleConnect={handleConnect} hideIfDisabled={true} />
         <Provider userProvider={providersByName[BLOCKWALLET.name] || BLOCKWALLET} handleConnect={handleConnect} hideIfDisabled={true} />
         <Provider userProvider={providersByName[ENKRYPTWALLET.name] || ENKRYPTWALLET} handleConnect={handleConnect} hideIfDisabled={true} />
+        <Provider userProvider={providersByName[SAFEPALWALLET.name] || SAFEPALWALLET} handleConnect={handleConnect} hideIfDisabled={true} />
       </ProviderRow>
       <ProviderRow className={PROVIDERS_MOBILE}>
         <Provider userProvider={providersByName[providers.WALLETCONNECT.name] || providers.WALLETCONNECT} handleConnect={handleConnect} hideIfDisabled={true} />
