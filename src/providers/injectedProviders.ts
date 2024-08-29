@@ -70,6 +70,10 @@ const injectedProviders = [
  * @returns updated array of providers
  */
 export const checkRLoginInjectedProviders = (providers: IProviderUserOptions[]) => {
+  // Remove liquality injected provider
+  providers.forEach((provider) => {
+    if (provider.name === 'Liquality') providers.splice(providers.indexOf(provider), 1)
+  })
   // if zero items, or the first item is not Web3 or Metamask return the array
   if (providers.length === 0 || (providers[0].name !== 'Web3' && providers[0].name !== 'MetaMask')) {
     return providers
